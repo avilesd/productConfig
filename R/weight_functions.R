@@ -21,3 +21,22 @@ weight_overall_freq <- function(dataset, userid = NULL , attr =NULL, rounds = NU
   result
 
 }
+
+## To be use for weights.
+#'
+#' @param rel_frequeny logical. Relative frequency, if \code{rel_frequency = TRUE}, the function ignores the refps argument
+#'        and calculates the aspiration level for each attribute as the relative frequency the user made for that attribute.
+#'
+#' ###to consider, defaults considers all your attributes in your table and calculates with relative frequency of the attributes
+#' if no other weights are given. ##no userid because weights independent from user
+#'
+get_attr_weight <- function(dataset) {
+  if(is.null(dataset) ) {
+    refps <- get_all_default_rps(dataset, userid)
+    ##TODO calculate relative frequency, see annotations notebook
+  }
+  ## TODO proove if length(w) =length(attributes), proof if numeric and the sum of all = 1!!!
+  else{
+    weight
+  }
+}

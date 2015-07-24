@@ -12,7 +12,7 @@
 #'
 #'
 #' @return d \code{user_id}.
-#' @examples
+#' @examples fadfad
 #'
 #' @export
 #'

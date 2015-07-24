@@ -12,6 +12,7 @@
 #' @examples
 #' get_table_by_ID(camera2_config_data, 9)
 #' get_table_by_ID(as.data.frame(matrix_full), 12)
+#' @export
 
 get_table_by_ID<- function(x, userid,...) {
   result <- x[x$usid == userid, ]
@@ -51,7 +52,7 @@ get_attrs_ID<- function(x) {
 #' The given data.frame should signalize with a column named 'round', which should only contain numbers.
 #'
 #' @param x the complete data.frame. You can also input the data.frame specific for one user, such as the one generated with \code{\link{get_table_by_ID}}. For more users at once see \code{\link{powerful_function}} or manually.#'
-#' @param user_id an integer, that identifies which rows (from which user) of the whole given dataset should be extracted.
+#' @param userid an integer, that identifies which rows (from which user) of the whole given dataset should be extracted.
 #'
 #' @return An integer vector representing the index of each round/click and therefore the total amount of rounds for the selected user.
 #' @seealso \code{\link{powerful_function}} allows you to run this and any other function in this package for more than one user.
@@ -70,7 +71,7 @@ get_rounds_by_ID <- function(x, userid) {
 #' Allows you to get all the user IDs in your data. It assumes you have a column \code{$usid} that identifies each user's information of each round with its corresponding user ID.
 #' Returns IDS unordered, i.e. in the order they appear on the table.
 #'
-#' @param x the data.frame you want to input.
+#' @param dataset the data.frame you want to input.
 #'
 #' @return a vector of integers with all user IDs. IDs are returned in the order they appear on the table.
 #' @examples
@@ -90,7 +91,7 @@ get_all_userids <- function(dataset) {
 #' With Default Referenece Points we mean the initial configuration of the product configurator, that is the value for each attribute that was selected as default before the
 #' user interacted with the configurator. It assumes there is a column with the name 'round' from which to read the default values (in round = 0) for each user. The  The default values of each 'category' can be interpreted as possible Reference Points for the decision maker. See Source for more about this assumption.
 #'
-#' @param x the data.frame you want to analyze. For the default values for more or all users, see \code{\link{powerful_function}}
+#' @param dataset the data.frame you want to analyze. For the default values for more or all users, see \code{\link{powerful_function}}
 #' @param user_id an integer, that identifies which rows (from which user) of the whole given dataset should be extracted.
 #' @return A numeric vector with column names representing the attribute ID each reference point belongs to.
 #' @seealso \code{\link{powerful_function}} allows you to run this and any other function in this package for more than one user.
@@ -119,40 +120,47 @@ get_all_default_rps <- function(dataset, userid) {
 
 }
 
+#' Normalize a vector
+#'
+#' Divide all given vectors with the absolute sum of all the elements in the vector, such that the sum of the result equals 1, that is if
+#' you take the absolute value of the results. In other words, you can give negative values.
+#'
+#' @param num_vector numeric vector you want to normalize.
+#'
+#' @return A normalized vector, i.e. anothernumeric vector with the sum of its absolute values equaling 1.
+#' @examples
+#' get_normalized_vec(c(1,2,1,2)) #Returns: [1] 0.1666667 0.3333333 0.1666667 0.3333333
+#' get_normalized_vec(c(1,2,1,-2)) #Returns: [1] 0.1666667 0.3333333 0.1666667 -0.3333333
+#'
+#' @references ProductConfig Github page: https://github.com/avilesd/productConfig
+#' @export
+
 get_normalized_vec <- function(num_vector) {
   if(is.vector(num_vector, mode="numeric")) {
-    sum <- sum(num_vector)
+    sum <- sum(abs(num_vector))
     result <- num_vector/sum
     result
   }
   else warning("Entered argument not a numeric vector.")
 }
 
+#' All unique values for provided attribute
+#'
+#' Returns all unique values that can be found in the given attribute, i.e. all values that exist for \code{attrid} for all users.
+#'
+#' @param dataset complete data.frame with a \code{atid} column referring to the attribute ID.
+#' @param attrid the ID of the attribute you want to know all unique values of.
+#'
+#' @return Unique values for the given attribute, applies for all users.
+#' @examples
+#' get_attr_values(example_data, attrid=1) # Example return: [1] 0 3 2 1 meaning that category only has 4 possible values in the product configutrator, or at least those were the ones the users clicked on
+#' get_attr_values(other_data, 3)
+#'
+#' @export
 
-# This is just a funcion that I wrote here to not forget the code, could be useful, but right now is not fundamental.
-read_attr_levels <-function(x) {
-  help1 <- tapply(x$selected, play_data$atid == 4, unique)
+get_attr_values <-function(dataset, attrid) {
+  help1 <- tapply(dataset$selected, play_data$atid == attrid, unique)
   result <- help1$'TRUE'
   result
-}
-
-
-## To be use for weights.
-#'
-#' @param rel_frequeny logical. Relative frequency, if \code{rel_frequency = TRUE}, the function ignores the refps argument
-#'        and calculates the aspiration level for each attribute as the relative frequency the user made for that attribute.
-#'
-#' ###to consider, defaults considers all your attributes in your table and calculates with relative frequency of the attributes
-#' if no other weights are given. ##no userid because weights independent from user
-#'
-get_attr_weight <- function(dataset) {
-  if(is.null(dataset) ) {
-  refps <- get_all_default_rps(dataset, userid)
-  ##TODO calculate relative frequency, see annotations notebook
-  }
-  ## TODO proove if length(w) =length(attributes), proof if numeric and the sum of all = 1!!!
-  else{
-    weight
-  }
 }
 

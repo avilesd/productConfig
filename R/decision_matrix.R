@@ -1,34 +1,66 @@
 #' Create the decision matrix
 #'
-#' Creates a decision matrix, which is necessary to create the 'Gains' and 'Losses' matrices after. If no attribute vector is given,
-#' containing the attributes IDs and if no alternatives are passed on as rounds, to be considered in the decision matrix, the function
-#' will go with the defaults and extract them from the dataset. Will be used only for one user (one userid).
+#' Creates a decision matrix, which is necessary to create the 'Gains' and 'Losses' matrices thereafter.
+#' The decision matrix is basically a representation of the interaction of one user with the product
+#' configurator through each step.
 #'
-#' @param dataset (CHANGED, can give both tables: small and originial) SHOULD ONLY BE THE SMALL MATRIX FROM 1 USER.  PERHAPS LATER WE CHANGE IT.
+#' If no attribute vector is given,containing the attributes IDs and if no alternatives are passed on as rounds, to be considered in
+#' the decision matrix, the function will go with the defaults and extract them from the dataset. Will be used only for one user (one userid).
 #'
-#' @param userid an integer, that identifies which rows of the whole given dataset (x) should be extracted.
+#' @param data data.frame with the user generated data from a product configurator. Please see Details for specifications of the data.frame.
 #'
-#' @param attr vector of integer numbers corresponding to the attributes IDs you desire to use.
-#' Default calculates with all attributes. Length := j.
+#' @param userid an integer that gives the information of which user the matrix should be calculated.
 #'
-#' @param rounds vector of integer numbers corr esponding to the alternatives to use for the decision matrix. Default calculates
-#' first round(initia product config) and last round of the session. Length:= i.
+#' @param attr attributes, vector of integer numbers corresponding to the attributes IDs you desire to use.
+#'
+#'
+#' @param rounds integer vector. Which steps of the configuration process should be shown? See Details.
+#'
+#' @param cost_ids argument use to convert selected cost attributes into benefit attributes. Integer vector.
+#'
+#' @details
+#' \code{data} We assume the input data.frame has following columns usid = User IDs, round = integers indicating which round the user is in
+#' (0-index works best), atid = integer column for referring the attribute ID, selected = numeric value of the attribute for a specific, given round,
+#' selectable = amount of options the user can chose at a given round, with the current configuration. This is a necessary parameter.
+#'
+#' \code{userid} is a necessary parameter, without it you'll get a warning. Default is NULL.
+#'
+#' \code{attr} Default calculates with all attributes. Attributes are automatically read from provided table, it is important you always provide
+#' the complete dataset so that the package functions properly.
+#'
+#' \code{rounds} Default calculates first round(initia product config) and last round of the session.
 #' Default calculates with first and last attributes (initial and final product configuration). To choose all give "all" as argument
-#' for rounds, see example.
+#' for rounds, see example. "first" and "last" are also possible argument values. You can give a vector of arbitrarily chosen rounds as well.
 #'
-#' @param cost_ids vector of integer numbers. To convert selected cost attributes into benefit attributes. If one or more of the
-#' attributes in your data is of cost type, e.g. price, so that lower is better then you should identify this attributes as such,
-#' providing their id, they'll be converted to benefit type (higher amount is better). Default assumes all are benefit type.
+#' \code{cost_ids} Default assumes all your attributes are of benefit type, that is a higher value in the attribute means the user
+#' is better of than with a lower value. If one or more of the attributes in your data is of cost type, e.g. price, so that lower is better then you should identify
+#' this attributes as such, providing their id, they'll be converted to benefit type (higher amount is better).
+#'
+#' General: Through the matrix you can observe the value of each attribute at
+#' any given moment or round. The number of columns of the matrix will always be the same for all users.
+#' The number of rows depends on how much clicks or rounds the user made in the product configurator. At
+#' the very least, you will get always'round 0' meaning the initial, default configuration and 'round 1' the last
+#' or final configuration, this is assuming the user just clicked once or not at all.
+#'
+#' This function is for one user only, for more or all users see \code{\link{powerful_function}}
 #'
 #'
-#' @return A decision matrix with j amount of columns and i amount of rows. Colnames = attrIDs and rownames = chosen rounds.\code{user_id}.
+#' @return A decision matrix for selected user with rows.length = length(\code{rounds}) and column.length = length(\code{attr}).
+#' Colnames = attrIDs and rownames = chosen rounds.
 #' @examples
-#' decision_matrix(camera2_config_data, 11)
+#' decision_matrix(camera2_config_data, 11) # Necessary arguments dataset and userid
 #' decision_matrix(my_data, userid = 11, attr = c(1,3,5))
 #' decision_matrix(another_data, userid = 80, rounds = c(1,2,3,7,8,9))
-#' decision_matrix(data2, 2, rounds = "all")
-#' @export
 #'
+#' decision_matrix(data2, 2, rounds = "all")
+#' decision_matrix(data2, 120, rounds = "first", cost_ids = 1)
+#' decision_matrix(data1, userid = 5, attr = c(1,4), rounds = "all", cost_ids="c(1,2)") #All possible parameters are in use here.
+#'
+#' @references ProductConfig Github page: https://github.com/avilesd/productConfig
+#'
+#' @export
+
+
 
 decision_matrix <- function(data, userid = NULL, attr = NULL, rounds = NULL, cost_ids = NULL) {
 
