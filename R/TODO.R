@@ -4,6 +4,8 @@
 #' with param EACH, calculate for each round and the next the gains and losses, in decision matrix,
 #'  an if at the end, if TRUE then another result.
 #'
+#'  (After Seminar) get_attr_ -> improve, do not assume that all users have the same amount of attributes, consequences?
+#'
 #' (FIXED) Error Catch: easy: by decision_matrix -- prove is provided userid is in the userid of the data.
 #'
 #'  (pending, IMPORTANT) Test cost_ids and if refps should also be given with -. Test with paper matrices current2.
