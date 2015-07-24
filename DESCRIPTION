@@ -2,7 +2,7 @@ Package: productConfig
 Title: Tools to analyze behavioral patterns from Product Configurators
 Version: 0.1.0.9000
 Authors@R: person("Diego", "Aviles", email = "diego.aviles.escobar@gmail.com", role = c("aut", "cre")),
-            person("Verena", "Dorner", email="verena.dorner@kit.edu")
+            person("Verena", "Dorner", email="verena.dorner@kit.edu", role=c("aut","cre"))
 Description: What the package does (one paragraph)
 Depends: R (>= 3.0.0)
 License: MIT
