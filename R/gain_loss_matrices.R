@@ -1,25 +1,58 @@
-#' Calculate the Gain matrix
+#' Gain matrix
 #'
 #' Creates the Gains matrix parting from a decision matrix and a vector containing the reference points (aspiration-levels).
+#' We based our calculations for gains and losses from a scientific paper, please see source and references.
 #'
-#' (NOT CHANGED)Creates a decision matrix, which is necessary to create the 'Gains' and 'Losses' matrices after. If no attribute vector is given,
-#' (NOT CHANGED)containing the attributes IDs and if no alternatives are passed on as rounds, to be considered in the decision matrix, the function
-#' (NOT CHANGED)will go with the defaults and extract them from the dataset. Will be used only for one user (one userid).
+#' @param data data.frame with the user generated data from a product configurator. Please see \code{decision_matrix}
+#'  for specifications of the data.frame.
 #'
-#' @param dataset
+#' @param userid an integer that gives the information of which user the matrix should be calculated.
 #'
-#' @param userid
+#' @param attr attributes IDs, vector of integer numbers corresponding to the attributes you desire to use; attr are assumed to be 1-indexed.
 #'
-#' @param attr
+#' @param rounds integer vector. Which steps of the configuration process should be shown? See Details.
 #'
-#' @param rounds
+#' @param refps numeric vector. Reference Points: each point corresponds to one attribute, i.e. each attribute has only one
+#' aspiration level. Default setting assumes the aspiration levels as the default values of the initial product configuration
+#' for each user.
 #'
-#' @return (NOT CHANGED)A decision matrix with j amount of columns and i amount of rows. Colnames = attrIDs and rownames = chosen rounds.\code{user_id}.
+#' @param cost_ids argument used to convert selected cost attributes into benefit attributes. Integer vector.
+#'
+#' @details
+#' General: The gain_matrix with ncol = number of attributes you selected or all(default) and nrow= number of rounds you selected or the first and last(default)
+#' for a selected user.
+#'
+#' \code{data} We assume the input data.frame has following columns usid = User IDs, round = integers indicating which round the user is in
+#' (0-index works best for 'round'), atid = integer column for referring the attribute ID (1 indexed), selected = numeric value of the attribute for a specific, given round,
+#' selectable = amount of options the user can chose at a given round, with the current configuration. This is a necessary parameter.
+#'
+#' \code{userid} is a necessary parameter, without it you'll get a warning. Default is NULL.
+#'
+#' \code{attr} Default calculates with all attributes. Attributes are automatically read from provided table, it is important you always provide
+#' the complete dataset so that the package functions properly. Moreover the attribute will be sorted in ascending order, i.e. if you input attr= c(1,3,2),
+#' the decision matrix resulting will display the columns in order: attr1 attr2 attr3.
+#'
+#' \code{rounds} Default calculates first round(initia product config) and last round of the session.
+#' Default calculates with first and last attributes (initial and final product configuration). To choose all give "all" as argument
+#' for rounds, see example. "first" and "last" are also possible argument values. You can give a vector of arbitrarily chosen rounds as well.
+#'
+#' \code{refps} The most important parameter for this function. If you only want to see the results for one attribute you may enter only a couple of reference points
+#' but you have to tell the function which attributes you want to use those referene points for. So the amount of attr and of refps should be the same.
+#' Moreover the functions always orders de attr, so be sure to input the reference point also in an ascending order corresponding to their attributes. (refps
+#' will not be ordered)
+#'
+#' \code{cost_ids} Default assumes all your attributes are of benefit type, that is a higher value in the attribute means the user
+#' is better of than with a lower value. If one or more of the attributes in your data is of cost type, e.g. price, so that lower is better then you should identify
+#' this attributes as such, providing their id, they'll be converted to benefit type (higher amount is better).
+#'
+#' This function is for one user only, for more or all users see \code{\link{powerful_function}}
+#'
+#' @return a gain matrix for a specific user.
 #' @examples
-#' decision_matrix(camera2_config_data, 11)
-#' decision_matrix(my_data, userid = 11, attr = c(1,3,5))
-#' decision_matrix(another_data, userid = 80, rounds = c(1,2,3,7,8,9))
-#' decision_matrix(data2, 2, rounds = "all")
+#' gain_matrix(pc_config_data, 11)
+#' gain_matrix(my_data, userid = 11, attr = c(1,3,5))
+#' gain_matrix(keyboard_data, 60, rounds = "all", refps = c(1,3,4,0), cost_ids = 4)
+#' gain_matrix(data1, 2, rounds = "last", attr = 1)
 #' @export
 
 gain_matrix <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
@@ -41,33 +74,66 @@ gain_matrix <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps =
     gain_matrix[m, ] <- mapply(gain_fun_a, des_matrix[m, ], refps_vector)
     m <- m + 1
   }
-  gain_matrix
 
+  gain_matrix
 
 }
 
-#' Calculate the Loss matrix
+#' Loss matrix
 #'
 #' Creates the Loss matrix parting from a decision matrix and a vector containing the reference points (aspiration-levels).
+#' We based our calculations for gains and losses from a scientific paper, please see source and references.
 #'
-#' (NOT CHANGED)Creates a decision matrix, which is necessary to create the 'Gains' and 'Losses' matrices after. If no attribute vector is given,
-#' (NOT CHANGED)containing the attributes IDs and if no alternatives are passed on as rounds, to be considered in the decision matrix, the function
-#' (NOT CHANGED)will go with the defaults and extract them from the dataset. Will be used only for one user (one userid).
+#' @param data data.frame with the user generated data from a product configurator. Please see \code{decision_matrix}
+#'  for specifications of the data.frame.
 #'
-#' @param dataset
+#' @param userid an integer that gives the information of which user the matrix should be calculated.
 #'
-#' @param userid
+#' @param attr attributes IDs, vector of integer numbers corresponding to the attributes you desire to use; attr are assumed to be 1-indexed.
 #'
-#' @param attr
+#' @param rounds integer vector. Which steps of the configuration process should be shown? See Details.
 #'
-#' @param rounds
+#' @param refps numeric vector. Reference Points: each point corresponds to one attribute, i.e. each attribute has only one
+#' aspiration level. Default setting assumes the aspiration levels as the default values of the initial product configuration
+#' for each user.
 #'
-#' @return (NOT CHANGED)A decision matrix with j amount of columns and i amount of rows. Colnames = attrIDs and rownames = chosen rounds.\code{user_id}.
+#' @param cost_ids argument used to convert selected cost attributes into benefit attributes. Integer vector.
+#'
+#' @details
+#' General: The loss_matrix with ncol = number of attributes you selected or all(default) and nrow= number of rounds you selected or the first and last(default)
+#' for a selected user.
+#'
+#' \code{data} We assume the input data.frame has following columns usid = User IDs, round = integers indicating which round the user is in
+#' (0-index works best for 'round'), atid = integer column for referring the attribute ID (1 indexed), selected = numeric value of the attribute for a specific, given round,
+#' selectable = amount of options the user can chose at a given round, with the current configuration. This is a necessary parameter.
+#'
+#' \code{userid} is a necessary parameter, without it you'll get a warning. Default is NULL.
+#'
+#' \code{attr} Default calculates with all attributes. Attributes are automatically read from provided table, it is important you always provide
+#' the complete dataset so that the package functions properly. Moreover the attribute will be sorted in ascending order, i.e. if you input attr= c(1,3,2),
+#' the decision matrix resulting will display the columns in order: attr1 attr2 attr3.
+#'
+#' \code{rounds} Default calculates first round(initia product config) and last round of the session.
+#' Default calculates with first and last attributes (initial and final product configuration). To choose all give "all" as argument
+#' for rounds, see example. "first" and "last" are also possible argument values. You can give a vector of arbitrarily chosen rounds as well.
+#'
+#' \code{refps} The most important parameter for this function. If you only want to see the results for one attribute you may enter only a couple of reference points
+#' but you have to tell the function which attributes you want to use those referene points for. So the amount of attr and of refps should be the same.
+#' Moreover the functions always orders de attr, so be sure to input the reference point also in an ascending order corresponding to their attributes. (refps
+#' will not be ordered)
+#'
+#' \code{cost_ids} Default assumes all your attributes are of benefit type, that is a higher value in the attribute means the user
+#' is better of than with a lower value. If one or more of the attributes in your data is of cost type, e.g. price, so that lower is better then you should identify
+#' this attributes as such, providing their id, they'll be converted to benefit type (higher amount is better).
+#'
+#' This function is for one user only, for more or all users see \code{\link{powerful_function}}
+#'
+#' @return a loss matrix for a specific user.
 #' @examples
-#' decision_matrix(camera2_config_data, 11)
-#' decision_matrix(my_data, userid = 11, attr = c(1,3,5))
-#' decision_matrix(another_data, userid = 80, rounds = c(1,2,3,7,8,9))
-#' decision_matrix(data2, 2, rounds = "all")
+#' loss_matrix(pc_config_data, 11)
+#' loss_matrix(my_data, userid = 11, attr = c(1,3,5))
+#' loss_matrix(keyboard_data, 60, rounds = "all", refps = c(1,3,4,0), cost_ids = 4)
+#' loss_matrix(data1, 2, rounds = "last", attr = 1)
 #' @export
 
 loss_matrix <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
@@ -94,7 +160,67 @@ loss_matrix <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps =
 
 }
 
-## Get both gain and loss matrix together
+#' Merges gain and loss matrices
+#'
+#' Returns a list with two elements one is the $gain matrix and the second one is the $loss matrix. The user can change the \code{result_type} to "cbind" or "rbind",
+#' both cases resulting in a merged matrix, which is easier to work with than a list. For a specificied \code{userid}.
+#'
+#' @param data data.frame with the user generated data from a product configurator. Please see \code{decision_matrix}
+#'  for specifications of the data.frame.
+#'
+#' @param userid an integer that gives the information of which user the matrix should be calculated.
+#'
+#' @param attr attributes IDs, vector of integer numbers corresponding to the attributes you desire to use; attr are assumed to be 1-indexed.
+#'
+#' @param rounds integer vector. Which steps of the configuration process should be shown? See Details.
+#'
+#' @param refps numeric vector. Reference Points: each point corresponds to one attribute, i.e. each attribute has only one
+#' aspiration level. Default setting assumes the aspiration levels as the default values of the initial product configuration
+#' for each user.
+#'
+#' @param result_type allows to change the result type. Default returns a list with two elements. Other possibilites are "cbind" and "rbind" as character input which
+#' do exactly what their name suggests; return a column- or row- binded matrix.
+#'
+#' @param cost_ids argument used to convert selected cost attributes into benefit attributes. Integer vector.
+#'
+#' @details
+#' \code{data} We assume the input data.frame has following columns usid = User IDs, round = integers indicating which round the user is in
+#' (0-index works best for 'round'), atid = integer column for referring the attribute ID (1 indexed), selected = numeric value of the attribute for a specific, given round,
+#' selectable = amount of options the user can chose at a given round, with the current configuration. This is a necessary parameter.
+#'
+#' \code{userid} is a necessary parameter, without it you'll get a warning.
+#'
+#' \code{attr} Default calculates with all attributes. Attributes are automatically read from provided table, it is important you always provide
+#' the complete dataset so that the package functions properly. Moreover the attribute will be sorted in ascending order, i.e. if you input attr= c(1,3,2),
+#' the decision matrix resulting will display the columns in order: attr1 attr2 attr3.
+#'
+#' \code{rounds} Default calculates first round(initia product config) and last round of the session.
+#' Default calculates with first and last attributes (initial and final product configuration). To choose all give "all" as argument
+#' for rounds, see example. "first" and "last" are also possible argument values. You can give a vector of arbitrarily chosen rounds as well.
+#'
+#' \code{refps} The most important parameter for this function. If you only want to see the results for one attribute you may enter only a couple of reference points
+#' but you have to tell the function which attributes you want to use those referene points for. So the amount of attr and of refps should be the same.
+#' Moreover the functions always orders de attr, so be sure to input the reference point also in an ascending order corresponding to their attributes. (refps
+#' will not be ordered)
+#'
+#' \code{result_type} Default assumes all your attributes are of benefit type, that is a higher value in the attribute means the user
+#' is better of than with a lower value. If one or more of the attributes in your data is of cost type, e.g. price, so that lower is better then you should identify
+#' this attributes as such, providing their id, they'll be converted to benefit type (higher amount is better).
+#'
+#' \code{cost_ids} Default assumes all your attributes are of benefit type, that is a higher value in the attribute means the user
+#' is better of than with a lower value. If one or more of the attributes in your data is of cost type, e.g. price, so that lower is better then you should identify
+#' this attributes as such, providing their id, they'll be converted to benefit type (higher amount is better).
+#'
+#' This function is for one user only, for more or all users see \code{\link{powerful_function}}
+#'
+#' @return gain and loss matrix for a specific user.
+#' @examples
+#' gain_loss_matrices(pc_config_data, 11)
+#' gain_loss_matrices(my_data, userid = 11, result_type = "cbind")
+#' gain_loss_matrices(monitor_data, 50, rounds = "last", refps = c(0.1,0.3,0.4,0.5), cost_ids = 3)
+#' gain_loss_matrices(data1, 2, attr = 1)
+#' gain_loss_matrices(data, 2, result_type = "cbind", attr = c(1,2,3,4) )
+#' @export
 gain_loss_matrices <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, result_type = NULL, cost_ids = NULL) {
 
   g_matrix <- gain_matrix(data, userid, attr, rounds, refps, cost_ids)
