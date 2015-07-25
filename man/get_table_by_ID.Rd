@@ -4,7 +4,7 @@
 \alias{get_table_by_ID}
 \title{Extract the part of the provided dataset that corresponds to a user id.}
 \usage{
-get_table_by_ID(x, userid, ...)
+get_table_by_ID(x, userid = NULL, ...)
 }
 \arguments{
 \item{x}{the data.frame (table) you want to separate in a smaller data.frame for a specific user. For more users at once see \code{\link{powerful_function}} or manually.}

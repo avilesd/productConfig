@@ -14,7 +14,16 @@
 #' get_table_by_ID(as.data.frame(matrix_full), 12)
 #' @export
 
-get_table_by_ID<- function(x, userid,...) {
+get_table_by_ID<- function(x, userid = NULL,...) {
+  if(is.null(userid)) {
+    stop("You need to specify one userid.")
+  }
+  ## Check if given userid is in the data
+  if(!userid %in% get_all_userids(x)) {
+    print(userid)
+    stop("The userid you specified is not contained in your data.")
+  }
+
   result <- x[x$usid == userid, ]
   result
 }
@@ -60,7 +69,16 @@ get_attrs_ID<- function(x) {
 #' get_rounds_by_ID(example_data, userid = 6) # Example return: [1] 0 1 2 3 4 5 6 7 8
 #' get_rounds_by_ID(as.data.frame(matrix_full), 1200) # If userid given not found in the given data(x) function returns: integer(0).
 #'
-get_rounds_by_ID <- function(x, userid) {
+get_rounds_by_ID <- function(x, userid = NULL) {
+  if(is.null(userid)) {
+    stop("You need to specify one userid.")
+  }
+  ## Check if given userid is in the data
+  if(!userid %in% get_all_userids(x)) {
+    print(userid)
+    stop("The userid you specified is not contained in your data.")
+  }
+
   table_by_ID <- get_table_by_ID(x, userid)
   result <- unique(table_by_ID$round)
   result
@@ -100,6 +118,15 @@ get_all_userids <- function(dataset) {
 #' get_all_default_rps(as.data.frame(matrix_full), 55)
 #'
 get_all_default_rps <- function(dataset, userid) {
+  if(is.null(userid)) {
+    stop("You need to specify one userid.")
+  }
+  ## Check if given userid is in the data
+  if(!userid %in% get_all_userids(dataset)) {
+    print(userid)
+    stop("The userid you specified is not contained in your data.")
+  }
+
   table_unique <- get_table_by_ID(dataset, userid)
   table_0 <- table_unique[table_unique$round == 0, ]
   result <- table_0$selected
@@ -154,11 +181,20 @@ get_normalized_vec <- function(num_vector) {
 #' @return Unique values for the given attribute, applies for all users.
 #' @examples
 #' get_attr_values(example_data, attrid=1) # Example return: [1] 0 3 2 1 meaning that category only has 4 possible values in the product configutrator, or at least those were the ones the users clicked on
-#' get_attr_values(other_data, 3)
+#' get_attr_values(other_data, 100) #Possible catched error: The attrID you specified is not contain in your data.
 #'
 #' @export
 
-get_attr_values <-function(dataset, attrid) {
+get_attr_values <-function(dataset, attrid = NULL) {
+  if(is.null(attrid)) {
+    stop("You need to specify one attrid")
+  }
+  ## Check if given userid is in the data
+  if(!attrid %in% get_attrs_ID(dataset)) {
+    print(attrid)
+    stop("The attrid you specified is not contained in your data.")
+  }
+
   help1 <- tapply(dataset$selected, play_data$atid == attrid, unique)
   result <- help1$'TRUE'
   result

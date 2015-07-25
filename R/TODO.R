@@ -41,6 +41,9 @@
 #'  ggplot(data = new, aes(x = xt, y = yt, color = pt)) + geom_line(size=1.1) + geom_point(size = 2)
 #'
 #'  (FINAL, going to Poster) ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green")
+#'
+#'  ##### FIXED
+#'
 
 
 

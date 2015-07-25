@@ -4,9 +4,6 @@
 #' The decision matrix is basically a representation of the interaction of one user with the product
 #' configurator through each step.
 #'
-#' If no attribute vector is given,containing the attributes IDs and if no alternatives are passed on as rounds, to be considered in
-#' the decision matrix, the function will go with the defaults and extract them from the dataset. Will be used only for one user (one userid).
-#'
 #' @param data data.frame with the user generated data from a product configurator. Please see Details for specifications of the data.frame.
 #'
 #' @param userid an integer that gives the information of which user the matrix should be calculated.
