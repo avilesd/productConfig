@@ -8,16 +8,15 @@
 #'
 #' @param userid an integer that gives the information of which user the matrix should be calculated.
 #'
-#' @param attr attributes, vector of integer numbers corresponding to the attributes IDs you desire to use.
-#'
+#' @param attr attribute IDs, vector of integer numbers corresponding to the attributes you desire to use.
 #'
 #' @param rounds integer vector. Which steps of the configuration process should be shown? See Details.
 #'
-#' @param cost_ids argument use to convert selected cost attributes into benefit attributes. Integer vector.
+#' @param cost_ids argument used to convert selected cost attributes into benefit attributes. Integer vector.
 #'
 #' @details
 #' \code{data} We assume the input data.frame has following columns usid = User IDs, round = integers indicating which round the user is in
-#' (0-index works best), atid = integer column for referring the attribute ID, selected = numeric value of the attribute for a specific, given round,
+#' (0-index works best for 'round'), atid = integer column for referring the attribute ID (1 indexed), selected = numeric value of the attribute for a specific, given round,
 #' selectable = amount of options the user can chose at a given round, with the current configuration. This is a necessary parameter.
 #'
 #' \code{userid} is a necessary parameter, without it you'll get a warning. Default is NULL.

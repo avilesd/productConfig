@@ -28,7 +28,7 @@ gain_matrix <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps =
 
 
   ## Get reference points(aspiration-levels) from input
-  refps_vector <-ref_points(data, userid, refps, cost_ids)
+  refps_vector <-ref_points(data, userid, refps, attr, cost_ids)
 
   ## Create empty result Gain matrix
   dim_matrix <- dim(des_matrix)
@@ -76,7 +76,7 @@ loss_matrix <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps =
 
 
   ## Get reference points(aspiration-levels) from input
-  refps_vector <-ref_points(data, userid, refps, cost_ids)
+  refps_vector <-ref_points(data, userid, refps, attr, cost_ids)
 
   ## Create empty result Gain matrix
   dim_matrix <- dim(des_matrix)
