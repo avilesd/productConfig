@@ -16,8 +16,8 @@
 #'
 #' @export
 #'
-
-ref_points <- function(dataset, userid, refps = NULL, cost_ids = NULL, ...) {
+##########TODO add attr and prove table + DOC and done.
+ref_points <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NULL, ...) {
 
   if(is.null(refps)) {
     refps <- get_all_default_rps(dataset, userid)
@@ -50,4 +50,6 @@ ref_points <- function(dataset, userid, refps = NULL, cost_ids = NULL, ...) {
     }
   }
   refps
+
+
 }

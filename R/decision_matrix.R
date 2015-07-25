@@ -23,7 +23,8 @@
 #' \code{userid} is a necessary parameter, without it you'll get a warning. Default is NULL.
 #'
 #' \code{attr} Default calculates with all attributes. Attributes are automatically read from provided table, it is important you always provide
-#' the complete dataset so that the package functions properly.
+#' the complete dataset so that the package functions properly. Moreover the attribute will be sorted in ascending order, i.e. if you input attr= c(1,3,2),
+#' the decision matrix resulting will display the columns in order: attr1 attr2 attr3.
 #'
 #' \code{rounds} Default calculates first round(initia product config) and last round of the session.
 #' Default calculates with first and last attributes (initial and final product configuration). To choose all give "all" as argument
@@ -75,7 +76,20 @@ decision_matrix <- function(data, userid = NULL, attr = NULL, rounds = NULL, cos
   if(is.null(attr)) {
     ##Get the attributes of given ID. Default = get all attributes.
     attr <- get_attrs_ID(dataset)
-
+    attr <- sort(attr)
+  }
+  else {
+    var1 <- length(attr)
+    var2 <- attr %in% get_attrs_ID(dataset)
+    var2 <- var2[var2 == TRUE]
+    var2 <- length(var2)
+    if(var1 == var2) {
+      attr <- sort(attr)
+    }
+    else {
+      rest <- var1 - var2
+      stop(paste(rest ,"of the attributes you entered in attr are not to be found in your data."))
+    }
   }
   ##Default setting first and last round
   if(is.null(rounds)) {

@@ -6,25 +6,21 @@
 #'
 #'  (After Seminar) get_attr_ -> improve, do not assume that all users have the same amount of attributes, consequences?
 #'
-#' (FIXED) Error Catch: easy: by decision_matrix -- prove is provided userid is in the userid of the data.
-#'
-#'  (pending, IMPORTANT) Test cost_ids and if refps should also be given with -. Test with paper matrices current2.
+#' (pending, IMPORTANT) Test cost_ids and if refps should also be given with -. Test with paper matrices current2.
 #'
 #' (pending, IMPORTANT) FIXED WEIGHTS AND WEIGHTS FUNCTION
 #'
 #' (pending) Alternatives 2c) a function that gives you all G & L matrices between chosen alternatives and their next
 #' one. If rounds = c(x, x+1, x+2, x+3) then give all following G & L: G&L(x, x+1) ; G&L(x+1, x+2) ; G&L(x+2, x+3). Normalized?
 #'
-#' (pending, NECESSARY ASAP, last is implemented) allow for rounds= "first", "last".
-#'
 #' (pending, important) suppressWarning when giving rounds= vector not NULL and not "all", try a way around.
 #'
-#' (pending, IMPORTANT) Change all 'data' args to dataset or other!
+#' (pending, IMPORTANT) Change all 'data' args to dataset or other than x!
 #'
 #' (pending, IMPORTANT) Change ref_ps function when called, add attr parameter and change function as well. attr already added
 #' powerful_f.
 #'
-#' (DONE, IMPORTANT) Add powerful_functions to the powerful_function conditions (con7,8), think which ones.
+#' (pending, middle important) Warning or try catch: Say if wrong attributes are given.
 #'
 #' WORKS HEATMAP with the right data! multiply attr4 by 6.545 and then take 4 - that!
 #'
@@ -44,8 +40,9 @@
 #'
 #'  ##### FIXED
 #'
-
-
+#' (FIXED) Error Catch: easy: by decision_matrix -- prove is provided userid is in the userid of the data.
+#' (DONE, IMPORTANT) Add powerful_functions to the powerful_function conditions (con7,8), think which ones.
+#' (DONE, NECESSARY ASAP, last is implemented) allow for rounds= "first", "last".
 
 
 
