@@ -6,7 +6,7 @@
 #'
 #' @param data data.frame with the user generated data from a product configurator. Please see Details for specifications of the data.frame.
 #'
-#' @param userid an integer that gives the information of which user the matrix should be calculated.
+#' @param userid User ID: an integer that gives the information of which user the matrix should be calculated
 #'
 #' @param attr attribute IDs, vector of integer numbers corresponding to the attributes you desire to use.
 #'

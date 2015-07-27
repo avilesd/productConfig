@@ -48,7 +48,7 @@ the decision matrix resulting will display the columns in order: attr1 attr2 att
 Default calculates with first and last attributes (initial and final product configuration). To choose all give "all" as argument
 for rounds, see example. "first" and "last" are also possible argument values. You can give a vector of arbitrarily chosen rounds as well.
 
-\code{refps} The most important parameter for this function. If you only want to see the results for one attribute you may enter only a couple of reference points
+\code{refps} If you only want to see the results for one attribute you may enter only a couple of reference points
 but you have to tell the function which attributes you want to use those referene points for. So the amount of attr and of refps should be the same.
 Moreover the functions always orders de attr, so be sure to input the reference point also in an ascending order corresponding to their attributes. (refps
 will not be ordered)

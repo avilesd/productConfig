@@ -2,37 +2,78 @@
 % Please edit documentation in R/powerful_functions.R
 \name{powerful_function}
 \alias{powerful_function}
-\title{Calculate the Gain matrix}
+\title{Takes one function and runs it for more than one user}
 \usage{
 powerful_function(dataset, userid = NULL, FUN = decision_matrix,
   attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL,
   weight = NULL, alpha = 0.88, beta = 0.88, lambda = 2.25,
-  gainm = TRUE)
+  gainm = TRUE, result_type = NULL)
 }
 \arguments{
-\item{dataset}{}
+\item{userid}{an integer that gives the information of which user you want the data from: User ID.}
 
-\item{userid}{}
+\item{FUN}{character. Name of the function within the package you want to use.}
 
-\item{attr}{}
+\item{attr}{attributes IDs, vector of integer numbers corresponding to the attributes you desire to use; attr are assumed to be 1-indexed.}
 
-\item{rounds}{}
+\item{rounds}{integer vector. Which steps of the configuration process should be shown? See Details.}
+
+\item{refps}{numeric vector. Reference Points: each point corresponds to one attribute, i.e. each attribute has only one
+aspiration level. Default setting assumes the aspiration levels as the default values of the initial product configuration
+for each user.}
+
+\item{cost_ids}{argument used to convert selected cost attributes into benefit attributes. Integer vector.}
+
+\item{weight}{orders each attribute a weight <= 1 for the value functions to assign a value to each alternative or in the case of productConfig, to each round.}
+
+\item{alpha}{numeric between [0, 1]. Determines the concativity of the value function as given by Reference [1].}
+
+\item{beta}{numeric between [0, 1]. Determines the convexity of the value function as given by Reference [1].}
+
+\item{lambda}{lambda > 1. Parameter of loss aversion for the value function as given by Reference [1].}
+
+\item{gainm}{loading...}
+
+\item{result_type}{allows to change the result type. Default returns a list with two elements. Other possibilites are "cbind" and "rbind" as character input which
+do exactly what their name suggests; return a column- or row- binded matrix. Only for \code{gain_loss_matrices} function.}
+
+\item{data}{data.frame with the user generated data from a product configurator. See Details
+ for the specifications of the data.frame.}
 }
 \value{
-(NOT CHANGED)A decision matrix with j amount of columns and i amount of rows. Colnames = attrIDs and rownames = chosen rounds.\code{user_id}.
+The same value that returns the function you entered in \code{FUN} for the users you entered in the \code{userid} parameter.
 }
 \description{
-Creates the Gains matrix parting from a decision matrix and a vector containing the reference points (aspiration-levels).
+Provides a way to run a function \code{FUN} for more users at once.Almost all other functions in this package are built so that you get the data you need for
+one specific user only at a time. The powerful_functionallows you to run almost all other functions in this package with the same parameters you are used to
+use, but for more users at once. The difference being that for \code{userid} you can now enter just one ID or a vector of IDs contained in your data.
 }
 \details{
-(NOT CHANGED)Creates a decision matrix, which is necessary to create the 'Gains' and 'Losses' matrices after. If no attribute vector is given,
-(NOT CHANGED)containing the attributes IDs and if no alternatives are passed on as rounds, to be considered in the decision matrix, the function
-(NOT CHANGED)will go with the defaults and extract them from the dataset. Will be used only for one user (one userid).
+Important is that you understand, the parameters of the function are passed on to other functions of the package, so the following description of
+parameters applies to the functions you are going to input in the \code{FUN} parameter, rather than to the powerful_function itself. You can imagine
+this function as being a loop-function that takes any other function and runs it for more \code{userid}s than just one.
+
+\code{data} We assume the input data.frame has following columns usid = User IDs, round = integers indicating which round the user is in
+(0-index works best for 'round'), atid = integer column for referring the attribute ID (1 indexed), selected = numeric value of the attribute for a specific, given round,
+selectable = amount of options the user can chose at a given round, with the current configuration. This is a necessary parameter.
+
+\code{userid}
+
+\code{FUN} Default value is "decision_matrix".
+
+\code{rounds} Default calculates first round(initia product config) and last round of the session.
+Default calculates with first and last attributes (initial and final product configuration). To choose all give "all" as argument
+for rounds, see example. "first" and "last" are also possible argument values. You can give a vector of arbitrarily chosen rounds as well.
+
+\code{weight} dfedf
+
+\code{alpha} Default value as given by Reference [1] is 0.88
+
+\code{beta} Default value as given by Reference [1] is 0.88
+
+\code{lambda} Default value as given by Reference [1] is 2.25
 }
 \examples{
-decision_matrix(camera2_config_data, 11)
-decision_matrix(my_data, userid = 11, attr = c(1,3,5))
-decision_matrix(another_data, userid = 80, rounds = c(1,2,3,7,8,9))
-decision_matrix(data2, 2, rounds = "all")
+powerful_function(data_camera, 2)
 }
 

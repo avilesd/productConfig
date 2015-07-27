@@ -6,6 +6,9 @@
 #'
 #'  (After Seminar) get_attr_ -> improve, do not assume that all users have the same amount of attributes, consequences?
 #'
+#'
+#' (pending, IMPORTANT) Consider removing gainm parameter in powerful_funciton, see what diegopv function does.
+#'
 #' (pending, IMPORTANT) Test cost_ids and if refps should also be given with -. Test with paper matrices current2.
 #'
 #' (pending, IMPORTANT) FIXED WEIGHTS AND WEIGHTS FUNCTION

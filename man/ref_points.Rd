@@ -11,7 +11,7 @@ ref_points(dataset, userid, refps = NULL, attr = NULL, cost_ids = NULL,
 \item{dataset}{cdata.frame with the user generated data from a product configurator. Please see \code{decision_matrix}
  for specifications of the data.frame.}
 
-\item{userid}{an integer that gives the information of which user the matrix should be calculated.}
+\item{userid}{an integer that gives the information of which user the reference points should be determined.}
 
 \item{refps}{numeric vector. Reference Points: each point corresponds to one attribute, i.e. each attribute has only one
 aspiration level. Default setting assumes the aspiration levels as the default values of the initial product configuration

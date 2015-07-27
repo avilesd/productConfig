@@ -10,7 +10,7 @@ decision_matrix(data, userid = NULL, attr = NULL, rounds = NULL,
 \arguments{
 \item{data}{data.frame with the user generated data from a product configurator. Please see Details for specifications of the data.frame.}
 
-\item{userid}{an integer that gives the information of which user the matrix should be calculated.}
+\item{userid}{User ID: an integer that gives the information of which user the matrix should be calculated}
 
 \item{attr}{attribute IDs, vector of integer numbers corresponding to the attributes you desire to use.}
 

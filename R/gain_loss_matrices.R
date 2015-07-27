@@ -36,7 +36,7 @@
 #' Default calculates with first and last attributes (initial and final product configuration). To choose all give "all" as argument
 #' for rounds, see example. "first" and "last" are also possible argument values. You can give a vector of arbitrarily chosen rounds as well.
 #'
-#' \code{refps} The most important parameter for this function. If you only want to see the results for one attribute you may enter only a couple of reference points
+#' \code{refps} If you only want to see the results for one attribute you may enter only a couple of reference points
 #' but you have to tell the function which attributes you want to use those referene points for. So the amount of attr and of refps should be the same.
 #' Moreover the functions always orders de attr, so be sure to input the reference point also in an ascending order corresponding to their attributes. (refps
 #' will not be ordered)
@@ -117,7 +117,7 @@ gain_matrix <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps =
 #' Default calculates with first and last attributes (initial and final product configuration). To choose all give "all" as argument
 #' for rounds, see example. "first" and "last" are also possible argument values. You can give a vector of arbitrarily chosen rounds as well.
 #'
-#' \code{refps} The most important parameter for this function. If you only want to see the results for one attribute you may enter only a couple of reference points
+#' \code{refps} If you only want to see the results for one attribute you may enter only a couple of reference points
 #' but you have to tell the function which attributes you want to use those referene points for. So the amount of attr and of refps should be the same.
 #' Moreover the functions always orders de attr, so be sure to input the reference point also in an ascending order corresponding to their attributes. (refps
 #' will not be ordered)
@@ -198,7 +198,7 @@ loss_matrix <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps =
 #' Default calculates with first and last attributes (initial and final product configuration). To choose all give "all" as argument
 #' for rounds, see example. "first" and "last" are also possible argument values. You can give a vector of arbitrarily chosen rounds as well.
 #'
-#' \code{refps} The most important parameter for this function. If you only want to see the results for one attribute you may enter only a couple of reference points
+#' \code{refps} If you only want to see the results for one attribute you may enter only a couple of reference points
 #' but you have to tell the function which attributes you want to use those referene points for. So the amount of attr and of refps should be the same.
 #' Moreover the functions always orders de attr, so be sure to input the reference point also in an ascending order corresponding to their attributes. (refps
 #' will not be ordered)
@@ -240,7 +240,47 @@ gain_loss_matrices <- function(data, userid = NULL, attr = NULL, rounds = NULL, 
 
 }
 
-## Normalized matrices
+#' Normalizes gain and loss matrices
+#'
+#' Returns a list with two elements one is the normalized $ngain matrix and the second one is a normalized $nloss matrix. There is an internal discussion about
+#' whether a matrix with one row or round should be normalized, which is not in the paper we based our calculations from. Up until this version, the function
+#' normalizes every gain and loss matrices that it gets. For what this means please see details.
+#'
+#' @param data data.frame with the user generated data from a product configurator. Please see \code{decision_matrix}
+#'  for specifications of the data.frame.
+#'
+#' @param userid an integer that gives the information of which user the matrices should be calculated.
+#'
+#' @param attr attributes IDs, vector of integer numbers corresponding to the attributes you desire to use; attr are assumed to be 1-indexed.
+#'
+#' @param rounds integer vector. Which steps of the configuration process should be shown? See Details.
+#'
+#' @param refps numeric vector. Reference Points: each point corresponds to one attribute, i.e. each attribute has only one
+#' aspiration level. Default setting assumes the aspiration levels as the default values of the initial product configuration
+#' for each user.
+#'
+#' @param cost_ids argument used to convert selected cost attributes into benefit attributes. Integer vector.
+#'
+#' @details
+#' If you want to know more details about each parameter, look at \code{gain_matrix loss_matrix decision_matrix}.
+#'
+#' The function normalizes both gain and loss matrices independently on the amount of rows, for nrow > 1 this works as expected. The problem
+#' arises when the matrices have only one row, i.e. one round. This results in normalized matrices which can only contain 0 or 1 as a result,
+#' since a positive gain in one specific attribute means a 0 in losses for the same attribute in the loss matrix. Therefore if a gain is bigger
+#' than one, when normalizing it ends up being 1 (gain) or -1 (loss) which loses information about the magnitude of the gain and loss, respectively.
+#' Definitely a point to be discussed and improved. Please refer to ...p2.
+#'
+#' This function is for one user only, for more or all users see \code{\link{powerful_function}}
+#'
+#' @return  normalized gain and loss matrices for a specific user.
+#' @examples
+#' norm_g_l_matrices(pc_config_data, 11)
+#' norm_g_l_matrices(my_data, userid = 11, result_type = "cbind")
+#' norm_g_l_matrices(monitor_data, 50, rounds = "last", refps = c(0.1,0.3,0.4,0.5), cost_ids = 3)
+#' norm_g_l_matrices(data1, 2, attr = 1)
+#'
+#' @export
+
 norm_g_l_matrices <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
   g_l_matrix <- gain_loss_matrices(data, userid, attr, rounds, refps, result_type="rbind", cost_ids)
 
@@ -264,8 +304,28 @@ norm_g_l_matrices <- function(data, userid = NULL, attr = NULL, rounds = NULL, r
   result
 }
 
+#' Calculates the gain for one attribute
+#'
+#' A simple function that given the value of an attribute (s_ij) and the reference point of the same attribute, calculates
+#' the gain and returns it. It is not built as a stand alone function, rather as an object to be used by other major
+#' functions, such as \code{gain_matrix loss_matrix}.
+#'
+#' @param s_ij value of attribute j in round i
+#'
+#' @param e_j reference point off attribute j
+#'
+#' @details
+#' For understanding how this works, see the function itself or refer to the paper.
+#' It handles only discrete numbers, so no interval numbers. Also
+#' a point to improve further on.
+#'
+#' @return  gain, numeric value.
+#' @examples
+#' gain_fun_a(5, 1)  # returns: 4
+#' gain_fun_a(2, 3)  # returns: 0
+#'
+#' @export
 
-## Gain function
 gain_fun_a <- function(s_ij, e_j) {
   if(s_ij >= e_j) {
     gain <- s_ij - e_j
@@ -275,7 +335,28 @@ gain_fun_a <- function(s_ij, e_j) {
   }
   gain
 }
-## Loss function
+
+#' Calculates the loss for one attribute
+#'
+#' A simple function that given the value of an attribute (s_ij) and the reference point of the same attribute, calculates
+#' the loss and returns it. It is not built as a stand alone function, rather as an object to be used by other major
+#' functions, such as \code{gain_matrix loss_matrix}.
+#'
+#' @param s_ij value of attribute j in round i
+#'
+#' @param e_j reference point off attribute j
+#'
+#' @details
+#' For understanding how this works, see the function itself or refer to the paper.
+#' It handles only discrete numbers, so no interval numbers. Also
+#' a point to improve further on.
+#'
+#' @return  loss, numeric value.
+#' @examples
+#' loss_fun_a(5, 1)  # returns: 0
+#' loss_fun_a(2, 3)  # returns: -1
+#'
+#' @export
 loss_fun_a <- function(s_ij, e_j) {
   if(s_ij >= e_j) {
     loss <- 0
