@@ -12,7 +12,7 @@ powerful_function(dataset, userid = NULL, FUN = decision_matrix,
 \arguments{
 \item{userid}{an integer that gives the information of which user you want the data from: User ID.}
 
-\item{FUN}{character. Name of the function within the package you want to use.}
+\item{FUN}{Name of the function within the package you want to use. Input without "".}
 
 \item{attr}{attributes IDs, vector of integer numbers corresponding to the attributes you desire to use; attr are assumed to be 1-indexed.}
 
@@ -49,6 +49,7 @@ one specific user only at a time. The powerful_functionallows you to run almost 
 use, but for more users at once. The difference being that for \code{userid} you can now enter just one ID or a vector of IDs contained in your data.
 }
 \details{
+If you enter more parameters that a given function needs, the function will just take the parameters it needs and ignore the extra ones.
 Important is that you understand, the parameters of the function are passed on to other functions of the package, so the following description of
 parameters applies to the functions you are going to input in the \code{FUN} parameter, rather than to the powerful_function itself. You can imagine
 this function as being a loop-function that takes any other function and runs it for more \code{userid}s than just one.
@@ -57,15 +58,25 @@ this function as being a loop-function that takes any other function and runs it
 (0-index works best for 'round'), atid = integer column for referring the attribute ID (1 indexed), selected = numeric value of the attribute for a specific, given round,
 selectable = amount of options the user can chose at a given round, with the current configuration. This is a necessary parameter.
 
-\code{userid}
+\code{userid} is a necessary parameter, without it you'll get a warning. Default is NULL.
 
-\code{FUN} Default value is "decision_matrix".
+\code{FUN} Default value is "decision_matrix". Some functions you can try \code{overall_pv gain_loss_matrices gain_matrix loss_matrix norm_g_l_matrices
+decision_matrix get_attrs_ID get_table_by_ID get_rounds_by_ID ref_points}
 
 \code{rounds} Default calculates first round(initia product config) and last round of the session.
 Default calculates with first and last attributes (initial and final product configuration). To choose all give "all" as argument
 for rounds, see example. "first" and "last" are also possible argument values. You can give a vector of arbitrarily chosen rounds as well.
 
-\code{weight} dfedf
+\code{refps} If you only want to see the results for one attribute you may enter only a couple of reference points
+but you have to tell the function which attributes you want to use those referene points for. So the amount of attr and of refps should be the same.
+Moreover the functions always orders de attr, so be sure to input the reference point also in an ascending order corresponding to their attributes. (refps
+will not be ordered)
+
+\code{cost_ids} Default assumes all your attributes are of benefit type, that is a higher value in the attribute means the user
+is better of than with a lower value. If one or more of the attributes in your data is of cost type, e.g. price, so that lower is better then you should identify
+this attributes as such, providing their id, they'll be converted to benefit type (higher amount is better).
+
+\code{weight}
 
 \code{alpha} Default value as given by Reference [1] is 0.88
 
@@ -74,6 +85,12 @@ for rounds, see example. "first" and "last" are also possible argument values. Y
 \code{lambda} Default value as given by Reference [1] is 2.25
 }
 \examples{
-powerful_function(data_camera, 2)
+powerful_function(data_camera, 2)  # FUN=decision_matrix
+powerful_function(data_pc, userid = c(1,2,4,8,9,100))
+powerful_function(my_table, get_all_userids(my_table))
+
+powerful_function(data_pc, userid = c(1,2,3), FUN = gain_matrix)
+powerful_function(data_pc, userid = c(1,2,3), FUN = overall_pv, alpha = 0.9, weight=c(0.1,0.2,0.5,0.2))
+powerful_function(datadata, c(6,9), FUN = ref_points) # Returns the default values for both users (user6, user9) assumed as reference points.
 }
 
