@@ -1,3 +1,13 @@
+overall_pv <- function (dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL,  weight = NULL,
+                        alpha = 0.88, beta = 0.88, lambda = 2.25) {
+
+  v_matrix <- pvalue_matrix(dataset, userid, attr, rounds, refps, cost_ids, alpha, beta, lambda)
+
+  overall_pv <- overall_pv_extend(v_matrix, weight, dataset)
+
+  overall_pv
+
+}
 ##ready
 pvalue_matrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL,
                           alpha = 0.88, beta = 0.88, lambda = 2.25) {
@@ -8,9 +18,6 @@ pvalue_matrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, re
   v_matrix
 
 }
-
-
-
 ##TODO y pv_matrix by original data and then usable on powerful_function
 prospect_value_matrix_extend <- function(ngain = NULL, nloss = NULL,alpha = 0.88, beta = 0.88, lambda = 2.25)  {
   if((is.null(ngain) || is.null(nloss)) ) {
@@ -28,9 +35,7 @@ prospect_value_matrix_extend <- function(ngain = NULL, nloss = NULL,alpha = 0.88
     }
   }
   value_matrix
-  }
-
-
+}
 ##explain alpha, beta, lambda and digits = 2
 pvalue_fun <- function(ngain_ij, nloss_ij, alpha = 0.88, beta = 0.88, lambda = 2.25) {
   result <- ((ngain_ij)^alpha) + (-lambda*((-nloss_ij)^beta))
@@ -38,16 +43,6 @@ pvalue_fun <- function(ngain_ij, nloss_ij, alpha = 0.88, beta = 0.88, lambda = 2
 
 }
 
-overall_pv <- function (dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL,  weight = NULL,
-                        alpha = 0.88, beta = 0.88, lambda = 2.25) {
-
-  v_matrix <- pvalue_matrix(dataset, userid, attr, rounds, refps, cost_ids, alpha, beta, lambda)
-
-  overall_pv <- overall_pv_extend(v_matrix, weight, dataset)
-
-  overall_pv
-
-}
 
 
 ##TO THINK  value_matrix and/or dataset? If you want to weight with rel_frequency you need to provide the dataset
@@ -63,3 +58,7 @@ overall_pv_extend <- function(value_matrix, weight = NULL, wfrom_dataset) {
   }
   result
 }
+
+
+
+
