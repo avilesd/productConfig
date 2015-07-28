@@ -22,7 +22,9 @@ weight_overall_freq <- function(dataset, userid = NULL , attr =NULL, rounds = NU
 
 }
 
-## To be use for weights.
+#' To be use for weights.
+#'
+#' Description
 #'
 #' @param rel_frequeny logical. Relative frequency, if \code{rel_frequency = TRUE}, the function ignores the refps argument
 #'        and calculates the aspiration level for each attribute as the relative frequency the user made for that attribute.

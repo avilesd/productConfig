@@ -171,7 +171,7 @@ get_normalized_vec <- function(num_vector) {
   else warning("Entered argument not a numeric vector.")
 }
 
-#' All unique values for provided attribute
+#' All unique values for a given attribute
 #'
 #' Returns all unique values that can be found in the given attribute, i.e. all values that exist for \code{attrid} for all users.
 #'

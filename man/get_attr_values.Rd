@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_functions.R
 \name{get_attr_values}
 \alias{get_attr_values}
-\title{All unique values for provided attribute}
+\title{All unique values for a given attribute}
 \usage{
 get_attr_values(dataset, attrid = NULL)
 }

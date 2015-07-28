@@ -2,7 +2,7 @@
 % Please edit documentation in R/weight_functions.R
 \name{get_attr_weight}
 \alias{get_attr_weight}
-\title{}
+\title{To be use for weights.}
 \usage{
 get_attr_weight(dataset)
 }
@@ -14,6 +14,6 @@ get_attr_weight(dataset)
 if no other weights are given. ##no userid because weights independent from user}
 }
 \description{
-
+Description
 }
 
