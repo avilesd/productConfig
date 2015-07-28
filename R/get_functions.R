@@ -207,6 +207,9 @@ get_attr_values <-function(dataset, attrid = NULL) {
   if(is.null(attrid)) {
     stop("You need to specify one attrid")
   }
+  if(is.null(dataset)) {
+    stop("You need to provide the dataset")
+  }
   ## Check if given userid is in the data
   if(!attrid %in% get_attrs_ID(dataset)) {
     print(attrid)
