@@ -1,5 +1,6 @@
 ## See if it does something useful or delete
-
+## Add weight thing or in other function?!?!A priori thinking here..-
+##Frequency based on the value level, the higher the historical value, the more important the attribute.
 weight_overall_freq <- function(dataset, userid = NULL , attr =NULL, rounds = NULL, refps =NULL, cost_ids =NULL) {
   all_dec_matrices <- powerful_function(dataset, userid, FUN=decision_matrix, attr, rounds, refps, cost_ids)
 
