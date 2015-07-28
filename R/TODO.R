@@ -5,7 +5,7 @@
 #'  an if at the end, if TRUE then another result.
 #'
 #'  (After Seminar) get_attr_ -> improve, do not assume that all users have the same amount of attributes, consequences?
-#'
+#'  (pending, after Seminar) prove if alpha and beta are in [0,1] intervall with <=,>=.
 #'
 #' (pending, IMPORTANT) Consider removing gainm parameter in powerful_funciton, see what diegopv function does.
 #'

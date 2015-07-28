@@ -10,6 +10,9 @@ powerful_function(dataset, userid = NULL, FUN = decision_matrix,
   gainm = TRUE, result_type = NULL)
 }
 \arguments{
+\item{dataset}{data.frame with the user generated data from a product configurator. See Details
+ for the specifications of the data.frame.}
+
 \item{userid}{an integer that gives the information of which user you want the data from: User ID.}
 
 \item{FUN}{Name of the function within the package you want to use. Input without "".}
@@ -36,9 +39,6 @@ for each user.}
 
 \item{result_type}{allows to change the result type. Default returns a list with two elements. Other possibilites are "cbind" and "rbind" as character input which
 do exactly what their name suggests; return a column- or row- binded matrix. Only for \code{gain_loss_matrices} function.}
-
-\item{data}{data.frame with the user generated data from a product configurator. See Details
- for the specifications of the data.frame.}
 }
 \value{
 The same value that returns the function you entered in \code{FUN} for the users you entered in the \code{userid} parameter.
@@ -54,7 +54,7 @@ Important is that you understand, the parameters of the function are passed on t
 parameters applies to the functions you are going to input in the \code{FUN} parameter, rather than to the powerful_function itself. You can imagine
 this function as being a loop-function that takes any other function and runs it for more \code{userid}s than just one.
 
-\code{data} We assume the input data.frame has following columns usid = User IDs, round = integers indicating which round the user is in
+\code{dataset} We assume the input data.frame has following columns usid = User IDs, round = integers indicating which round the user is in
 (0-index works best for 'round'), atid = integer column for referring the attribute ID (1 indexed), selected = numeric value of the attribute for a specific, given round,
 selectable = amount of options the user can chose at a given round, with the current configuration. This is a necessary parameter.
 

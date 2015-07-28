@@ -23,4 +23,12 @@ get_all_userids(data) #Example return: [1] 6 9 10 8 6 2 4  # returns IDs just as
 \references{
 ProductConfig Github page: https://github.com/avilesd/productConfig
 }
+\seealso{
+Other get functions: \code{\link{get_all_default_rps}};
+  \code{\link{get_attr_values}};
+  \code{\link{get_attrs_ID}};
+  \code{\link{get_normalized_vec}};
+  \code{\link{get_rounds_by_ID}};
+  \code{\link{get_table_by_ID}}
+}
 

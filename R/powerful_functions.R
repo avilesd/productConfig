@@ -9,7 +9,7 @@
 #' parameters applies to the functions you are going to input in the \code{FUN} parameter, rather than to the powerful_function itself. You can imagine
 #' this function as being a loop-function that takes any other function and runs it for more \code{userid}s than just one.
 #'
-#' @param data data.frame with the user generated data from a product configurator. See Details
+#' @param dataset data.frame with the user generated data from a product configurator. See Details
 #'  for the specifications of the data.frame.
 #'
 #' @param userid an integer that gives the information of which user you want the data from: User ID.
@@ -40,7 +40,7 @@
 #' do exactly what their name suggests; return a column- or row- binded matrix. Only for \code{gain_loss_matrices} function.
 #'
 #' @details
-#' \code{data} We assume the input data.frame has following columns usid = User IDs, round = integers indicating which round the user is in
+#' \code{dataset} We assume the input data.frame has following columns usid = User IDs, round = integers indicating which round the user is in
 #' (0-index works best for 'round'), atid = integer column for referring the attribute ID (1 indexed), selected = numeric value of the attribute for a specific, given round,
 #' selectable = amount of options the user can chose at a given round, with the current configuration. This is a necessary parameter.
 #'

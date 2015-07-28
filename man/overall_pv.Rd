@@ -2,13 +2,16 @@
 % Please edit documentation in R/prospect_value_functions.R
 \name{overall_pv}
 \alias{overall_pv}
-\title{Takes}
+\title{Calcultes the overall prospect values}
 \usage{
 overall_pv(dataset, userid = NULL, attr = NULL, rounds = NULL,
   refps = NULL, cost_ids = NULL, weight = NULL, alpha = 0.88,
   beta = 0.88, lambda = 2.25)
 }
 \arguments{
+\item{dataset}{data.frame with the user generated data from a product configurator. See Details
+ for the specifications of the data.frame.}
+
 \item{userid}{an integer that gives the information of which user you want the data from: User ID.}
 
 \item{attr}{attributes IDs, vector of integer numbers corresponding to the attributes you desire to use;1-indexed.}
@@ -20,33 +23,42 @@ aspiration level.}
 
 \item{cost_ids}{argument used to convert selected cost attributes into benefit attributes. Integer vector.}
 
-\item{weight}{orders each attribute a weight <= 1 for the value functions to assign a value to each alternative or in the case of productConfig, to each round.}
+\item{weight}{numeric, represents the importance or relative relevance of each attribute.}
 
 \item{alpha}{numeric between [0, 1]. Determines the concativity of the value function as given by Reference[1].}
 
 \item{beta}{numeric between [0, 1]. Determines the convexity of the value function as given by Reference[1].}
 
 \item{lambda}{lambda > 1. Parameter of loss aversion for the value function as given by Reference[1].}
-
-\item{data}{data.frame with the user generated data from a product configurator. See Details
- for the specifications of the data.frame.}
 }
 \value{
-The same value that returns the function you entered in \code{FUN} for the users you entered in the \code{userid} parameter.
+overall prospect values for each attribute
 }
 \description{
-Pro
+For the given number of attributes \code{attr} (number of columns) and the given number of \code{rounds} (number of rows).The process works
+in 3 main steps. (1) It calculates the normalized gain and loss matrices (2) with both matrices, the value matrix is the calculated and finally
+(3) the prospect value for each alternative/round/row.
 }
 \details{
-If you need more detailed information about the parameters please see \code{\link{pvalue_matrix}}
+This function is for one user or one userid for \strong{more users} and for more detailed \strong{parameter information} please
+see \code{\link{powerful_function}}
 
-\code{data} We assume the input data.frame has following columns usid = User IDs, round = integers indicating which round the user is in
+The 3 step calculation of the prospect values comes from one specific paper \italics{Reference[1]}. (1) For the noramlized gain and loss matrices
+we use the function \code{\link{norm_g_l_matrices}} from this package. (2) The value matrix is calculated with a series of auxiliary
+functions. (3) The prospect value works with a simple additive weighting method from \code{overall_pv_extend}.
+
+If you only have the normalized gain and loss matrices you can use first \code{\link{prospect_value_matrix_extend}} with parameters (norm_gain, norm_loss)
+and that function returns a value matrix which you then can give to \code\link{overall_pv_extend} together with your desired weights to
+get the prospect values for each alternative.
+
+\code{dataset} We assume the input data.frame has following columns usid = User IDs, round = integers indicating which round the user is in
 (0-index works best for 'round'), atid = integer column for referring the attribute ID (1 indexed), selected = numeric value of the attribute for a specific, given round,
 selectable = amount of options the user can chose at a given round, with the current configuration. This is a necessary parameter.
 
-\code{userid} is a necessary parameter, without it you'll get a warning. Default is NULL.
+\code{userid} is a necessary parameter.
 
-\code{weight}
+\code{weight} default orders each attribute a weight <= 1 according to the relative frequency with which the user interacted with that specific attribute. Ideally
+the sum of all weights equals 1. ##Ignore-Bug: What happens if you give three attributes but enter 4 or more weights or vice versa?
 
 \code{alpha} Default value as given by Reference [1] is 0.88
 
@@ -55,15 +67,15 @@ selectable = amount of options the user can chose at a given round, with the cur
 \code{lambda} Default value as given by Reference [1] is 2.25
 }
 \examples{
-powerful_function(data_camera, 2)  # FUN=decision_matrix
-powerful_function(data_pc, userid = c(1,2,4,8,9,100))
-powerful_function(my_table, get_all_userids(my_table))
-
-powerful_function(data_pc, userid = c(1,2,3), FUN = gain_matrix)
-powerful_function(data_pc, userid = c(1,2,3), FUN = overall_pv, alpha = 0.9, weight=c(0.1,0.2,0.5,0.2))
-powerful_function(datadata, c(6,9), FUN = ref_points) # Returns the default values for both users (user6, user9) assumed as reference points.
+overall_pv(data_camera, 2)
+overall_pv(data_pc, userid = 1, weight=c(0.1,0.4,0.3,0.2))
+overall_pv(full_data, 6 ,attr = c(1,2,3), rounds="all", alpha = 0.95, beta = 0.78)
 }
 \seealso{
 \code{\link{powerful_function}}
+
+Other prospect value functions: \code{\link{overall_pv_extend}};
+  \code{\link{prospect_value_matrix_extend}};
+  \code{\link{pvalue_matrix}}
 }
 

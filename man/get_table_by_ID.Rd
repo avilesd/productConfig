@@ -25,5 +25,12 @@ get_table_by_ID(as.data.frame(matrix_full), 12)
 }
 \seealso{
 \code{\link{powerful_function}} allows you to run this and any other function in this package for more than one user.
+
+Other get functions: \code{\link{get_all_default_rps}};
+  \code{\link{get_all_userids}};
+  \code{\link{get_attr_values}};
+  \code{\link{get_attrs_ID}};
+  \code{\link{get_normalized_vec}};
+  \code{\link{get_rounds_by_ID}}
 }
 

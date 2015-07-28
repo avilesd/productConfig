@@ -21,4 +21,12 @@ Returns all unique values that can be found in the given attribute, i.e. all val
 get_attr_values(example_data, attrid=1) # Example return: [1] 0 3 2 1 meaning that category only has 4 possible values in the product configutrator, or at least those were the ones the users clicked on
 get_attr_values(other_data, 100) #Possible catched error: The attrID you specified is not contain in your data.
 }
+\seealso{
+Other get functions: \code{\link{get_all_default_rps}};
+  \code{\link{get_all_userids}};
+  \code{\link{get_attrs_ID}};
+  \code{\link{get_normalized_vec}};
+  \code{\link{get_rounds_by_ID}};
+  \code{\link{get_table_by_ID}}
+}
 

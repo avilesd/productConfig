@@ -1,0 +1,512 @@
+devtools::load_all(".")
+powerful_function(play_data, get_all_userids(play_data), FUN=diego_pv, cost_ids=4, weight= wei)
+powerful_function(play_data, 62:63, FUN=decision_matrix, cost_ids=4, weight= wei)
+powerful_function(play_data, 9:10, FUN=decision_matrix, cost_ids=4, weight= wei)
+powerful_function(play_data, 62:63, FUN=decision_matrix, cost_ids=4, weight= wei, refps=c(0,0,0,0.01944444))
+powerful_function(play_data, 62:63, FUN=diego_pv, cost_ids=4, weight= wei, refps=c(0,0,0,0.01944444))
+xxx <- powerful_function(play_data, get_all_userids(play_data), FUN=diego_pv, cost_ids=4, weight= wei, refps=c(0,0,0,0.01944444), rounds="last")
+yy
+yyy <- xxx
+x_diego
+plot(x_diego, yyy)
+View(play_data)
+View(get_table_by_ID(play_data, 9))
+powerful_function(play_data, 6, FUN=decision_matrix, cost_ids=4)
+heat1 <- powerful_function(play_data, 6, FUN=decision_matrix, cost_ids=4, rounds="all")
+heatmap(heat1)
+heat1
+as.matrix(heat1)
+as.data.frame(heat1)
+heatmap(as.data.frame(heat1))
+heatmap.2(as.data.frame(heat1))
+library("gplots")
+heatmap.2(as.data.frame(heat1))
+heat1 <- powerful_function(play_data, 6, FUN=gain_matrix, cost_ids=4, rounds="all")
+heatmap.2(heat1)
+heat1
+class(heat1)
+as.numeric(heat1)
+heatmap.2(heat1[1])
+heat[1]
+heat1[1]
+heat1 <- gain_matrix(play_data, 6, cost_ids=4, rounds="all")
+heatmap.2(heat1)
+heat1 <- decision_matrix(play_data, 6, cost_ids=4, rounds="all")
+heatmap.2(heat1)
+heatmap.2(heat1, dendrogram="none")
+heatmap.2(heat1, dendrogram="none", Rowv=F, Colv=F)
+breaks = c(seq(-1,1,length=3),seq(1,2,length=1),seq(2,3,length=1))
+my_palette <- colorRampPalette(c("yellow", "orange", "red"))(n = 4)
+heatmap.2(heat1, dendrogram="none", Rowv=F, Colv=F, col=my_palette, breaks=breaks)
+heatmap.2(heat1, dendrogram="none", Rowv=F, Colv=F, col=my_palette, breaks=breaks, symm=F,symkey=F,symbreaks=T, scale="none")
+breaks = c(seq(-1,1,length=4),seq(1,2,length=3),seq(2,3,length=3))
+my_palette <- colorRampPalette(c("yellow", "orange", "red"))(n = 9)
+heatmap.2(heat1, dendrogram="none", Rowv=F, Colv=F, col=my_palette, breaks=breaks, symm=F,symkey=F,symbreaks=T, scale="none")
+heatmap.2(as.matrix(heat1), col=my_palette,
+breaks=colors, density.info="none", trace="none",
+dendrogram=c("row"), symm=F,symkey=F,symbreaks=T, scale="none")
+heatmap.2(heat1, col=my_palette,
+breaks=colors, density.info="none", trace="none",
+dendrogram="none", symm=F,symkey=F,symbreaks=T, scale="none")
+heatmap.2(heat1, col=my_palette,
+breaks=colors, density.info="none", trace="none",
+dendrogram="none", symm=F,symkey=F,symbreaks=T, scale="none")
+heatmap.2(heat1, dendrogram="none", Rowv=F, Colv=F, col=my_palette, breaks=breaks, symm=F,symkey=F,symbreaks=T, scale="none")
+heatmap.2(heat1, dendrogram="none", Rowv=F, Colv=F, breaks=breaks, symm=F,symkey=F,symbreaks=T, scale="none")
+heatmap.2(heat1, dendrogram="none", Rowv=F, Colv=F, col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none")
+heatmap.2(heat1, dendrogram="none", breaks=breaks, symm=F,symkey=F,symbreaks=T, scale="none")
+decision_matrix(play_data,6)
+decision_matrix(play_data,6, rounds="all")
+heatmap.2(heat1,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none")
+heatmap.2(heat1, symm=F,symkey=F,symbreaks=T, scale="none")
+my_palette <- colorRampPalette(c("white", "yellow", "orange", "red"))(n = 9)
+heatmap.2(heat1,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none")
+heatmap.2(heat1,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none")
+heatmap.2(heat1,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F)
+heatmap.2(heat1,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F, trace="none")
+xx_diego
+x_diego
+heat15_dec <- decision_matrix(play_data, 15, rounds="all")
+heat15_dec_norm <- decision_matrix(play_data, 15, rounds="all")
+heat15_dec_cost4 <- decision_matrix(play_data, 15, rounds="all", cost_ids=4)
+heat15_gain <- gain_matrix(play_data, 15, rounds="all")
+heatmap.2(heat15_dec,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F, trace="none")
+heat15_dec
+heat15_dec2 * c(1,1,1, 6.515)
+heat15_dec * c(1,1,1, 6.515)
+apply(heat15_dec, 1, function(x) { x*c(1,1,1,6.516)})
+?apply
+as.matrix(apply(heat15_dec, 1, function(x) { x*c(1,1,1,6.516)}))
+prueba <- as.matrix(apply(heat15_dec, 1, function(x) { x*c(1,1,1,6.516)}))
+heatmap.2(prueba,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F, trace="none")
+class(prueba)
+t(prueba)
+tprueba <- t(prueba)
+heatmap.2(tprueba,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F, trace="none")
+save.image("C:/Users/Diego/Google Drive/Seminar_eC_HCI/R/productConfig/current_ultra_clean.RData")
+colbr <- c(seq(-2, 4, len=length(my_palette)+1))
+heatmap.2(tprueba,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F, trace="none", breaks =colbr)
+t2prueba <- apply(tprueba, 1, function(x) { x[4]<- 4-x[4]})
+t2prueba
+tprueba$attr4 <- t2prueba
+rbind(tprubea, t2prueba)
+rbind(tprueba, t2prueba)
+cbind(tprueba, t2prueba)
+class(trprueba)
+class(tprueba)
+class(as.matrix(tprueba))
+tmatrix <- as.matrix(tprueba))
+tmatrix <- as.matrix(tprueba)
+tmatrix
+tprueba
+prueba <- as.matrix(apply(heat15_dec, 1, function(x) { x*c(1,1,1,6.516)}))
+tprueba <- t(prueba)
+tprueba
+tmatrix <- as.matrix(tprueba)
+tmatrix
+test <- tmatrix
+t2prueba
+class(t2prueba)
+cbind(test, t2prueba)
+test
+resultado <- cbind(test, t2prueba)
+resultado
+res <- resultado
+res <- res[res$attrr1 & res$attr2 & res$attr3 & res$t2prueba, ]
+res[-4]
+res[,-4]
+heat_full <- res[,-4]
+heatmap.2(heat_full,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F, trace="none", breaks =colbr)
+decision_matrix(play_data, 15)
+decision_matrix(play_data, 15, rounds="all")
+heatmap.2(heat_full,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F, trace="none", breaks =colbr, margin = 50)
+heatmap.2(heat_full,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F, trace="none", breaks =colbr, margins = (0.7,0.8))
+heatmap.2(heat_full,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F, trace="none", breaks =colbr, margins = c(0.7,0.8))
+heatmap.2(heat_full,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F, trace="none", breaks =colbr)
+heatmap.2(heat_full,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F, trace="none", breaks =colbr, margins = c(1,8))
+heatmap.2(heat_full,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F, trace="none", breaks =colbr, margins = c(1,8))
+heatmap.2(heat_full,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F, trace="none", breaks =colbr, margins = c(10,8))
+coll <- c("resol", "zoom", "weight", "price")
+colnames(heat_full) <- coll
+colnames(heat_full)
+heatmap.2(heat_full,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F, trace="none", breaks =colbr, margins = c(10,8))
+heatmap.2(heat_full,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F, trace="none", breaks =colbr, margins = c(5,5))
+heatmap.2(heat_full,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F, trace="none", breaks =colbr, margins = c(6,5))
+heatmap.2(heat_full,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F, trace="none", breaks =colbr, margins = c(6,5), density.info="none")
+heatmap.2(heat_full,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F, trace="none", breaks =colbr, margins = c(6,5))
+heatmap.2(heat_full,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F, trace="none", breaks =colbr, margins = c(6,5), key=FALSE)
+heatmap.2(heat_full,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F, trace="none", breaks =colbr, margins = c(6,5))
+x6 <- 1:100
+weight_overall_freq(play_data)
+weight_overall_freq(play_data, 6)
+weight_overall_freq(play_data, 9)
+weight_overall_freq(play_data, 6)
+decision_matrix(play_data, 6)
+decision_matrix(play_data, 6, rounds="all")
+weight_overall_freq(play_data, 6, rounds="all")
+w6 <- weight_overall_freq(play_data, 6, rounds="all")
+y6 <- powerful_function(play_data, 6, diego_pv, rounds="all", weight = w6, cost_ids=4, refps=(0,0,0,0.01944444))
+y6 <- powerful_function(play_data, 6, diego_pv, rounds="all", weight = w6, cost_ids=4, refps=c(0,0,0,0.01944444))
+y6
+round(y6, digits=5)
+round(y6$usid6, digits=5)
+unique(round(y6$usid6, digits=5))
+y6
+plot(x6, y6$usid6)
+xall <- powerful_function(play_data, get_all_userids(play_data), FUN=diego_pv, cost_ids=4, refps=c(0,0,0,0.01944444), rounds="last", weight=weight_overall_freq(play_data, get_all_userids(play_data), rounds="all"))
+xall
+y_diego
+x_diego
+plot(x_diego, yall)
+yall <- powerful_function(play_data, get_all_userids(play_data), FUN=diego_pv, cost_ids=4, refps=c(0,0,0,0.01944444), rounds="last", weight=weight_overall_freq(play_data, get_all_userids(play_data), rounds="all"))
+plot(x_diego, yall)
+allusers <- x_diego[-xdiego$usid6]
+allusers <- x_diego[-xd_iego$usid6]
+allusers <- x_diego[-x_diego$usid6]
+allusers <- x_diego[x_diego < 100]
+allusers
+yall
+yall2 <- yall[yall > 0]
+length(yall2)
+length(all_users)
+length(allusers)
+plot(allusers, yall2)
+yall2
+yall
+x_diego
+plot(x_diego,yall)
+library("ggplot")
+install.packages("ggplot")
+library("ggplot")
+library("ggplot2")
+install.packages("ggplot2")
+ggplot(nmmaps, aes(x_diego, yall))+geom_point(color="firebrick")+
+stat_smooth()
+ggplot2(nmmaps, aes(x_diego, yall))+geom_point(color="firebrick")+
+stat_smooth()
+library("ggplot2")
+ggplot(nmmaps, aes(x_diego, yall))+geom_point(color="firebrick")+
+stat_smooth()
+cbind(x_diego, yall)
+tables <- cbind(x_diego, yall)
+ggplot(tables, aes(x_diego, yall))+geom_point(color="firebrick")+
+stat_smooth()
+?as.csv
+?as.data.frame
+ggplot(as.data.frame(tables), aes(x_diego, yall))+geom_point(color="firebrick")+
+stat_smooth()
+ggplot(as.data.frame(tables), aes(as.vector(x_diego), as.vector(yall)))+geom_point(color="firebrick")+
+stat_smooth()
+ggplot(as.data.frame(tables), aes(as.vector(x_diego), as.vector(yall)))
+ggplot(as.data.frame(tables))
+ggplot(play_data, usid, attr)
+View(play_data)
+qplot(x_diego, yall)
+qplot(tables)
+qplot(as.data.frame(tables))
+qplot(as.data.frame(tables), x_diego, yall)
+x_diego
+class(as.vector(x_diego))
+x <- as.vector(x_diego))
+x <- as.vector(x_diego)
+y <- as.vector(yall)
+qplot(as.data.frame(tables), x_dieg, yall)
+qplot(as.data.frame(tables), x, y)
+?plot
+plot(x,y, type=points)
+plot(x,y, type=point)
+?plot
+plot(x,y, type="l")
+plot(allusers,yall2, type="l")
+order(allusers)
+tables
+new <- tables[order(x_diego),]
+new
+plot(new)
+plot(new, type="l")
+names(tables)
+colnames(tables)
+save.image("C:/Users/Diego/Google Drive/Seminar_eC_HCI/R/productConfig/current_ultra_clean.RData")
+devtools::load_all(".")
+devtools::load_all(".")
+load("C:/Users/Diego/Google Drive/Seminar_eC_HCI/R/productConfig/current_ultra_clean.RData")
+plot(x,y, type="l")
+plot(new, type="l")
+new
+libraray("plyr")
+library("plyr")
+library("reshape2")
+ggplot(new)
+library("ggplot2")
+ggplot(new)
+head(iris)
+class(iris)
+new <- as.data.frame(new)
+new
+class)new
+clasS(new)
+class(nw)
+class(new)
+ggplot(data = new)
+ggplot(data = new) + geom_point()
+ggplot(data = new, aes(x = x_diego, y = yall)) + geom_point()
+xt <- as.vector(x_diego)
+identical(xt, x_diego)
+yt <- as.vector(yall)
+ggplot(data = new, aes(x = xt, y = yt)) + geom_point()
+identical(yt, yall)
+class(yt)
+class(as.vector(yt))
+yt
+sapply(yt, function(x) { x*1})
+yt <- sapply(yt, function(x) { x*1})
+class(yt)
+identical(yt, yall)
+ggplot(data = new, aes(x = xt, y = yt)) + geom_point()
+ggplot(data = new, aes(x = xt, y = yt)) + geom_line()
+ggplot(data = new, aes(x = xt, y = yt)) + geom_line() + geom_point(size = 1)
+ggplot(data = new, aes(x = xt, y = yt)) + geom_line() + geom_point(size = 2)
+powerful_function(play_data, get_all_userids(play_data), FUN=decision_matrix, attr=4, rounds="last")
+price <- powerful_function(play_data, get_all_userids(play_data), FUN=decision_matrix, attr=4, rounds="last")
+clasS(price)
+class(price)
+price <- as.vector(price)
+class(price)
+price <- sapply(price, function(x) { x*1})
+class(price)
+new
+pt <- price
+cbind(new,pt)
+new
+newt <- cbind(new, pt)
+ggplot(data = new, aes(x = xt, y = yt, color = pt)) + geom_line() + geom_point(size = 2)
+ggplot(data = new, aes(x = xt, y = yt, color = pt)) + geom_line(size=2) + geom_point(size = 2)
+ggplot(data = new, aes(x = xt, y = yt, color = pt)) + geom_line(size=1) + geom_point(size = 2)
+ggplot(data = new, aes(x = xt, y = yt, color = pt)) + geom_line(size=1.1, colour="orange") + geom_point(size = 2)
+ggplot(data = new, aes(x = xt, y = yt, color = (pt*2)) + geom_line(size=1.1) + geom_point(size = 2)
+)
+ggplot(data = new, aes(x = xt, y = yt, color = (pt*2))) + geom_line(size=1.1) + geom_point(size = 2)
+ggplot(data = new, aes(x = xt, y = yt, color = (pt*10))) + geom_line(size=1.1) + geom_point(size = 2)
+tprueba
+tprueba$attr4
+tprueba,4
+tprueba[,4]
+new
+tnew <- cbind(new, tprueba[,4])
+newt
+apply(newt, 2,  function(x) { x*c(1,1,6.51)})
+newt[,3]*6.51
+help <- newt[,3]*6.51
+help <- 4- help
+help
+newt2 <- cbind(new, help = "pt")
+newt2
+newt2 <- cbind(new, help)
+newt2
+ggplot(data = new, aes(x = xt, y = yt, color = pt)) + geom_line(size=1.1) + geom_point(size = 2)
+ggplot(data = newt2, aes(x = xt, y = yt, color = help)) + geom_line(size=1.1) + geom_point(size = 2)
+x2 <- powerful_function(play_data, get_all_userids(play_data), FUN=get_rounds_by_ID)
+x2
+length(x2)
+sapply(x2, length)
+x2 <- sapply(x2, length)
+class(x2)
+users
+users <- get_all_userids(play_data)
+powerful_function(play_data, users, FUN=diego_pv, weights=wei, cost_ids=4, refps=c(0,0,0,0.01944444) )
+powerful_function(play_data, users, FUN=diego_pv, weight=wei, cost_ids=4, refps=c(0,0,0,0.01944444) )
+powerful_function(play_data, users, FUN=diego_pv, weight=wei, cost_ids=4, refps=c(0,0,0,0.01944444), rounds="last" )
+y2 <- powerful_function(play_data, users, FUN=diego_pv, weight=wei, cost_ids=4, refps=c(0,0,0,0.01944444), rounds="last" )
+y2 <- sapply(y2, function(x) { x*1})
+y2
+t2 <- cbind(x2, y2)
+t2
+devtools::load_all(".")
+decision_matrix(play_data, 9)
+decision_matrix(play_data, 9, rounds="first")
+p2first <- powerful_function(play_data, users, FUN=decision_matrix, rounds="first", attr=4 )
+p2first
+p2last <- powerful_function(play_data, users, FUN=decision_matrix, rounds="last", attr=4 )
+p2last
+p2first <- sapply(p2first, function(x) { x*1})
+p2first
+p2first <- p2first*6.51
+p2first
+p2first <- 4-p2first
+table2
+t2
+t2first <- cbind(t2, x2, y2, p2first)
+t2first <- cbind(t2, x2, y2, p2first)
+t2first
+t2first <- cbind(tw, p2first)
+t2first <- cbind(t2, p2first)
+t2first
+test <- t2first[order(x2),]
+test
+ggplot(data = t2first, aes(x = x2, y = y2, color = p2first)) + geom_line(size=1.1) + geom_point(size = 2)
+t2first <- as.data.frame(t2first)
+class(t2first)
+class(x2)
+class(y2)
+class(p2first)
+ggplot(data = t2first, aes(x = x2, y = y2, color = p2first)) + geom_line(size=1.1) + geom_point(size = 2)
+t2
+p2first
+p2last
+sapply(p2last, function(x) {x*1})
+p2last <-  sapply(p2last, function(x) {x*1})
+t2last
+p2last <- p2last*6.51
+p2last
+p2last <- 4-p2last
+p2last
+t2last <- cbind(t2, p2last)
+t2last
+test <- t2last[order(x2),]
+test
+t2last <- t2last[order(x2),]
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2)
+t2last <- as.data.frame(t2last)
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2)
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + geom_smooth(method="lm")
+?geom_smooth
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + geom_smooth()
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_fill_gradient(low="red", high="green")
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green")
+install.packages("ggthemes")
+library("ggthemes")
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme_wsj()
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme_stata()
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme_solarized()
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme_excel()
+?ggthemes
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme_economist()
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme_fivethirtyeight()
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme_tufte()
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme_fc()
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme_hc()
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme_calc()
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green")
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme(axis.title.y = " This is")
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme(axis.title.y = element_text(angle=0))
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme(axis.title.y = element_text(hallo))
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme(axis.title.y = element_text("hallo"))
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green")
+Chosen_Price <- p2last
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme_calc()
+ggplot(data = t2last, aes(x = x2, y = y2, color = Chosen_Price)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green")
+ggplot(data = t2last, aes(x = x2, y = y2, color = Chosen_Price)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") +theme(legend.position="bottom")
+ggplot(data = t2last, aes(x = x2, y = y2, color = Chosen_Price)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") +theme(legend.position="bottom", strip.background="element_rect(fill="blue"")
+ggplot(data = t2last, aes(x = x2, y = y2, color = Chosen_Price)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme_fivethirtyeight()
+ggplot(data = t2last, aes(x = x2, y = y2, color = Chosen_Price)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme(plot.background = element_rect(fill='blue'))
+ggplot(data = t2last, aes(x = x2, y = y2, color = Chosen_Price)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme_fivethirtyeight()
+ggplot(data = t2last, aes(x = x2, y = y2, color = Chosen_Price)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme(plot.background = element_rect(fill='#e2e3e4'))
+ggplot(data = t2last, aes(x = x2, y = y2, color = Chosen_Price)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme(plot.background = element_rect(fill='#e2e3e4')) + theme_fivethirthyeight()
+ggplot(data = t2last, aes(x = x2, y = y2, color = Chosen_Price)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme(plot.background = element_rect(fill='#e2e3e4')) + theme_fivethirtyeight()
+ggplot(data = t2last, aes(x = x2, y = y2, color = Chosen_Price)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme(plot.background = element_rect(fill='#e2e3e4')) + theme_fivethirtyeight(plot.background= element_rect(fill='#e2e3e4'))
+ggplot(data = t2last, aes(x = x2, y = y2, color = Chosen_Price)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme(plot.background = element_rect(fill='#e2e3e4'))
+ggplot(data = t2last, aes(x = x2, y = y2, color = Chosen_Price)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme(plot.background = element_rect(fill='#e2e3e4'),legend.position="bottom" )
+ggplot(data = t2last, aes(x = x2, y = y2, color = Chosen_Price)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme(plot.background = element_rect(fill='#e2e3e4')) + theme_fivethirtyeight()
+ggplot(data = t2last, aes(x = x2, y = y2, color = Chosen_Price)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme(plot.background = element_rect(fill='#e2e3e4'))
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme(plot.background = element_rect(fill='#e2e3e4'))
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(guide = FALSE) + theme(plot.background = element_rect(fill='#e2e3e4'))
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(guide=FALSE,low="red", high="green") + theme(plot.background = element_rect(fill='#e2e3e4'))
+Total_Amount_of_clicks<- x2
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(guide=FALSE,low="red", high="green") + theme(plot.background = element_rect(fill='#e2e3e4'), axis.title.x=element_blank(),
+axis.title.y=element_blank(),)
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(guide=FALSE,low="red", high="green") + theme(plot.background = element_rect(fill='#e2e3e4'), axis.title.x=element_blank(),
+axis.title.y=element_blank())
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(guide=FALSE,low="red", high="green") + theme(plot.background = element_rect(fill='#e2e3e4'), axis.title.x=element_blank(),
+axis.title.y=element_blank(), text=element_text(size=20))
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(guide=FALSE,low="red", high="green") + theme(plot.background = element_rect(fill='#e2e3e4'), axis.title.x=element_blank(),
+axis.title.y=element_blank(), text=element_text(size=28))
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.5) + geom_point(size = 2) + scale_colour_gradient(guide=FALSE,low="red", high="green") + theme(plot.background = element_rect(fill='#e2e3e4'), axis.title.x=element_blank(),
+axis.title.y=element_blank(), text=element_text(size=30))
+ggplot(data = t2last, aes(x = x2, y = y2, color = Chosen_Price)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green") + theme(plot.background = element_rect(fill='#e2e3e4'))
+save.image("C:/Users/Diego/Google Drive/Seminar_eC_HCI/R/productConfig/current4_not_so_clean.RData")
+devtools::load_all(".")
+load("C:/Users/Diego/Google Drive/Seminar_eC_HCI/R/productConfig/current4_not_so_clean.RData")
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(guide = FALSE) + theme(plot.background = element_rect(fill='#e2e3e4'))
+library("ggplots2")
+library("ggplot2")
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(guide = FALSE) + theme(plot.background = element_rect(fill='#e2e3e4'))
+ggplot(data = t2last, aes(x = x2, y = y2, color = p2last)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green")
+ggplot(data = t2last, aes(x = x2, y = y2, color = Chosen_Price)) + geom_line(size=1.1) + geom_point(size = 2) + scale_colour_gradient(low="red", high="green")
+load("C:/Users/Diego/Google Drive/Seminar_eC_HCI/R/productConfig/current4_not_so_clean.RData")
+decision_matrix(play_data, 50)
+devtools::load_all(".")
+decision_matrix(play_data, 50)
+decision_matrix(play_data, 51)
+decision_matrix(play_data, 52)
+decision_matrix(play_data, 55)
+decision_matrix(play_data, 57)
+decision_matrix(play_data, 6)
+decision_matrix(play_data, 10)
+git init
+install.packages("productConfig")
+decision_matrix(play_data, 6)
+install_github("avilesd/productConfig")
+library("devtools")
+install_github("avilesd/productConfig")
+devtools::load_all(".")
+devtools::load_all(".")
+git
+library("devtools")
+install_github("avilesd/productConfig")
+decision_matrix
+library()
+library("productConfig")
+decision_matrix
+library("productConfig")
+ls()
+load("productConfig")
+library("devtools")
+ls()
+library("ggplot2")
+ls()
+ggplot()
+install_github("kbroman/broman")
+Rpushbullet
+arrowlocator
+library("broman")
+arrowlocator
+library("productConfig")
+powerful_function
+require(productConfig)
+powerful_function
+library(productConfigds)
+library(productConfig)
+.packages()
+packages()
+library("devtools")
+.packages()
+library()
+library("gplots")
+library()
+?search
+search()
+install_url("https://github.com/avilesd/productConfig")
+library("devtools")
+devtools(dev_mode=T)
+dev_mode=T
+install_url("https://github.com/avilesd/productConfig")
+powerful_function
+library("stringi")
+install.packages("stringi")
+libraray("stringi")
+library("stringi")
+install_url("https://github.com/avilesd/productConfig")
+install_github(avilesd/productConfig)
+install_github("avilesd/productConfig")
+library("productConfig")
+get_all_attr
+powerful_function
+packages()
+.packages()
+load("productConfig")
+ls()
+library()
+library(productConfig)
+g
+library("productConfig")
+powerful_function

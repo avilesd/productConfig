@@ -23,4 +23,12 @@ get_normalized_vec(c(1,2,1,-2)) #Returns: [1] 0.1666667 0.3333333 0.1666667 -0.3
 \references{
 ProductConfig Github page: https://github.com/avilesd/productConfig
 }
+\seealso{
+Other get functions: \code{\link{get_all_default_rps}};
+  \code{\link{get_all_userids}};
+  \code{\link{get_attr_values}};
+  \code{\link{get_attrs_ID}};
+  \code{\link{get_rounds_by_ID}};
+  \code{\link{get_table_by_ID}}
+}
 

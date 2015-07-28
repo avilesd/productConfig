@@ -9,6 +9,9 @@
 #' @param user_id an integer, that identifies which rows (from which user) of the whole given dataset should be extracted.
 #' @return A data.frame with the same columns as the original, but only with rows about the provided \code{user_id}.
 #' @seealso \code{\link{powerful_function}} allows you to run this and any other function in this package for more than one user.
+#'
+#' @family get functions
+#'
 #' @examples
 #' get_table_by_ID(camera2_config_data, 9)
 #' get_table_by_ID(as.data.frame(matrix_full), 12)
@@ -37,6 +40,9 @@ get_table_by_ID<- function(x, userid = NULL,...) {
 #' @param x the data.frame you want to input.
 #'
 #' @return a vector of integers representing all existing attribute IDs.
+#'
+#' @family get functions
+#'
 #' @examples
 #' get_attrs_ID(my_data) #Example return: [1] 1 2 3 4 , meaning there are 4 attributes on my_data with ascending indexes.
 #' get_attrs_ID(bad_data) #Warning: Attributes IDs should only be integers.
@@ -65,6 +71,9 @@ get_attrs_ID<- function(x) {
 #'
 #' @return An integer vector representing the index of each round/click and therefore the total amount of rounds for the selected user.
 #' @seealso \code{\link{powerful_function}} allows you to run this and any other function in this package for more than one user.
+#'
+#' @family get functions
+#'
 #' @examples
 #' get_rounds_by_ID(example_data, userid = 6) # Example return: [1] 0 1 2 3 4 5 6 7 8
 #' get_rounds_by_ID(as.data.frame(matrix_full), 1200) # If userid given not found in the given data(x) function returns: integer(0).
@@ -92,6 +101,8 @@ get_rounds_by_ID <- function(x, userid = NULL) {
 #' @param dataset the data.frame you want to input.
 #'
 #' @return a vector of integers with all user IDs. IDs are returned in the order they appear on the table.
+#'
+#' @family get functions
 #' @examples
 #' get_all_userids(example_data) #Example return: [1] 1 2 3 4 5  # ordered userids.
 #' get_all_userids(data) #Example return: [1] 6 9 10 8 6 2 4  # returns IDs just as they are on the given table.
@@ -111,8 +122,11 @@ get_all_userids <- function(dataset) {
 #'
 #' @param dataset the data.frame you want to analyze. For the default values for more or all users, see \code{\link{powerful_function}}
 #' @param user_id an integer, that identifies which rows (from which user) of the whole given dataset should be extracted.
+#'
 #' @return A numeric vector with column names representing the attribute ID each reference point belongs to.
+#'
 #' @seealso \code{\link{powerful_function}} allows you to run this and any other function in this package for more than one user.
+#' @family get functions
 #' @examples
 #' get_all_default_rps(camera2_config_data, 100)
 #' get_all_default_rps(as.data.frame(matrix_full), 55)
@@ -155,6 +169,8 @@ get_all_default_rps <- function(dataset, userid) {
 #' @param num_vector numeric vector you want to normalize.
 #'
 #' @return A normalized vector, i.e. anothernumeric vector with the sum of its absolute values equaling 1.
+#'
+#' @family get functions
 #' @examples
 #' get_normalized_vec(c(1,2,1,2)) #Returns: [1] 0.1666667 0.3333333 0.1666667 0.3333333
 #' get_normalized_vec(c(1,2,1,-2)) #Returns: [1] 0.1666667 0.3333333 0.1666667 -0.3333333
@@ -179,6 +195,8 @@ get_normalized_vec <- function(num_vector) {
 #' @param attrid the ID of the attribute you want to know all unique values of.
 #'
 #' @return Unique values for the given attribute, applies for all users.
+#'
+#' @family get functions
 #' @examples
 #' get_attr_values(example_data, attrid=1) # Example return: [1] 0 3 2 1 meaning that category only has 4 possible values in the product configutrator, or at least those were the ones the users clicked on
 #' get_attr_values(other_data, 100) #Possible catched error: The attrID you specified is not contain in your data.

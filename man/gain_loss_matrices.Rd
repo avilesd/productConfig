@@ -67,7 +67,7 @@ This function is for one user only, for more or all users see \code{\link{powerf
 gain_loss_matrices(pc_config_data, 11)
 gain_loss_matrices(my_data, userid = 11, result_type = "cbind")
 gain_loss_matrices(monitor_data, 50, rounds = "last", refps = c(0.1,0.3,0.4,0.5), cost_ids = 3)
-gain_loss_matrices(data1, 2, attr = 1)
-gain_loss_matrices(data, 2, result_type = "cbind", attr = c(1,2,3,4) )
+gain_loss_matrices(data1, 40, attr = 1)
+gain_loss_matrices(data, 3, result_type = "cbind", attr = c(1,2,3,4) )
 }
 

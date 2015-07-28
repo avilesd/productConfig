@@ -33,7 +33,7 @@ reference points as default values. We also provide the tools for the user of th
 the funciton and use those to calculate further matrices and value functions.
 }
 \details{
-\code{data} We assume the input data.frame has following columns usid = User IDs, round = integers indicating which round the user is in
+\code{dataset} We assume the input data.frame has following columns usid = User IDs, round = integers indicating which round the user is in
 (0-index works best for round), atid = integer column for referring the attribute ID (1 indexed), selected = numeric value of the attribute for a specific, given round,
 selectable = amount of options the user can chose at a given round, with the current configuration. This is a necessary parameter.
 

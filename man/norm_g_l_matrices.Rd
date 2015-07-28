@@ -46,6 +46,6 @@ This function is for one user only, for more or all users see \code{\link{powerf
 norm_g_l_matrices(pc_config_data, 11)
 norm_g_l_matrices(my_data, userid = 11, result_type = "cbind")
 norm_g_l_matrices(monitor_data, 50, rounds = "last", refps = c(0.1,0.3,0.4,0.5), cost_ids = 3)
-norm_g_l_matrices(data1, 2, attr = 1)
+norm_g_l_matrices(data1, 8, attr = 1)
 }
 
