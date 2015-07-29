@@ -4,14 +4,17 @@
 \alias{get_attr_weight}
 \title{To be use for weights.}
 \usage{
-get_attr_weight(dataset)
+get_attr_weight(dataset, userid = NULL, weight = NULL, attr = NULL,
+  rounds = NULL, cost_ids = NULL)
 }
 \arguments{
 \item{rel_frequeny}{logical. Relative frequency, if \code{rel_frequency = TRUE}, the function ignores the refps argument
        and calculates the aspiration level for each attribute as the relative frequency the user made for that attribute.
 
 ###to consider, defaults considers all your attributes in your table and calculates with relative frequency of the attributes
-if no other weights are given. ##no userid because weights independent from user}
+if no other weights are given. ##no userid because weights independent from user
+Probably change method parameter to weight.
+Attr handling is in functions, not here!!!}
 }
 \description{
 Description

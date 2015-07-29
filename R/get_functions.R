@@ -78,6 +78,8 @@ get_attrs_ID<- function(x) {
 #' get_rounds_by_ID(example_data, userid = 6) # Example return: [1] 0 1 2 3 4 5 6 7 8
 #' get_rounds_by_ID(as.data.frame(matrix_full), 1200) # If userid given not found in the given data(x) function returns: integer(0).
 #'
+#'@export
+
 get_rounds_by_ID <- function(x, userid = NULL) {
   if(is.null(userid)) {
     stop("You need to specify one userid.")
@@ -130,7 +132,7 @@ get_all_userids <- function(dataset) {
 #' @examples
 #' get_all_default_rps(camera2_config_data, 100)
 #' get_all_default_rps(as.data.frame(matrix_full), 55)
-#'
+#'@export
 get_all_default_rps <- function(dataset, userid) {
   if(is.null(userid)) {
     stop("You need to specify one userid.")
