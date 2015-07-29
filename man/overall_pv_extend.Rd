@@ -4,14 +4,12 @@
 \alias{overall_pv_extend}
 \title{Calculate Prospect Values}
 \usage{
-overall_pv_extend(value_matrix, weight = NULL, dataset = NULL)
+overall_pv_extend(value_matrix, weight = NULL)
 }
 \arguments{
 \item{value_matrix}{numeric matrix, results from using the value function on previously calculated normalized gain and loss matrices.}
 
 \item{weight}{numeric, represents the importance or relative relevance of each attribute.}
-
-\item{dataset}{data.frame containing your raw data from the product configurator.}
 }
 \value{
 prospect values for each attribute
@@ -32,8 +30,6 @@ This is mainly an auxiliary function.
 
 \code{weight} default orders each attribute a weight <= 1 according to the relative frequency with which the user interacted with that specific attribute. Ideally
 the sum of all weights equals 1. ##Ignore-Bug: What happens if you give three attributes but enter 4 or more weights or vice versa?
-
-\code{dataset} For the ideal form of this data.frame please refer to \code{\link{powerful_function}} 's Details.
 }
 \examples{
 overall_pv_extend(my_value_matrix, weight = c(0.1, 0.2, 0.4, 0.3))

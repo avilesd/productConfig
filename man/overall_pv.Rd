@@ -43,12 +43,12 @@ in 3 main steps. (1) It calculates the normalized gain and loss matrices (2) wit
 This function is for one user or one userid for \strong{more users} and for more detailed \strong{parameter information} please
 see \code{\link{powerful_function}}
 
-The 3 step calculation of the prospect values comes from one specific paper \italics{Reference[1]}. (1) For the noramlized gain and loss matrices
+The 3 step calculation of the prospect values comes from one specific paper \emph{Reference[1]}. (1) For the noramlized gain and loss matrices
 we use the function \code{\link{norm_g_l_matrices}} from this package. (2) The value matrix is calculated with a series of auxiliary
 functions. (3) The prospect value works with a simple additive weighting method from \code{overall_pv_extend}.
 
 If you only have the normalized gain and loss matrices you can use first \code{\link{prospect_value_matrix_extend}} with parameters (norm_gain, norm_loss)
-and that function returns a value matrix which you then can give to \code\link{overall_pv_extend} together with your desired weights to
+and that function returns a value matrix which you then can give to \code{\link{overall_pv_extend}} together with your desired weights to
 get the prospect values for each alternative.
 
 \code{dataset} We assume the input data.frame has following columns usid = User IDs, round = integers indicating which round the user is in

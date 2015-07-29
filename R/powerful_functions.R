@@ -102,6 +102,8 @@ powerful_function <- function(dataset, userid = NULL, FUN = decision_matrix, att
       con7 <- identical(FUN, pvalue_matrix)
       con8 <- identical(FUN, overall_pv)
       con9 <- identical(FUN, diego_pv)
+      con10 <- identical(FUN, weight_higher_sum_value)
+      con11 <- identical(FUN, get_attr_weight)
 
       if(con1) {
         result_list[[usid]] <- FUN(dataset)
@@ -129,6 +131,12 @@ powerful_function <- function(dataset, userid = NULL, FUN = decision_matrix, att
       }
       else if(con9) {
         result_list[[usid]] <- FUN(dataset, userid = i, attr, rounds, refps, cost_ids, weight, gainm)
+      }
+      else if(con10) {
+        result_list[[usid]] <- FUN(dataset, userid = i, rounds, cost_ids)
+      }
+      else if(con11) {
+        result_list[[usid]] <- FUN(dataset, userid = i, weight, attr, rounds, cost_ids)
       }
       else {
         print("It appears the function (FUN) you gave is not to be use here, or not implemented yet.")

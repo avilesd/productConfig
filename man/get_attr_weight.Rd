@@ -2,21 +2,48 @@
 % Please edit documentation in R/weight_functions.R
 \name{get_attr_weight}
 \alias{get_attr_weight}
-\title{To be use for weights.}
+\title{Weights calculating function}
 \usage{
-get_attr_weight(dataset, userid = NULL, weight = NULL, attr = NULL,
-  rounds = NULL, cost_ids = NULL)
+get_attr_weight(dataset = NULL, userid = NULL, weight = NULL,
+  attr = NULL, rounds = NULL, cost_ids = NULL)
 }
 \arguments{
-\item{rel_frequeny}{logical. Relative frequency, if \code{rel_frequency = TRUE}, the function ignores the refps argument
-       and calculates the aspiration level for each attribute as the relative frequency the user made for that attribute.
+\item{dataset}{data.frame with the user generated data from a product configurator. See Details
+ for the specifications of the data.frame.}
 
-###to consider, defaults considers all your attributes in your table and calculates with relative frequency of the attributes
-if no other weights are given. ##no userid because weights independent from user
-Probably change method parameter to weight.
-Attr handling is in functions, not here!!!}
+\item{userid}{an integer that gives the information of which user you want the data from: User ID.}
+
+\item{weight}{integer vector. Represents the importance or relevance that an attribute has and the weight it should have in the
+calculation of the prospect value.}
+
+\item{attr}{attributes IDs, vector of integer numbers corresponding to the attributes you desire to use; attr are assumed to be 1-indexed.}
+
+\item{rounds}{integer vector. Which steps of the configuration process should be taken into account?}
+
+\item{cost_ids}{argument used to convert selected cost attributes into benefit attributes. Integer vector.}
+}
+\value{
+Calculated weights according to the chosen weight_function
 }
 \description{
-Description
+This function gives you an interface to all weight calculating functions in this package.
+}
+\details{
+Default value of FUN uses \code{\link{weight_higher_sum_value}} to get the \code{weight} vector. Below you can
+find alternative functions implemented until now to calculate weights.
+
+\code{attr} This function does handles different amount of attributes.
+
+\code{cost_ids} Are passed along to the function you chosee (See Also), not handled here.
+
+If you want to know more about the other parameters, look at \code{powerful_function}.
+}
+\examples{
+get_attr_weight(pc_data, 11)
+get_attr_weight(my_data, userid = 1000, cost_ids = 4)
+get_attr_weight(monitor_data, 50)
+}
+\seealso{
+Other weight functions: \code{\link{weight_higher_sum_value}}
 }
 

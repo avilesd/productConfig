@@ -32,12 +32,12 @@
 #' This function is for one user or one userid for \strong{more users} and for more detailed \strong{parameter information} please
 #' see \code{\link{powerful_function}}
 #'
-#' The 3 step calculation of the prospect values comes from one specific paper \italics{Reference[1]}. (1) For the noramlized gain and loss matrices
+#' The 3 step calculation of the prospect values comes from one specific paper \emph{Reference[1]}. (1) For the noramlized gain and loss matrices
 #' we use the function \code{\link{norm_g_l_matrices}} from this package. (2) The value matrix is calculated with a series of auxiliary
 #' functions. (3) The prospect value works with a simple additive weighting method from \code{overall_pv_extend}.
 #'
 #' If you only have the normalized gain and loss matrices you can use first \code{\link{prospect_value_matrix_extend}} with parameters (norm_gain, norm_loss)
-#' and that function returns a value matrix which you then can give to \code\link{overall_pv_extend} together with your desired weights to
+#' and that function returns a value matrix which you then can give to \code{\link{overall_pv_extend}} together with your desired weights to
 #' get the prospect values for each alternative.
 #'
 #' \code{dataset} We assume the input data.frame has following columns usid = User IDs, round = integers indicating which round the user is in
@@ -67,10 +67,16 @@
 #'
 overall_pv <- function (dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL,  weight = NULL,
                         alpha = 0.88, beta = 0.88, lambda = 2.25) {
+  if(is.null(weight) & is.null(dataset)) {
+    stop("Unable to get weights. You need to enter the weights or provide the dataset for us to calculate them. ")
+  }
+  if(is.null(weight) & !is.null(dataset)) {
+    weight <-get_attr_weight(dataset, userid, weight,  attr, rounds, cost_ids)
+  }
 
   v_matrix <- pvalue_matrix(dataset, userid, attr, rounds, refps, cost_ids, alpha, beta, lambda)
 
-  overall_pv <- overall_pv_extend(v_matrix, weight, dataset)
+  overall_pv <- overall_pv_extend(v_matrix, weight)
 
   overall_pv
 
@@ -190,8 +196,6 @@ pvalue_fun <- function(ngain_ij, nloss_ij, alpha = 0.88, beta = 0.88, lambda = 2
 #'
 #' @param weight numeric, represents the importance or relative relevance of each attribute.
 #'
-#' @param dataset data.frame containing your raw data from the product configurator.
-#'
 #' @details
 #' You need to pre-calculate the value matrix, for example with \code{\link{pvalue_matrix}} and give it as a parameter. This is one of the few functions
 #' of this package that do not allow you to give the raw data from your product Configurator, but rather calculate a previous result(value matrix) to
@@ -204,8 +208,6 @@ pvalue_fun <- function(ngain_ij, nloss_ij, alpha = 0.88, beta = 0.88, lambda = 2
 #'
 #' \code{weight} default orders each attribute a weight <= 1 according to the relative frequency with which the user interacted with that specific attribute. Ideally
 #' the sum of all weights equals 1. ##Ignore-Bug: What happens if you give three attributes but enter 4 or more weights or vice versa?
-#'
-#' \code{dataset} For the ideal form of this data.frame please refer to \code{\link{powerful_function}} 's Details.
 #'
 #' @return prospect values for each attribute
 #'
@@ -221,19 +223,11 @@ pvalue_fun <- function(ngain_ij, nloss_ij, alpha = 0.88, beta = 0.88, lambda = 2
 #' @family prospect value functions
 #'
 #' @export
-overall_pv_extend <- function(value_matrix, weight = NULL, dataset = NULL) {
-  if(is.null(weight) & is.null(dataset)) {
-    stop("Unable to get weights. You need to enter the weights or provide the dataset for us to calculate them. ")
+overall_pv_extend <- function(value_matrix, weight = NULL) {
+  if(length(weight) != ncol(value_matrix)) {
+    warning("Length of weight does not equal amount of attributes, some recycling may have been done here.")
   }
-  if(is.null(weight & !is.null(dataset))) {
-    result <-get_attr_weight(dataset)
-  }
-  else {
-    if(length(weight) != ncol(value_matrix)) {
-      warning("Length of weight does not equal amount of attributes, some recycling may have been done here.")
-    }
-    result <- apply(value_matrix, 1, function(my_vector) { sum(my_vector*weight)})
-  }
+  result <- apply(value_matrix, 1, function(my_vector) { sum(my_vector*weight)})
   result
 }
 
