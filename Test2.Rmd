@@ -59,5 +59,81 @@ get_rounds_by_ID(camera_data, userid = 18)
 ```
 The user 18, interacted 15 times with the camera configurator. This means, that there were 15 configurations the user considerated before taking his decision. Note that given the nature of product configurators, it is likely to see duplicate alternatives, i.e. equal configurations.
 
-We know now the number of columns (attributes) and the number of rows (rounds) the decision matrix can have, for our selected user. For the decision matrix the user has the ability to choose how many columns and rounds he wants to use, this is done through the \texttt{attr} and \texttt{rounds} parameters, respectively.
+We know now the number of columns (attributes) and the number of rows (rounds) the decision matrix can have, for our selected user. For the decision matrix the reader has the ability to choose how many columns and rounds he wants to use, this is done through the \texttt{attr} and \texttt{rounds} parameters, respectively. To calculate the decision matrix using all attributes and rounds, we can find at least three equivalent ways to do it:
+```{r, eval=FALSE}
+decision_matrix(data= camera_data, userid= 18,  attr= c(1,2,3,4), 
+                rounds= c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14))
+
+decision_matrix(data= camera_data, 18, attr= get_attrs_ID(camera_data),
+                rounds = get_rounds_by_ID(camera_data, userid= 18))
+
+decision_matrix(data= camera_data, 18, rounds="all")
+```
+Returning the full decision matrix for the selected user:
+```{r, echo=FALSE, warning=FALSE}
+## Full decision matrix for selected user
+decision_matrix(data= camera_data, 18, attr= get_attrs_ID(camera_data),
+                rounds = get_rounds_by_ID(camera_data, userid= 18))
+
+```
+Note that in the third option, we did not enter any \texttt{attr} value. Excluding the \texttt{dataset} and \texttt{userid} arguments, all arguments are assigned a default value by the functions, unless stated otherwise by the reader. In this case, the default behavior without \texttt{attr} input is to calculate all attributes found in the given data. At this point it is important to note that default values and behavior can be changed, but should be well documented.
+
+As the next step in our procedure comes the calculation of the reference point vector, \texttt{refps} in 'productConfig'. Ideally, the length of the \texttt{refps} vector is equal to the length of the \texttt{attr} vector, although the function \texttt{ref\_points} has built-in capabilites to handle other scenarios. The package's user may enter its own values. If no value is given, \texttt{refps} determines the reference points as the default values for each attribute in the initial configuration. For our selected user they are:
+```{r, warning=FALSE}
+ref_points(camera_data, userid= 18) 
+
+```
+
+We discussed earlier the possibility of reference points being defined by the decision-maker as other than default values. There is also extensive literature about the use of multiple reference points, for a brief overview see [11]. At this point of development we worked only with single reference points ,default values, or status quo. It is but a major limitation and it presents great room for future package development in this direction.
+
+Having determined the decision matrix and the reference points vector, we now calculate the normalized gain and loss matrices. After the next code sample we leave the attr and refps command out, since their default values calculate the same values we are using.
+```{r, warning=FALSE}
+norm_g_l_matrices(data= camera_data, userid= 18,
+                              attr = get_attrs_ID(camera_data),  
+                              rounds = "all",  
+                              refps = NULL) 
+```
+For the final step of calculating the prospect values, we are only missing the attribute weights. The \texttt{WeightFunctions} provides different functions to calculate the weights. It is structured in such a way that it does this with what we call an interface function, named \texttt{get\_attr\_weight}. The idea is to simplify the calculation by providing the interface function with the necessary parameters and the name of the function you want to use. Nevertheless at the time of the publication of this seminar paper, only one weight function was deemed mature enough to include. 
+
+Weight functions are also a point to reflect on. To the best of my knowledge, there is no uniformly consensus on how to determine them. We are working in some creative ways to calculate them using the dataset the reader provides. However, we encourage more thoughts on this subject, to advance the status of this package. The standard function used at the moment \texttt{weight\_higher\_sum\_value} weights each attribute according to the relative size of the sum of its values across all rounds.
+```{r, warning=FALSE}
+weights_demo <- get_attr_weight(dataset= camera_data, userid= 18,
+                weight= NULL,
+                rounds= "all")
+weights_demo
+```
+As you can observe, all weights are smaller than 1 and their sum \texttt{sum(weights\_demo)} returns `r sum(weights_demo)`.
+
+We have gone through all the necessary functions that lead to the higher level cluster \texttt{ProspectValueFunctions}. Within this group of functions we find two important steps, (1)the calculation of the value matrix and the following (2) determination of the overall prospect values for each one of the fifteen rounds.
+
+\textbf{Value matrix}
+```{r, warning=FALSE}
+pvalue_matrix(dataset= camera_data, userid= 18,
+                rounds= "all",
+                alpha= 0.88, beta= 0.88, lambda= 2.25)  ## attr, refps default
+```
+\textbf{Overall prospect values}
+```{r, warning=FALSE}
+overall_pv(dataset= camera_data, userid= 18,
+                rounds = "all",
+                alpha = 0.88, beta = 0.88, lambda = 2.25)  ## attr, refps, weight default
+```
+Although this walk-through has allowed us to ilustrate some functionality of our package, we capitalize this moment to show off the reasoning behind the strutcuring of 'productConfig'. Since the higher level function \texttt{overall\_pv} is independent from the steps shown above, we can reproduce the exact same result just by running a simple command.
+```{r, warning=FALSE}
+overall_pv(camera_data, 18, rounds = "all") 
+```
+One problem the reader might suggest is that the results are only for one user. This is where the \texttt{powerful\_function} is particularly useful.
+```{r, eval=FALSE, warning=FALSE}
+powerful_function(camera_data,
+                  userid= get_all_userids(camera_data), 
+                  FUN= overall_pv,
+                  rounds = "all")
+```
+For space purposes we will only show the results of four randomly picked users.
+```{r, eval=TRUE, warning=FALSE}
+powerful_function(camera_data,
+                  userid= c(54, 20, 6, 16), 
+                  FUN= overall_pv,
+                  rounds = "all")
+```
 
