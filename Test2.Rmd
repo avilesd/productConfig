@@ -2,7 +2,9 @@
 title: "test"
 author: "Diego Aviles"
 date: "Wednesday, July 29, 2015"
-output: pdf_document
+output:
+  pdf_document:
+    keep_tex: yes
 ---
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>. 
@@ -12,19 +14,50 @@ When you click the **Knit** button a document will be generated that includes bo
 #Heather?
 ##Heather?!?!?!?
 
-```{r echo = FALSE, warning = FALSE}
+```{r echo = FALSE, warning = FALSE, message= FALSE}
 # Load all necessary information without showing it
+library(productConfig)
 load("current5_not_at_allclean.RData")
+library(devtools)
 devtools::load_all(".")
-library("gplots")
+
 ```
 
-You can also embed plots, for example:
 
+```{r, warning = FALSE, message= FALSE, eval=FALSE}
+install_github("avilesd/productConfig")
+library(productConfig)
+```
+--------------------------------------------------
+```{r}
+head(camera_data)
+```
+Before calculating the decision matrix, it is necessary to first gather some key data from the \texttt{camera\_data} provided. This is were the \texttt{GetFunctions} come in. For example, it is necessary to know how many attributes there are,
+
+```{r}
+get_attrs_ID(camera_data)
+```
+as well as how the possible value each attribute can have:
+```{r, eval=FALSE}
+get_attr_values(dataset = camera_data, attrid = 1)
+get_attr_values(camera_data, 2)
+get_attr_values(camera_data, 3)
+get_attr_values(camera_data, 4) ## Price attribute
+
+```
 ```{r, echo=FALSE}
-decision_matrix(play_data, 9, attr=1)
-heatmap.2(tprueba,col=my_palette, symm=F,symkey=F,symbreaks=T, scale="none", dendrogram="none", Colv= F, Rowv=F,
-trace="none", breaks =colbr, margins(6,5))
-```
+get_attr_values(camera_data, 1)
+get_attr_values(camera_data, 2)
+get_attr_values(camera_data, 3)
+ unique(round(get_attr_values(camera_data, 4), 8))
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```
+But even more important, is to know how many \texttt{rounds}, i.e. how many rows our decision matrix can have. For the remainder of this example we are going to work with a random picked \texttt{userid = 18}.
+```{r}
+get_rounds_by_ID(camera_data, userid = 18)
+
+```
+The user 18, interacted 15 times with the camera configurator. This means, that there were 15 configurations the user considerated before taking his decision. Note that given the nature of product configurators, it is likely to see duplicate alternatives, i.e. equal configurations.
+
+We know now the number of columns (attributes) and the number of rows (rounds) the decision matrix can have, for our selected user. For the decision matrix the user has the ability to choose how many columns and rounds he wants to use, this is done through the \texttt{attr} and \texttt{rounds} parameters, respectively.
+
