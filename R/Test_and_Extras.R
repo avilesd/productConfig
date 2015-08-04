@@ -41,3 +41,22 @@ test_function_within_function <- function(x, play) {
     result <- second_function(x, play)
     result
 }
+
+test <- function(list1) {
+
+  help <- numeric(0)
+
+  for(i in list1){
+    help <- c(help, sum(i))
+  }
+  help
+}
+
+lengthp <- function(list1) {
+  help <- numeric(0)
+
+  for(i in list1){
+    help <- c(help, length(i))
+  }
+  help
+}
