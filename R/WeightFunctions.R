@@ -8,29 +8,41 @@
 
 #' Weights based on the sum of attribute values
 #'
-#' This weight function sums all attribute values for all available rounds. The higher the sum for one attribute, the better it will be weighted.
-#' After getting the sum for each attribute, the results will be normalized resulting in all weights being smaller than 1 and the sum of all weights
-#' equaling 1. Typically used within this package to calculate weights when the user has not given any in \code{\link{get_attr_weight}}
+#' This weight function sums all attribute values for all available rounds. The
+#' higher the sum for one attribute, the better it will be weighted. After
+#' getting the sum for each attribute, the results will be normalized resulting
+#' in all weights being smaller than 1 and the sum of all weights equaling 1.
+#' Typically used within this package to calculate weights when the user has not
+#' given any in \code{\link{get_attr_weight}}
 #'
 #' @inheritParams powerful_function
 #'
-#' @param rounds integer vector. Does not play a role at this moment (<= 0.2.0.9000) in this function, but it does for future improvements.
+#' @param rounds integer vector. Does not play a role at this moment (<=
+#'   0.2.0.9000) in this function, but it does for future improvements.
 #'
-#' @details This function does not handle different amount of attributes, it always calculates weights for all attr. The filtering
-#' according to the user's input happens in \code{\link{get_attr_weight}}
+#' @details This function does not handle different amount of attributes, it
+#'   always calculates weights for all attr. The filtering according to the
+#'   user's input happens in \code{\link{get_attr_weight}}
 #'
-#' One problem of this function as it is (<= 0.2.0.9000) is that it works mostly assuming that the attribute values
-#' across all attributes have the same maximum and minimum value, so that a comparison of the sum of each attribute values makes sense.
-#' In the data we worked building this package, there is already a problem with this since three attributes work with {0,1,2,3} values
-#' and a forth works with values between [0,1]. For our package we found a solution, but it is necessary to implement a more general
-#' solution.
+#'   One problem of this function as it is (<= 0.2.0.9000) is that it works
+#'   mostly assuming that the attribute values across all attributes have the
+#'   same maximum and minimum value, so that a comparison of the sum of each
+#'   attribute values makes sense. In the data we worked building this package,
+#'   there is already a problem with this since three attributes work with
+#'   {0,1,2,3} values and a forth works with values between [0,1]. For our
+#'   package we found a solution, but it is necessary to implement a more
+#'   general solution.
 #'
-#' \code{cost_ids} It handles it well, by adding all together and treating it as cost and then just using abs() to get the positive value.
-#' Default assumes all your attributes are of benefit type, that is a higher value in the attribute means the user
-#' is better of than with a lower value. If one or more of the attributes in your data is of cost type, e.g. price, so that lower is better then you should identify
-#' this attributes as such, providing their id, they'll be converted to benefit type (higher amount is better).
+#'   \code{cost_ids} It handles it well, by adding all together and treating it
+#'   as cost and then just using abs() to get the positive value. Default
+#'   assumes all your attributes are of benefit type, that is a higher value in
+#'   the attribute means the user is better of than with a lower value. If one
+#'   or more of the attributes in your data is of cost type, e.g. price, so that
+#'   lower is better then you should identify this attributes as such, providing
+#'   their id, they'll be converted to benefit type (higher amount is better).
 #'
-#' If you want to know more about the other parameters, e.g. \code{dataset}, look at \code{powerful_function}.
+#'   If you want to know more about the other parameters, e.g. \code{dataset},
+#'   look at \code{powerful_function}.
 #'
 #' @return Relative weights for all attributes
 #'
@@ -67,11 +79,12 @@ weight_higher_sum_value <- function(dataset, userid = NULL , rounds = NULL, cost
 
 }
 
-## TODO calculate relative frequency, see annotations notebook: As separate function.
-## to consider, defaults considers all your attributes in your table and calculates with relative frequency of the attributes
-## if no other weights are given. ##no userid because weights independent from user
-## Probably change method parameter to weight.
-## Attr handling here not in functions!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+## TODO calculate relative frequency, see annotations notebook: As separate
+## function. to consider, defaults considers all your attributes in your table
+## and calculates with relative frequency of the attributes if no other weights
+## are given. ##no userid because weights independent from user Probably change
+## method parameter to weight. Attr handling here not in
+## functions!!!!!!!!!!
 
 #' Weights calculating function
 #'

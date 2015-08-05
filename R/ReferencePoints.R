@@ -1,47 +1,68 @@
 #' Delivers the Reference Points
 #'
-#' This function delivers reference points for other functions to use. With the reference points you can
-#' calculate gains and losses relative to a reference point. We base our knowledge and assumptions to calculate gains
-#' and losses from a paper, please see source and references. Reference Points can be many things, such as defaults,
-#' aspiration levels, status quo, etc. Here we provide the tools to read the reference points from the given data, i.e.
-#' reference points as default values. We also provide the tools for the user of this package to provide the refps to
-#' the funciton and use those to calculate further matrices and value functions.
+#' This function delivers reference points for other functions to use. With the
+#' reference points you can calculate gains and losses relative to a reference
+#' point. We base our knowledge and assumptions to calculate gains and losses
+#' from a paper, please see source and references. Reference Points can be many
+#' things, such as defaults, aspiration levels, status quo, etc. Here we provide
+#' the tools to read the reference points from the given data, i.e. reference
+#' points as default values. We also provide the tools for the user of this
+#' package to provide the refps to the funciton and use those to calculate
+#' further matrices and value functions.
 #'
-#' @param dataset cdata.frame with the user generated data from a product configurator. Please see \code{decision_matrix}
-#'  for specifications of the data.frame.
+#' @param dataset cdata.frame with the user generated data from a product
+#'   configurator. Please see \code{decision_matrix} for specifications of the
+#'   data.frame.
 #'
-#' @param userid an integer that gives the information of which user the reference points should be determined.
+#' @param userid an integer that gives the information of which user the
+#'   reference points should be determined.
 #'
-#' @param refps numeric vector. Reference Points: each point corresponds to one attribute, i.e. each attribute has only one
-#' aspiration level. Default setting assumes the aspiration levels as the default values of the initial product configuration
-#' for each user.
+#' @param refps numeric vector. Reference Points: each point corresponds to one
+#'   attribute, i.e. each attribute has only one aspiration level. Default
+#'   setting assumes the aspiration levels as the default values of the initial
+#'   product configuration for each user.
 #'
-#' @param attr attributes IDs, vector of integer numbers corresponding to the attributes you desire to use; attr are assumed to be 1-indexed.
+#' @param attr attributes IDs, vector of integer numbers corresponding to the
+#'   attributes you desire to use; attr are assumed to be 1-indexed.
 #'
-#' @param cost_ids argument used to convert selected cost attributes into benefit attributes. Integer vector.
+#' @param cost_ids argument used to convert selected cost attributes into
+#'   benefit attributes. Integer vector.
 #'
-#' @details
-#' \code{dataset} We assume the input data.frame has following columns usid = User IDs, round = integers indicating which round the user is in
-#' (0-index works best for round), atid = integer column for referring the attribute ID (1 indexed), selected = numeric value of the attribute for a specific, given round,
-#' selectable = amount of options the user can chose at a given round, with the current configuration. This is a necessary parameter.
+#' @details \code{dataset} We assume the input data.frame has following columns
+#' usid = User IDs, round = integers indicating which round the user is in
+#' (0-index works best for round), atid = integer column for referring the
+#' attribute ID (1 indexed), selected = numeric value of the attribute for a
+#' specific, given round, selectable = amount of options the user can chose at a
+#' given round, with the current configuration. This is a necessary parameter.
 #'
-#' \code{userid} is a necessary parameter, without it you'll get a warning. Default is NULL.
+#' \code{userid} is a necessary parameter, without it you'll get a warning.
+#' Default is NULL.
 #'
-#' \code{refps} The most important parameter for this function. If you only want to see the results for one attribute you may enter only a couple of reference points
-#' but you have to tell the function which attributes you want to use those referene points for. So the amount of attr and of refps should be the same.
-#' Moreover the functions always orders de attr, so be sure to input the reference point also in an ascending order corresponding to their attributes. (refps
-#' will not be ordered)
+#' \code{refps} The most important parameter for this function. If you only want
+#' to see the results for one attribute you may enter only a couple of reference
+#' points but you have to tell the function which attributes you want to use
+#' those referene points for. So the amount of attr and of refps should be the
+#' same. Moreover the functions always orders de attr, so be sure to input the
+#' reference point also in an ascending order corresponding to their attributes.
+#' (refps will not be ordered)
 #'
-#' \code{attr} Default calculates with all attributes. Attributes are automatically read from provided table, it is important you always provide
-#' the complete dataset so that the package functions properly. Moreover the attribute will be sorted in ascending order, i.e. if you input attr= c(1,3,2),
-#' the decision matrix resulting will display the columns in order: attr1 attr2 attr3. You may input fewer attributes than there are on your data.
+#' \code{attr} Default calculates with all attributes. Attributes are
+#' automatically read from provided table, it is important you always provide
+#' the complete dataset so that the package functions properly. Moreover the
+#' attribute will be sorted in ascending order, i.e. if you input attr=
+#' c(1,3,2), the decision matrix resulting will display the columns in order:
+#' attr1 attr2 attr3. You may input fewer attributes than there are on your
+#' data.
 #'
-#' \code{cost_ids} To identify cost type attributes, i.e. a lower value is better for the user of the product configurator.
+#' \code{cost_ids} To identify cost type attributes, i.e. a lower value is
+#' better for the user of the product configurator.
 #'
-#' Keep in mind you will probably not use this function on itself, it will receive its parameters from a parent funciton,
-#' that is why is it not fully documented.
+#' Keep in mind you will probably not use this function on itself, it will
+#' receive its parameters from a parent funciton, that is why is it not fully
+#' documented.
 #'
-#' @return reference points. A numeric vector with default values if nothing is given or the ones inputed by the user. For one specific user only.
+#' @return reference points. A numeric vector with default values if nothing is
+#'   given or the ones inputed by the user. For one specific user only.
 #'
 #' @examples
 #' ref_points(play_data, 9)
