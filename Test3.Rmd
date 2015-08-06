@@ -9,6 +9,8 @@ output:
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
+
+
 Part 2:
 ```{r echo = FALSE, warning = FALSE, message= FALSE}
 # Load all necessary information without showing it
@@ -17,6 +19,10 @@ load("current5_not_at_allclean.RData")
 library(devtools)
 devtools::load_all(".")
 
+```
+
+```{r}
+decision_matrix(camera_data, 18, rounds="first")
 ```
 
 Attribute number 1 in our \texttt{camera\_data} is the digital camera's resolution. Consider the following: you want to research how the importance of the resolution attribute correlates with the prospect value of the chosen camera. Remember that the last round in the end configuration represents the specifications of the camera the user decided to choose. As the 'importance of the resolution attribute' we will use the relative sum of the values for the resolution category, throughout all rounds, for each user. Assuming the package is loaded, we first must extract the decision matrix for all users, but only for the first attribute, i.e. the resolution.
@@ -65,7 +71,7 @@ symbols(x, y, circles= sqrt(z /pi),
         inches= 0.40, fg="lightgray", 
         bg= rgb(235, 146, 1, alpha= 180, maxColorValue= 255),
         xlab="Relative gains in attribute 1", 
-        ylab="Prospect value of end configuration (chosen product)")
+        ylab="Prospect value of end configuration")
 
 ```
 

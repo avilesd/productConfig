@@ -116,6 +116,17 @@ using R Markdown see \url{http://rmarkdown.rstudio.com}.
 
 Part 2:
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{decision_matrix}\NormalTok{(camera_data, }\DecValTok{18}\NormalTok{, }\DataTypeTok{rounds=}\StringTok{"first"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        attr1 attr2 attr3     attr4
+## round0     2     0     0 0.3166667
+\end{verbatim}
+
 Attribute number 1 in our \texttt{camera\_data} is the digital camera's
 resolution. Consider the following: you want to research how the
 importance of the resolution attribute correlates with the prospect
@@ -295,10 +306,10 @@ package, we want to give an example so that the values for
         \DataTypeTok{inches=} \FloatTok{0.40}\NormalTok{, }\DataTypeTok{fg=}\StringTok{"lightgray"}\NormalTok{, }
         \DataTypeTok{bg=} \KeywordTok{rgb}\NormalTok{(}\DecValTok{235}\NormalTok{, }\DecValTok{146}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DataTypeTok{alpha=} \DecValTok{180}\NormalTok{, }\DataTypeTok{maxColorValue=} \DecValTok{255}\NormalTok{),}
         \DataTypeTok{xlab=}\StringTok{"Relative gains in attribute 1"}\NormalTok{, }
-        \DataTypeTok{ylab=}\StringTok{"Prospect value of end configuration (chosen product)"}\NormalTok{)}
+        \DataTypeTok{ylab=}\StringTok{"Prospect value of end configuration"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Test3_files/figure-latex/unnamed-chunk-9-1.pdf}
+\includegraphics{Test3_files/figure-latex/unnamed-chunk-10-1.pdf}
 
 \end{document}

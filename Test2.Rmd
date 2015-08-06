@@ -129,7 +129,7 @@ powerful_function(camera_data,
                   FUN= overall_pv,
                   rounds = "all")
 ```
-For space purposes we will only show the results of four randomly picked users.
+For space purposes we will only show the results of user 18 and three randomly picked users.
 ```{r, eval=TRUE, warning=FALSE}
 powerful_function(camera_data,
                   userid= c(54, 20, 6, 16), 
