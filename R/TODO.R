@@ -51,7 +51,7 @@
 #' p2last)) + geom_line(size=1.1) + geom_point(size = 2) +
 #' scale_colour_gradient(low="red", high="green")
 #'
-#' ##### FIXED
+#' ###### FIXED
 #'
 #' (FIXED) Error Catch: easy: by decision_matrix -- prove is provided userid is
 #' in the userid of the data. (DONE, IMPORTANT) Add powerful_functions to the
