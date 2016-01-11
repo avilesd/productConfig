@@ -1,4 +1,4 @@
-##' NEWTODO - testing cache git
+##' NEWTODO - username and pw saved
 ##'
 ##' BA-Liste
 ##'
