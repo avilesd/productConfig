@@ -24,7 +24,7 @@
 #' get_table_by_ID(as.data.frame(matrix_full), 12)
 #' @export
 
-get_table_by_ID<- function(x, userid = NULL,...) {
+get_table_by_ID <- function(x, userid = NULL,...) {
   if(is.null(userid)) {
     stop("You need to specify one userid.")
   }
@@ -38,7 +38,7 @@ get_table_by_ID<- function(x, userid = NULL,...) {
   result
 }
 
-getTableByID <- function(dataset, userid = NULL,...) {
+getTableById <- function(dataset, userid = NULL,...) {
   if(is.null(userid)) {
     stop("You need to specify at least one userid.")
   }
@@ -46,8 +46,8 @@ getTableByID <- function(dataset, userid = NULL,...) {
   if(FALSE %in%(userid %in% get_all_userids(dataset))) {
     logicalVector <-!(userid %in% get_all_userids(dataset))
     fatalUserid <- userid[logicalVector]
-    print(fatalUserid)
-    stop("At least one userid you specified is not contained within your data.")
+    fatalUserid <- paste(fatalUserid, collapse = " ")
+    stop("At least one userid you specified is not contained within your data: ", fatalUserid)
   }
 
   result <- split(dataset, f = dataset$usid)
@@ -65,7 +65,7 @@ getTableByID <- function(dataset, userid = NULL,...) {
 #' \code{$atid}. It also assumes, that all users interacted with the same amount
 #' of attributes.
 #'
-#' @param x the data.frame you want to input.
+#' @param dataset the data.frame you want to input.
 #'
 #' @return a vector of integers representing all existing attribute IDs.
 #'
@@ -118,7 +118,7 @@ get_attrs_ID <- function(dataset) {
 
 get_rounds_by_ID <- function(x, userid = NULL) {
   if(is.null(userid)) {
-    stop("You need to specify one userid.")
+    stop("You need to specify at least one userid.")
   }
   ## Check if given userid is in the data
   if(!userid %in% get_all_userids(x)) {
@@ -128,6 +128,14 @@ get_rounds_by_ID <- function(x, userid = NULL) {
 
   table_by_ID <- get_table_by_ID(x, userid)
   result <- unique(table_by_ID$round)
+  result
+}
+
+getRoundsById <- function(dataset, userid = NULL) {
+  # Userid error catching already done in below function 'getTableById'
+
+  tablesById <- getTableById(dataset, userid)
+  result <- lapply(tablesById, function(tempData) unique(tempData$round))
   result
 }
 
@@ -153,6 +161,12 @@ get_rounds_by_ID <- function(x, userid = NULL) {
 #' @export
 
 get_all_userids <- function(dataset) {
+  table_unique <- sapply(dataset, unique)
+  result <- table_unique$usid
+  result
+}
+
+getAllUserIds <- function(dataset) {
   table_unique <- sapply(dataset, unique)
   result <- table_unique$usid
   result
@@ -209,9 +223,23 @@ get_all_default_rps <- function(dataset, userid) {
   names(result) <- rp_names
 
   result
-
 }
 
+getDefaultRefps <- function(dataset, userid = NULL) {
+
+  tablesById <- getTableById(dataset, userid)
+  tablesDefaultRound <- lapply(tablesById, function(tempData) tempData[tempData$round == 0, ])
+  result <- lapply(tablesDefaultRound, function(tempData2) tempData2$selected)
+
+  ## Get Names, depending on how many attributes and set them on a vector
+  allAttr <- get_attrs_ID(dataset)
+  refpsNames <- paste("rp", allAttr)
+
+  result <- lapply(result, setNames, refpsNames)
+
+  result
+
+}
 #' Normalize a vector
 #'
 #' Divide all given vectors with the absolute sum of all the elements in the
@@ -233,6 +261,15 @@ get_all_default_rps <- function(dataset, userid) {
 #' @export
 
 get_normalized_vec <- function(num_vector) {
+  if(is.vector(num_vector, mode="numeric")) {
+    sum <- sum(abs(num_vector))
+    result <- num_vector/sum
+    result
+  }
+  else warning("Entered argument not a numeric vector.")
+}
+
+normalize <- function(num_vector) {
   if(is.vector(num_vector, mode="numeric")) {
     sum <- sum(abs(num_vector))
     result <- num_vector/sum
