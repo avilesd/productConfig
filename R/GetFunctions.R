@@ -313,4 +313,3 @@ get_attr_values <-function(dataset, attrid = NULL) {
   result <- help1$'TRUE'
   result
 }
-
