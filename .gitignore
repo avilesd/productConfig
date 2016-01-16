@@ -4,6 +4,9 @@
 .Rmd
 .tex
 
+#BA files used for writing and Dependencies
+/BAFiles
+
 # History files
 .Rhistory
 .Rapp.history

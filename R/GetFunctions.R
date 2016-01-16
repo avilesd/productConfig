@@ -38,6 +38,24 @@ get_table_by_ID<- function(x, userid = NULL,...) {
   result
 }
 
+getTableByID <- function(dataset, userid = NULL,...) {
+  if(is.null(userid)) {
+    stop("You need to specify at least one userid.")
+  }
+
+  if(FALSE %in%(userid %in% get_all_userids(dataset))) {
+    logicalVector <-!(userid %in% get_all_userids(dataset))
+    fatalUserid <- userid[logicalVector]
+    print(fatalUserid)
+    stop("At least one userid you specified is not contained within your data.")
+  }
+
+  result <- split(dataset, f = dataset$usid)
+  result <- result[as.character(userid)]
+  result
+}
+
+
 #' Get the amount of attributes and their IDs
 #'
 #' Allows the user to know how many different attributes there are in the
@@ -61,8 +79,8 @@ get_table_by_ID<- function(x, userid = NULL,...) {
 #' @export
 #'
 
-get_attrs_ID<- function(x) {
-  help <- lapply(x, unique)
+get_attrs_ID <- function(dataset) {
+  help <- lapply(dataset, unique)
   result <- help$atid
 
   if(!is.vector(result) & class(result) != "integer") {
@@ -135,7 +153,7 @@ get_rounds_by_ID <- function(x, userid = NULL) {
 #' @export
 
 get_all_userids <- function(dataset) {
-  table_unique <- sapply(play_data, unique)
+  table_unique <- sapply(dataset, unique)
   result <- table_unique$usid
   result
 }

@@ -1,4 +1,4 @@
-##' NEWTODO - username and pw saved
+##' NEWTODO -
 ##'
 ##' BA-Liste
 ##'
