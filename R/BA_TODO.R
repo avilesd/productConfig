@@ -13,8 +13,10 @@
 ##'
 #' COuld do
 ##'
-##' Allow the possibility to get attrIds by userid. Would work for data with different attributes per user.
+##' +Allow the possibility to get attrIds by userid. Would work for data with different attributes per user.
 ##' Low-level functions
+##'
+##' -Do a test environment: Asses. Test if results from old functions are identical to the one of new functions.
 ##'
 ##'
 ##' Won't do
