@@ -315,18 +315,18 @@ get_attr_values <-function(dataset, attrid = NULL) {
 }
 
 getAttrValues <-function(dataset, attrid = NULL) {
-  if(is.null(attrid)) {
-    stop("You need to specify at least one attrid")
-  }
   if(is.null(dataset)) {
     stop("You need to provide the dataset")
   }
 
-  help0 <- get_attrs_ID(dataset)
+  allAttributes <- get_attrs_ID(dataset)
 
-  if(FALSE %in%(attrid %in% help0)) {
-    help0 <- paste(help0, sep=",", collapse = " ")
-    stop("The attrid you specified is not contained in your data. Valid Ids are:", help0)
+  if(is.null(attrid)) {
+    attrid <- allAttributes
+  }
+  if(FALSE %in%(attrid %in% allAttributes)) {
+    allAttributes <- paste(allAttributes, sep=",", collapse = " ")
+    stop("One of the attrid you specified is not contained in your data. Valid Attibute Ids are:", allAttributes)
   }
 
   help1 <- split(dataset, f = dataset$atid)
