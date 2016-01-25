@@ -43,7 +43,7 @@ getTableById <- function(dataset, userid = NULL,...) {
     stop("You need to specify at least one userid.")
   }
 
-  if(FALSE %in%(userid %in% get_all_userids(dataset))) {
+  if(FALSE %in%(userid %in% getAllUserIds(dataset))) {
     logicalVector <-!(userid %in% get_all_userids(dataset))
     fatalUserid <- userid[logicalVector]
     fatalUserid <- paste(fatalUserid, collapse = " ")
@@ -86,7 +86,7 @@ get_attrs_ID <- function(dataset) {
   if(!is.vector(result) & class(result) != "integer") {
     warning("Result of function not a vector of integers, attributes IDs should only be integers.")
   }
-
+  result <- sort(result)
   result
 }
 
@@ -326,7 +326,7 @@ getAttrValues <-function(dataset, attrid = NULL) {
   }
   if(FALSE %in%(attrid %in% allAttributes)) {
     allAttributes <- paste(allAttributes, sep=",", collapse = " ")
-    stop("One of the attrid you specified is not contained in your data. Valid Attibute Ids are:", allAttributes)
+    stop("One of the attrid you specified is not contained in your data. Valid Attibute Ids are: ", allAttributes)
   }
 
   help1 <- split(dataset, f = dataset$atid)
