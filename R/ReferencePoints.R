@@ -82,9 +82,8 @@ ref_points <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NU
   ## Handle attributes
   attrnull <- is.null(attr)
   if(attrnull) {
-    ##Get the attributes of given ID. Default = get all attributes.
+    ##Get all the attributes. Default = get all attributes.
     attr <- get_attrs_ID(dataset)
-    attr <- sort(attr)
   }
   else {
     var1 <- length(attr)
@@ -100,13 +99,72 @@ ref_points <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NU
     }
   }
   ## Actual getting of the Reference Points begins here
-  fullattr <- all(sort(get_attrs_ID(play_data)) == attr)
+  fullattr <- identical(sort(get_attrs_ID(dataset)), sort(attr))
 
   if(is.null(refps) & fullattr) {
     refps <- get_all_default_rps(dataset, userid)
   }
   else if(is.null(refps) & !fullattr) {
     refps <- get_all_default_rps(dataset, userid)
+    refps <- refps[attr]
+  }
+  else {
+    #Bug fixed
+    if(length(attr) != length(refps)){
+      if(attrnull) {
+        stop("Amount of RefPoints entered doesn't equal amount of attributes in your table. Enter equal amount of attributes and RefPoints or all RefPoints.")
+      }
+      else {
+        stop("Amount of RefPoints entered doesn't equal amount of attributes you entered. Enter equal amount of attributes and RefPoints or none.")
+
+      }
+    }
+
+    m <- 1
+    rp_names <- character(0)
+
+    for(rp in refps){
+      rp_names <- c(rp_names, paste("rp", m, seq="", collapse=""))
+      m <- m + 1
+    }
+    names(refps) <- rp_names
+  }
+
+  n <- 1
+  if(!is.null(cost_ids)) {
+    for(n in 1:length(cost_ids)) {
+      if(!is.null(cost_ids)) {
+        refps[cost_ids[n]] <- refps[cost_ids[n]] * (-1)
+      }
+    }
+  }
+  refps
+
+}
+
+referencePoints <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NULL, ...) {
+  ## Handle attributes
+
+  if(is.null(attr)) {
+    ##Get the attributes of given ID. Default = get all attributes.
+    attr <- get_attrs_ID(dataset)
+  }
+  else {
+    if(FALSE %in% (attr %in% get_attrs_ID(dataset))) {
+      attr <- get_attrs_ID(dataset)
+      attr <- paste(attr, sep=",", collapse = " ")
+      stop("of the attribute IDs you entered in attr are not to be found in your data.
+                  Valid attr Ids are: ", attr)
+    }
+  }
+  ## Actual getting of the Reference Points begins here
+  fullattr <- identical(sort(get_attrs_ID(dataset)), sort(attr))
+
+  if(is.null(refps) & fullattr) {
+    refps <- getDefaultRefps(dataset, userid)
+  }
+  else if(is.null(refps) & !fullattr) {
+    refps <- getDefaultRefps(dataset, userid)
     refps <- refps[attr]
   }
   else {
