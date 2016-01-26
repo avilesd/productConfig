@@ -1,2 +1,3 @@
+#not same as .gitignore, this is for development/deployment of R Package
 ^.*\.Rproj$
 ^\.Rproj\.user$
