@@ -130,6 +130,7 @@ ref_points <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NU
     names(refps) <- rp_names
   }
 
+  print(refps)
   n <- 1
   if(!is.null(cost_ids)) {
     for(n in 1:length(cost_ids)) {
@@ -144,9 +145,10 @@ ref_points <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NU
 
 referencePoints <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NULL, ...) {
   ## Handle attributes
+  attrnull <- is.null(attr)
 
-  if(is.null(attr)) {
-    ##Get the attributes of given ID. Default = get all attributes.
+  if(attrnull) {
+    ##Get all the attributes: Default behavior.
     attr <- get_attrs_ID(dataset)
   }
   else {
@@ -154,9 +156,9 @@ referencePoints <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids
       attr <- get_attrs_ID(dataset)
       attr <- paste(attr, sep=",", collapse = " ")
       stop("of the attribute IDs you entered in attr are not to be found in your data.
-                  Valid attr Ids are: ", attr)
+           Valid attr Ids are: ", attr)
     }
-  }
+    }
   ## Actual getting of the Reference Points begins here
   fullattr <- identical(sort(get_attrs_ID(dataset)), sort(attr))
 
@@ -165,7 +167,7 @@ referencePoints <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids
   }
   else if(is.null(refps) & !fullattr) {
     refps <- getDefaultRefps(dataset, userid)
-    refps <- refps[attr]
+    refps <- lapply(refps[1:length(refps)], "[", attr)
   }
   else {
     #Bug fixed
@@ -178,24 +180,8 @@ referencePoints <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids
 
       }
     }
-
-    m <- 1
-    rp_names <- character(0)
-
-    for(rp in refps){
-      rp_names <- c(rp_names, paste("rp", m, seq="", collapse=""))
-      m <- m + 1
-    }
-    names(refps) <- rp_names
-  }
-
-  n <- 1
-  if(!is.null(cost_ids)) {
-    for(n in 1:length(cost_ids)) {
-      if(!is.null(cost_ids)) {
-        refps[cost_ids[n]] <- refps[cost_ids[n]] * (-1)
-      }
-    }
+    #refpsNames <- paste("rp", attr)
+    #refps <- lapply(refps, setNames, refpsNames)
   }
   refps
 

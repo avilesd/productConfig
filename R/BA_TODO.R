@@ -2,6 +2,10 @@
 ##'
 ##' BA-Liste
 #' MUst do
+##'
+##' +++ Rethink Reihenfolge, which parameter has more weight, and according to that, execute
+##' partition of refps. Before partitioning do calculations, e.g. cost_ids. Paper first -->Fix 'referencePoints' cost_ids colliding with attr, quick fix. Common denomninator?
+##' ++ Fix 'referenecPoints' what happens to list-result when user inputs refps parameter?
 ##' ++ Try and catch dataset parameter input on low level functions.
 ##'
 ##' current: MostImportant--Vectorize functions, meaning that when given two or more IDs,
