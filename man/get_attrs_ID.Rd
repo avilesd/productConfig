@@ -4,10 +4,10 @@
 \alias{get_attrs_ID}
 \title{Get the amount of attributes and their IDs}
 \usage{
-get_attrs_ID(x)
+get_attrs_ID(dataset)
 }
 \arguments{
-\item{x}{the data.frame you want to input.}
+\item{dataset}{the data.frame you want to input.}
 }
 \value{
 a vector of integers representing all existing attribute IDs.
