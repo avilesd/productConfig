@@ -144,12 +144,10 @@ ref_points <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NU
 }
 
 referencePoints <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NULL, ...) {
-  ## Handle attributes
   attrnull <- is.null(attr)
 
   if(attrnull) {
-    ##Get all the attributes: Default behavior.
-    attr <- get_attrs_ID(dataset)
+    attr <- get_attrs_ID(dataset) #Get all the attributes: Default behavior.
   }
   else {
     if(FALSE %in% (attr %in% get_attrs_ID(dataset))) {
@@ -158,22 +156,27 @@ referencePoints <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids
       stop("of the attribute IDs you entered in attr are not to be found in your data.
            Valid attr Ids are: ", attr)
     }
-    }
+  }
   ## Actual getting of the Reference Points begins here
-  fullattr <- identical(sort(get_attrs_ID(dataset)), sort(attr))
+  fullattr <- identical(sort(get_attrs_ID(dataset)), sort(attr)) #Check if there are fullattr, either inputed or as default (line150)
+  defaultRefps <- getDefaultRefps(dataset, userid) #Handels userid input errors
+
+  ## Act on cost_ids
+  defAndCostIdRefps <- benefitToCostAttr(dataset, defaultRefps, cost_ids)
 
   if(is.null(refps) & fullattr) {
-    refps <- getDefaultRefps(dataset, userid)
+    refps <- defAndCostIdRefps
   }
   else if(is.null(refps) & !fullattr) {
-    refps <- getDefaultRefps(dataset, userid)
+    refps <- defAndCostIdRefps
     refps <- lapply(refps[1:length(refps)], "[", attr)
-  }
+    print("I am here 2")}
   else {
     #Bug fixed
     if(length(attr) != length(refps)){
       if(attrnull) {
-        stop("Amount of RefPoints entered doesn't equal amount of attributes in your table. Enter equal amount of attributes and RefPoints or all RefPoints.")
+        refps <- defAndCostIdRefps
+        print("I am here 3..replacing the given refps into the lists, alike with benefitToCostAttr function")
       }
       else {
         stop("Amount of RefPoints entered doesn't equal amount of attributes you entered. Enter equal amount of attributes and RefPoints or none.")
