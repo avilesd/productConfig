@@ -333,3 +333,40 @@ getAttrValues <-function(dataset, attrid = NULL) {
   result <- lapply(help1[attrid], function(tempData) unique(tempData$selected))
   result
 }
+
+#' HEader
+#'
+#'
+#'
+#' @param da
+#' @param at
+#'
+#' @return Uni
+#'
+#' @family get functions
+#' @examples tbd
+#'
+#' @export
+
+benefitToCostAttr <- function(dataset, aList, cost_ids = NULL) {
+  allAttrs <- get_attrs_ID(dataset)
+  booleanVector <- cost_ids %in% allAttrs
+
+  if(FALSE %in% booleanVector) {
+    attrAndCostIds <- cost_ids[!booleanVector]
+    attrAndCostIds <- paste(attrAndCostIds, sep=",", collapse = " ")
+    stop("some cost/attribute IDs you entered in cost_ids are not to be found in your data: ", attrAndCostIds)
+  }
+
+  if(is.null(cost_ids)) {
+    costifiedList <- aList
+  }
+  else {
+    n <- 1
+    for(n in 1:length(aList)) {
+      aList[[n]][cost_ids] <- aList[[n]][cost_ids]*(-1)
+      costifiedList <- aList
+    }
+  }
+  costifiedList
+}

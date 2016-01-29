@@ -3,7 +3,7 @@
 ##' BA-Liste
 #' MUst do
 ##'
-##' +++ Rethink Reihenfolge, which parameter has more weight, and according to that, execute
+##' +++ @'ReferencePoints.R' Rethink Reihenfolge, which parameter has more weight, and according to that, execute
 ##' partition of refps. Before partitioning do calculations, e.g. cost_ids. Paper first -->Fix 'referencePoints' cost_ids colliding with attr, quick fix. Common denomninator?
 ##' ++ Fix 'referenecPoints' what happens to list-result when user inputs refps parameter?
 ##' ++ Try and catch dataset parameter input on low level functions.
@@ -31,6 +31,8 @@
 #'  FIXED
 ##' --Give labels to some function outputs, e.g. getDefaultRefpsById, old function gave labels. But not that important.
 ##'  in powerful_function it was with loops (sort of cheating and way it was built). [setNames]
+##'
+##'  + Create new function to costify the lists, initially for 'referencePoints' but also to be use later.
 ##'
 ##'
 ##'
