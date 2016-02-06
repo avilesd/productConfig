@@ -269,6 +269,7 @@ get_normalized_vec <- function(num_vector) {
   else warning("Entered argument not a numeric vector.")
 }
 
+## Renewed function , eventually to put in other R script with functional functions below
 normalize <- function(num_vector) {
   if(is.vector(num_vector, mode="numeric")) {
     sum <- sum(abs(num_vector))
@@ -348,11 +349,12 @@ getAttrValues <-function(dataset, attrid = NULL) {
 #'
 #' @export
 
+#New function
 benefitToCostAttr <- function(dataset, aList, cost_ids = NULL) {
   allAttrs <- get_attrs_ID(dataset)
   booleanVector <- cost_ids %in% allAttrs
 
-  if(FALSE %in% booleanVector) {
+  if(FALSE %in% booleanVector  & class(cost_ids) == "numeric") {
     attrAndCostIds <- cost_ids[!booleanVector]
     attrAndCostIds <- paste(attrAndCostIds, sep=",", collapse = " ")
     stop("some cost/attribute IDs you entered in cost_ids are not to be found in your data: ", attrAndCostIds)
@@ -370,15 +372,16 @@ benefitToCostAttr <- function(dataset, aList, cost_ids = NULL) {
   }
   costifiedList
 }
-
-##cache
-#m <- 1
-#for(m in 1:length(defaultRefps)) {
-  #defaultRefps[[m]][boolean.vector] <- refps[boolean.vector]
- # resultresult <- lapply(defaultRefps, FUN = function(tempData) tempData[boolean.vector] <- refps[boolean.vector])
-#}
-
+## New function
 replaceNotNA <- function(x, y, boolean.vector) {
   x[boolean.vector] <- y[boolean.vector]
   x
 }
+
+##cache
+#m <- 1
+#for(m in 1:length(defaultRefps)) {
+#defaultRefps[[m]][boolean.vector] <- refps[boolean.vector]
+# resultresult <- lapply(defaultRefps, FUN = function(tempData) tempData[boolean.vector] <- refps[boolean.vector])
+#}
+
