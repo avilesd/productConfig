@@ -370,3 +370,15 @@ benefitToCostAttr <- function(dataset, aList, cost_ids = NULL) {
   }
   costifiedList
 }
+
+##cache
+#m <- 1
+#for(m in 1:length(defaultRefps)) {
+  #defaultRefps[[m]][boolean.vector] <- refps[boolean.vector]
+ # resultresult <- lapply(defaultRefps, FUN = function(tempData) tempData[boolean.vector] <- refps[boolean.vector])
+#}
+
+replaceNotNA <- function(x, y, boolean.vector) {
+  x[boolean.vector] <- y[boolean.vector]
+  x
+}
