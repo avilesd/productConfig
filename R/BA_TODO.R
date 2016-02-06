@@ -13,13 +13,18 @@
 ##'
 #' Should do
 ##'
-##' ++Allow the possibility to get attrIds by userid. Would work for data with different attributes per user.
+##' +Allow the possibility to get attrIds by userid. Would work for data with different attributes per user.
 ##' Low-level functions
 ##'
 ##'
 #' COuld do
 ##'
 ##' -Do a test environment: Asses. Test if results from old functions are identical to the one of new functions.
+##'
+##' ++Allow data.frame input in refps parameter, not only same vector for all users.
+##'   helpful code: create boolean.list from input: lapply(someList, function(tempData) !is.na(tempData))
+##'                 see if vector: if(is.vector(someVector) & !is.list(someVector))
+##'                 todo: lapply and change each list element[bool.list] with refps-list[bool.list]
 ##'
 ##'
 ##' Won't do

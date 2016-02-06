@@ -143,7 +143,7 @@ ref_points <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NU
 
 }
 
-referencePoints <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NULL, ...) {
+referencePoints <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NULL, forceRefps = TRUE) {
   attrnull <- is.null(attr)
 
   if(attrnull) {
@@ -161,31 +161,43 @@ referencePoints <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids
   fullattr <- identical(sort(get_attrs_ID(dataset)), sort(attr)) #Check if there are fullattr, either inputed or as default (line150)
   defaultRefps <- getDefaultRefps(dataset, userid) #Handels userid input errors
 
-  ## Act on cost_ids
+  ## UP until here we have the full table: defaultRefps (a)
+
+  ## REFPS are handled here (b1 and c), pending data.frame input
+  if (!is.null(refps)) {
+    lengthDefValues <- length(defaultRefps[[1]])
+    if(lengthDefValues != length(refps) & forceRefps) {
+      warning("Alternatively set forceRefps to FALSE", call. = FALSE)
+      stop("You need to enter a numeric or NA value for all refps, total amount of attributes: ", lengthDefValues, call. = FALSE)
+    }
+    boolean.vector <- !is.na(refps)
+    defaultRefps <- lapply(defaultRefps, FUN = replaceNotNA, refps, boolean.vector)
+  }
+
+  ## Act on COST_IDS (d)
   defAndCostIdRefps <- benefitToCostAttr(dataset, defaultRefps, cost_ids)
 
   if(is.null(refps) & fullattr) {
     refps <- defAndCostIdRefps
   }
+  ## CUT modified table (e)
   else if(is.null(refps) & !fullattr) {
     refps <- defAndCostIdRefps
     refps <- lapply(refps[1:length(refps)], "[", attr)
-    print("I am here 2")}
+  }
+  else if(!fullattr) {
+    refps <- defAndCostIdRefps
+    refps <- lapply(refps[1:length(refps)], "[", attr)
+  }
+  #Act on forceRefps = FALSE
+  else if(length(attr) != length(refps) & !forceRefps){
+    stop("Amount of RefPoints entered doesn't equal amount of attributes you entered. Enter equal amount of attributes and RefPoints or none.")
+  }
   else {
-    #Bug fixed
-    if(length(attr) != length(refps)){
-      if(attrnull) {
-        refps <- defAndCostIdRefps
-        print("I am here 3..replacing the given refps into the lists, alike with benefitToCostAttr function")
-      }
-      else {
-        stop("Amount of RefPoints entered doesn't equal amount of attributes you entered. Enter equal amount of attributes and RefPoints or none.")
-
-      }
-    }
+    refps <- defAndCostIdRefps
+  }
     #refpsNames <- paste("rp", attr)
     #refps <- lapply(refps, setNames, refpsNames)
-  }
   refps
 
 }
