@@ -143,7 +143,7 @@ ref_points <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NU
 
 }
 
-referencePoints <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NULL, forceRefps = TRUE) {
+referencPoints <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NULL, forceRefps = TRUE) {
   attrnull <- is.null(attr)
 
   if(attrnull) {
@@ -200,4 +200,76 @@ referencePoints <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids
     #refps <- lapply(refps, setNames, refpsNames)
   refps
 
+}
+
+
+referencePoints <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NULL, forceRefps = TRUE) {
+  # Check decision tree
+  attrnull <- is.null(attr)
+  fillAfterCut <- FALSE
+
+  if(attrnull) {
+    attr <- get_attrs_ID(dataset) #Get all the attributes: Default behavior.
+  }
+  else {
+    if(FALSE %in% (attr %in% get_attrs_ID(dataset))) {
+      attr <- get_attrs_ID(dataset)
+      attr <- paste(attr, sep=",", collapse = " ")
+      stop("of the attribute IDs you entered in attr are not to be found in your data.
+           Valid attr Ids are: ", attr)
+    }
+  }
+  fullattr <- identical(sort(get_attrs_ID(dataset)), sort(attr)) #Check if there are fullattr, either inputed or as default (line150)
+  defaultRefps <- getDefaultRefps(dataset, userid) #Handels userid input errors
+
+  if(forceRefps) {
+    if (!is.null(refps)) {
+      lengthDefValues <- length(defaultRefps[[1]])
+      if(lengthDefValues != length(refps)) {
+        warning("Alternatively set forceRefps to FALSE", call. = FALSE)
+        stop("You need to enter a numeric or NA value for all refps, total amount of attributes: ", lengthDefValues, call. = FALSE)
+      }
+      boolean.vector <- !is.na(refps)
+      defaultRefps <- lapply(defaultRefps, FUN = replaceNotNA, refps, boolean.vector)
+    }
+    else { # refps is null
+      defaultRefps <- defaultRefps
+    }
+  }
+
+  if(!forceRefps) {
+    if(length(attr) != length(refps) & !is.null(refps)) {
+      stop("Amount of RefPoints entered doesn't equal amount of attributes you entered. Enter equal amount of attributes and RefPoints or none.")
+    }
+    else {
+      fillAfterCut <- TRUE
+    }
+  }
+
+  defAndCostIdRefps <- benefitToCostAttr(dataset, defaultRefps, cost_ids)
+
+  #CUT according to attribute
+  if (fullattr) {
+    cutTable <- defAndCostIdRefps
+  }
+  else {
+    cutTable <- defAndCostIdRefps
+    cutTable <- lapply(cutTable[1:length(cutTable)], "[", attr)
+  }
+
+  if(fillAfterCut & !is.null(refps)) {
+    boolean.vector2 <- !is.na(refps)
+    result <- lapply(cutTable, FUN = replaceNotNA, refps, boolean.vector2)
+
+    costCharacter <- paste("rp", cost_ids)
+    result <- benefitToCostAttr(dataset, result, costCharacter)
+
+    if(length(cost_ids) > length(attr)) {
+      warning("You have entered more cost_ids than attributes", call. = FALSE)
+    }
+  }
+  else {
+    result <- cutTable
+  }
+  result
 }
