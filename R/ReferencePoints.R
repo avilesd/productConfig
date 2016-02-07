@@ -130,7 +130,6 @@ ref_points <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NU
     names(refps) <- rp_names
   }
 
-  print(refps)
   n <- 1
   if(!is.null(cost_ids)) {
     for(n in 1:length(cost_ids)) {
