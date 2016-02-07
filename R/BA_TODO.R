@@ -13,6 +13,8 @@
 ##' +Allow the possibility to get attrIds by userid. Would work for data with different attributes per user.
 ##' Low-level functions
 ##'
+##' ++Benchmarking execution time and compare with older version. (powerful_function)
+##'
 ##'
 #' COuld do
 ##'
