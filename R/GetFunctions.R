@@ -349,7 +349,8 @@ getAttrValues <-function(dataset, attrid = NULL) {
 #'
 #' @export
 
-#New function
+#New function it can handle two types of lists, important for RefPoints and for decisionMatrix. It handles
+# with list-elements as a. vectors, e.g. refps or as b. matrices like in a decision matrix.
 benefitToCostAttr <- function(dataset, aList, cost_ids = NULL) {
   allAttrs <- get_attrs_ID(dataset)
   booleanVector <- cost_ids %in% allAttrs
@@ -365,9 +366,17 @@ benefitToCostAttr <- function(dataset, aList, cost_ids = NULL) {
   }
   else {
     n <- 1
-    for(n in 1:length(aList)) {
-      aList[[n]][cost_ids] <- aList[[n]][cost_ids]*(-1)
-      costifiedList <- aList
+    if(is.vector(aList[[1]]) & !is.list(aList[[1]])) {
+      for(n in 1:length(aList)) {
+        aList[[n]][cost_ids] <- aList[[n]][cost_ids]*(-1)
+        costifiedList <- aList
+      }
+    }
+    else {
+      for(n in 1:length(aList)) {
+        aList[[n]][,cost_ids] <- aList[[n]][,cost_ids]*(-1)
+        costifiedList <- aList
+      }
     }
   }
   costifiedList
