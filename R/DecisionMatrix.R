@@ -177,3 +177,58 @@ decision_matrix <- function(data, userid = NULL, attr = NULL, rounds = NULL, cos
   result_matrix
 
 }
+
+#New function: different than previous version is for example by the handling of the cost_ids
+# argument, e.g. decision_matrix(myData, 60, attr=c(1,2,4) ,rounds="all", cost_ids = 3),
+# previous function cuts matrix first and then wrongly applies cost_ids to the third attribute,
+# in this case attr4. Cost ids will be calculated before, so dont' have to consider anything
+# before their input.
+
+decisionMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, cost_ids = NULL) {
+  if(is.null(attr)) {
+    attr <- sort(get_attrs_ID(dataset))
+  }
+  completeTables <- getTableById(dataset, userid)
+
+  orderedLists <- lapply(completeTables, function(tempData) tapply(tempData$selected, tempData$round, FUN = "["))
+  bindedTables <- lapply(orderedLists, function(tempData2) do.call(rbind, tempData2))
+
+  costifiedTables <- benefitToCostAttr(dataset, bindedTables, cost_ids)
+  costifiedTables
+
+  #Consider names beforing cutting
+
+  #Rounds
+  if(is.null(rounds)) {
+    all_rounds <- get_rounds_by_ID(dataset, userid)
+    rounds <- c(all_rounds[1], all_rounds[length(all_rounds)])
+  }
+  else if (rounds == "all"){
+    rounds <- getRoundsById(dataset, userid)
+  }
+  else if (rounds == "last") {
+    all_rounds <- get_rounds_by_ID(dataset, userid)
+    rounds <- all_rounds[length(all_rounds)]
+  }
+  else if (rounds == "first") {
+    all_rounds <- get_rounds_by_ID(dataset, userid)
+    rounds <- c(all_rounds[1])
+  }
+
+  # CUT according to attr, not finished, need some rest, return later to it, write it down
+  # current default behavior is getting all rounds.
+  attribute.cut <- lapply(costifiedTables[1:length(costifiedTables)], function(tempData3) tempData3[,attr, drop=FALSE])
+
+  #roundCut <- function(roundsPerUser) {
+  #  result <- lapply(attribute.cut[1:length(attribute.cut)], function(tempData4) tempData4[roundsPerUser, , drop=FALSE])
+  #  result
+  #}
+
+  #j <- 1
+  #for (i in rounds) {
+  #  rounds.cut <- roundCut(i)
+  #}
+  #print(rounds.cut)
+  attribute.cut
+
+}
