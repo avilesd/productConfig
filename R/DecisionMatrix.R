@@ -200,18 +200,18 @@ decisionMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
 
   #Rounds
   if(is.null(rounds)) {
-    all_rounds <- get_rounds_by_ID(dataset, userid)
-    rounds <- c(all_rounds[1], all_rounds[length(all_rounds)])
+    all_rounds <- getRoundsById(dataset, userid)
+    #rounds <- c(all_rounds[1], all_rounds[length(all_rounds)])
   }
   else if (rounds == "all"){
     rounds <- getRoundsById(dataset, userid)
   }
   else if (rounds == "last") {
-    all_rounds <- get_rounds_by_ID(dataset, userid)
+    all_rounds <- getRoundsById(dataset, userid)
     rounds <- all_rounds[length(all_rounds)]
   }
   else if (rounds == "first") {
-    all_rounds <- get_rounds_by_ID(dataset, userid)
+    all_rounds <- getRoundsById(dataset, userid)
     rounds <- c(all_rounds[1])
   }
 
@@ -219,16 +219,11 @@ decisionMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
   # current default behavior is getting all rounds.
   attribute.cut <- lapply(costifiedTables[1:length(costifiedTables)], function(tempData3) tempData3[,attr, drop=FALSE])
 
-  #roundCut <- function(roundsPerUser) {
-  #  result <- lapply(attribute.cut[1:length(attribute.cut)], function(tempData4) tempData4[roundsPerUser, , drop=FALSE])
-  #  result
-  #}
+  #round.cut <- lapply(attribute.cut[1:length(attribute.cut)], function(tempData4) tempData4[,rounds[j], drop=FALSE])
 
-  #j <- 1
-  #for (i in rounds) {
-  #  rounds.cut <- roundCut(i)
-  #}
-  #print(rounds.cut)
+  #round.cut <- lapply(attribute.cut[1:length(attribute.cut)], function(tempData4) tempData4[rounds[j], , drop=FALSE])
+  attribute.cut <- mapply(attribute.cut[1:length(attribute.cut)], FUN = function(tempDataA, tempDataB) tempDataA[tempDataB, , drop = FALSE], all_rounds, SIMPLIFY = FALSE)
+
   attribute.cut
 
 }
