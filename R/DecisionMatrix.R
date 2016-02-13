@@ -199,22 +199,28 @@ decisionMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
   #Consider names beforing cutting
 
   #Rounds
+  all_rounds <- getRoundsById(dataset, userid)
+
+  j <- 1
   if(is.null(rounds)) {
-    all_rounds <- getRoundsById(dataset, userid)
-    #rounds <- c(all_rounds[1], all_rounds[length(all_rounds)])
+    rounds <- list()
+    for (i in userid) {
+      rounds[[j]] <- c(1, length(all_rounds[[j]]))
+      j <- j + 1
+    }
   }
   else if (rounds == "all"){
-    rounds <- getRoundsById(dataset, userid)
+    rounds <- lapply(all_rounds, function(tempDataX) tempDataX+1)
   }
   else if (rounds == "last") {
-    all_rounds <- getRoundsById(dataset, userid)
-    rounds <- all_rounds[length(all_rounds)]
+    rounds <- lapply(all_rounds, length)
   }
   else if (rounds == "first") {
-    all_rounds <- getRoundsById(dataset, userid)
-    rounds <- c(all_rounds[1])
+    rounds <- lapply(all_rounds, function(tempDataY) 1)
   }
-
+  else {
+    warning("Input in 'rounds' not recognized, calculated with default: first and last rounds")
+  }
   # CUT according to attr, not finished, need some rest, return later to it, write it down
   # current default behavior is getting all rounds.
   attribute.cut <- lapply(costifiedTables[1:length(costifiedTables)], function(tempData3) tempData3[,attr, drop=FALSE])
@@ -222,8 +228,8 @@ decisionMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
   #round.cut <- lapply(attribute.cut[1:length(attribute.cut)], function(tempData4) tempData4[,rounds[j], drop=FALSE])
 
   #round.cut <- lapply(attribute.cut[1:length(attribute.cut)], function(tempData4) tempData4[rounds[j], , drop=FALSE])
-  attribute.cut <- mapply(attribute.cut[1:length(attribute.cut)], FUN = function(tempDataA, tempDataB) tempDataA[tempDataB, , drop = FALSE], all_rounds, SIMPLIFY = FALSE)
+  round.cut <- mapply(attribute.cut[1:length(attribute.cut)], FUN = function(tempDataA, tempDataB) tempDataA[tempDataB, , drop = FALSE], rounds, SIMPLIFY = FALSE)
 
-  attribute.cut
+  round.cut
 
 }
