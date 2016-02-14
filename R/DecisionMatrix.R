@@ -237,12 +237,11 @@ decisionMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
   #Get Dimensions -  move to if else cases
   tableRows <- lapply(round.cut, rownames)
   round.RowNames <- lapply(tableRows, paste0, "round")
-  attribute.ColNames <- paste0("attr", attr)
-
-  unnamedResult <- lapply(round.cut, unname)
 
   #namedResult <- lapply(round.cut, function(tempData5) {colnames(tempData5) <- attribute.ColNames; tempData5})
-  namedResult <- lapply(unnamedResult, function(tempData5) {colnames(tempData5) <-colnames(tempData5, do.NULL = F, prefix = "attr"); tempData5})
+  namedResult <- lapply(round.cut, function(tempData5) {colnames(tempData5) <-colnames(tempData5, do.NULL = F, prefix = "attr"); tempData5})
+  namedResult <- mapply(namedResult[1:length(namedResult)], FUN =  function(tempDataC, tempDataD) {rownames(tempDataC) <- tempDataD; tempDataC}, round.RowNames, SIMPLIFY = FALSE)
+
   ## Below doesn't work, it deletes colnames and it starts from 0, should start from 0
   ##namedResult <- lapply(unnamedResult, function(tempData6) {rownames(tempData6) <-rownames(tempData6, do.NULL = F, prefix = "round"); tempData6})
   #namedResult <- lapply(namedResult, function(tempDataC, tempDataD) {rownames(tempDataC) <- tempDataD[1] ;tempDataC}, round.RowNames)
