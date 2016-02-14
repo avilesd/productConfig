@@ -25,7 +25,8 @@ get_attr_values(other_data, 100) #Possible catched error: The attrID you specifi
 
 }
 \seealso{
-Other get functions: \code{\link{get_all_default_rps}},
+Other get functions: \code{\link{benefitToCostAttr}},
+  \code{\link{get_all_default_rps}},
   \code{\link{get_all_userids}},
   \code{\link{get_attrs_ID}},
   \code{\link{get_normalized_vec}},
