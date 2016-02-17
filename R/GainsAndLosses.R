@@ -103,16 +103,49 @@ gain_matrix <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps =
 }
 
 gainMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
-  desMatrixList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
-  referencePs <- referencePoints(dataset, userid, refps, attr, cost_ids)
+  desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
+  refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)
 
-  tMatrixList <- lapply(desMatrixList, t)
+  tMatrixList <- lapply(desList, t)
 
-  result <- mapply(gainFunction, tMatrixList, referencePs, SIMPLIFY = F)
+  result <- mapply(gainFunction, tMatrixList, refPs, SIMPLIFY = F)
+
+  allRounds <- getRoundsById(dataset, userid)
+  if (is.null(attr)) attr <- get_attrs_ID(dataset)
+
+  #desList <- lapply(result, dim, nrow = rounds, ncol= length(attr), byrow = T)
+  res <- mapply(function(tempData7, tempData8) {dim(tempData7) <- c(ncol(tempData8), nrow(tempData8)); tempData7}, result, desList, SIMPLIFY = F)
+  finalRes <- lapply(res, t)
+  finalRes
+}
+
+gainMatrix2 <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
+  desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
+  refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)
+
+  tMatrixList <- lapply(desList, t)
+
+  result <- mapply(gainFunction, tMatrixList, refPs, SIMPLIFY = F)
+
+  allRounds <- getRoundsById(dataset, userid)
+  if (is.null(attr)) attr <- get_attrs_ID(dataset)
+
+  if(is.null(rounds)) {
+    rounds <-  rep(2, times=length(userid))
+  }
+  else if (rounds == "all"){
+    rounds <- sapply(allRounds, length)
+  }
+  else if (rounds == "last") {
+    rounds <-  rep(1, times=length(userid))
+  }
+  else if (rounds == "first") {
+    rounds <-  rep(1, times=length(userid))
+  }
+  for(i in 1:length(rounds)) {
+    result[[i]] <- matrix(result[[i]],nrow = rounds[i], ncol = length(attr), byrow = T)
+  }
   result
-
-  some <- lapply(result[1:length(result)], matrix, ncol = c(4,5,7), byrow = T)
-  some
 }
 
 #' Loss matrix
@@ -215,8 +248,23 @@ loss_matrix <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps =
     m <- m + 1
   }
   loss_matrix
+}
 
+lossMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
+  desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
+  refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)
 
+  tMatrixList <- lapply(desList, t)
+
+  result <- mapply(lossFunction, tMatrixList, refPs, SIMPLIFY = F)
+
+  allRounds <- getRoundsById(dataset, userid)
+  if (is.null(attr)) attr <- get_attrs_ID(dataset)
+
+  #desList <- lapply(result, dim, nrow = rounds, ncol= length(attr), byrow = T)
+  res <- mapply(function(tempData7, tempData8) {dim(tempData7) <- c(ncol(tempData8), nrow(tempData8)); tempData7}, result, desList, SIMPLIFY = F)
+  finalRes <- lapply(res, t)
+  finalRes
 }
 
 #' Merges gain and loss matrices
@@ -325,6 +373,14 @@ gain_loss_matrices <- function(data, userid = NULL, attr = NULL, rounds = NULL, 
 
 }
 
+gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
+  gainList <- gainMatrix(dataset, userid, attr, rounds, refps, cost_ids)
+  lossList <- lossMatrix(dataset, userid, attr, rounds, refps, cost_ids)
+  gain.loss <- mapply(list, gain = gainList, loss = lossList, SIMPLIFY = F)
+
+  gain.loss
+}
+
 #' Normalizes gain and loss matrices
 #'
 #' Returns a list with two elements one is the normalized $ngain matrix and the
@@ -401,6 +457,10 @@ norm_g_l_matrices <- function(data, userid = NULL, attr = NULL, rounds = NULL, r
   }
   result <- list(ngain = n_gain, nloss = n_loss)
   result
+}
+
+norm.gainLoss <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
+
 }
 
 #' Calculates the gain for one attribute
