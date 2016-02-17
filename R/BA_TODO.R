@@ -18,6 +18,8 @@
 ##'
 #' COuld do
 ##'
+##' Optimize gain and loss vector-functions @gainFunction to reduce processing time.
+##'
 ##' -Do a test environment: Asses. Test if results from old functions are identical to the one of new functions.
 ##'
 ##' ++Allow data.frame input in refps parameter, not only same vector for all users.

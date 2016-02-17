@@ -102,6 +102,19 @@ gain_matrix <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps =
 
 }
 
+gainMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
+  desMatrixList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
+  referencePs <- referencePoints(dataset, userid, refps, attr, cost_ids)
+
+  tMatrixList <- lapply(desMatrixList, t)
+
+  result <- mapply(gainFunction, tMatrixList, referencePs, SIMPLIFY = F)
+  result
+
+  some <- lapply(result[1:length(result)], matrix, ncol = c(4,5,7), byrow = T)
+  some
+}
+
 #' Loss matrix
 #'
 #' Creates the Loss matrix parting from a decision matrix and a vector
@@ -414,12 +427,17 @@ norm_g_l_matrices <- function(data, userid = NULL, attr = NULL, rounds = NULL, r
 
 gain_fun_a <- function(s_ij, e_j) {
   if(s_ij >= e_j) {
-    gain <- s_ij - e_j
+  gain <- s_ij - e_j
   }
   else {
     gain <- 0
   }
   gain
+}
+
+gainFunction <- function(v1, v2) {
+  gainVector <- mapply(gain_fun_a, v1, v2)
+  gainVector
 }
 
 #' Calculates the loss for one attribute
@@ -451,4 +469,9 @@ loss_fun_a <- function(s_ij, e_j) {
     loss <- s_ij - e_j
   }
   loss
+}
+
+lossFunction <- function(v1, v2) {
+  lossVector <- mapply(loss_fun_a, v1, v2)
+  lossVector
 }
