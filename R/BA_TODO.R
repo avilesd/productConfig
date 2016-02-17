@@ -3,10 +3,16 @@
 ##' BA-Liste
 #' MUst do
 ##'
+##' ++ Move to WRITING TODO: vectorized vs non-vectorized, latter faster for small amount of data, but for all users, first is a
+##' lot faster, e.g. system.time(replicate(50,powerful_function(myData, all.users, FUN = gain_loss_matrices))) : user 30.78
+##' system.time(replicate(50, gainLoss(myData, all.users)) : user 7.88
+##'
 ##' ++ Try and catch dataset parameter input on low level functions.
 ##'
 ##' current: MostImportant--Vectorize functions, meaning that when given two or more IDs,
 ##'       then able to calculate it, without powerful_function.
+##'
+##' -when input @referencePoints refps contains NA and forceRefps = F, weird things happen
 ##'
 #' Should do
 ##'
@@ -18,7 +24,12 @@
 ##'
 #' COuld do
 ##'
-##' Optimize gain and loss vector-functions @gainFunction to reduce processing time.
+##' +Decide: name rows/cols? Missing in gains and losses.
+##'
+##' Optimize gain and loss vector-functions @gainFunction to reduce processing time. Compared to powerful, slower for
+##' small quantites of data userid = 9:11 but a lot faster for AllUsers.
+##'
+##' -Test if using less variables and reusing (eg @decisionMatrix) performs faster.
 ##'
 ##' -Do a test environment: Asses. Test if results from old functions are identical to the one of new functions.
 ##'

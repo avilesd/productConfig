@@ -199,7 +199,7 @@ referencePoints <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids
   if(fillAfterCut & !is.null(refps)) {
     boolean.vector2 <- !is.na(refps)
     result <- lapply(cutTable, FUN = replaceNotNA, refps, boolean.vector2)
-
+    print("here is the error, Na + forceRefps = T")
     costCharacter <- paste("rp", cost_ids)
     result <- benefitToCostAttr(dataset, result, costCharacter)
 
