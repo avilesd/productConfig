@@ -261,7 +261,7 @@ lossMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps
   allRounds <- getRoundsById(dataset, userid)
   if (is.null(attr)) attr <- get_attrs_ID(dataset)
 
-  #desList <- lapply(result, dim, nrow = rounds, ncol= length(attr), byrow = T)
+  #This should be a standalone function
   res <- mapply(function(tempData7, tempData8) {dim(tempData7) <- c(ncol(tempData8), nrow(tempData8)); tempData7}, result, desList, SIMPLIFY = F)
   finalRes <- lapply(res, t)
   finalRes
@@ -459,8 +459,23 @@ norm_g_l_matrices <- function(data, userid = NULL, attr = NULL, rounds = NULL, r
   result
 }
 
-norm.gainLoss <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
+norm.gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
+  desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
+  refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)
 
+  tMatrixList <- lapply(desList, t)
+
+  gainList <- mapply(gainFunction, tMatrixList, refPs, SIMPLIFY = F)
+  lossList <- mapply(lossFunction, tMatrixList, refPs, SIMPLIFY = F)
+
+  bindedGain <- mapply(function(tempData7, tempData8) {dim(tempData7) <- c(nrow(tempData8), ncol(tempData8)); tempData7}, gainList, desList, SIMPLIFY = F)
+  bindedLoss <- mapply(function(tempData7, tempData8) {dim(tempData7) <- c(nrow(tempData8), ncol(tempData8)); tempData7}, lossList, desList, SIMPLIFY = F)
+
+  rbindedBoth <- mapply(rbind, gainList, lossList, SIMPLIFY = F)
+
+  #With info you have create a 'muster' template with correct number of attributes/columns! rows may vary
+
+  rbindedBoth
 }
 
 #' Calculates the gain for one attribute
