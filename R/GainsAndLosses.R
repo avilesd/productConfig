@@ -110,9 +110,6 @@ gainMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps
 
   result <- mapply(gainFunction, tMatrixList, refPs, SIMPLIFY = F)
 
-  allRounds <- getRoundsById(dataset, userid)
-  if (is.null(attr)) attr <- get_attrs_ID(dataset)
-
   #desList <- lapply(result, dim, nrow = rounds, ncol= length(attr), byrow = T)
   res <- mapply(function(tempData7, tempData8) {dim(tempData7) <- c(ncol(tempData8), nrow(tempData8)); tempData7}, result, desList, SIMPLIFY = F)
   finalRes <- lapply(res, t)
@@ -258,9 +255,6 @@ lossMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps
 
   result <- mapply(lossFunction, tMatrixList, refPs, SIMPLIFY = F)
 
-  allRounds <- getRoundsById(dataset, userid)
-  if (is.null(attr)) attr <- get_attrs_ID(dataset)
-
   #This should be a standalone function
   res <- mapply(function(tempData7, tempData8) {dim(tempData7) <- c(ncol(tempData8), nrow(tempData8)); tempData7}, result, desList, SIMPLIFY = F)
   finalRes <- lapply(res, t)
@@ -376,7 +370,13 @@ gain_loss_matrices <- function(data, userid = NULL, attr = NULL, rounds = NULL, 
 gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
   gainList <- gainMatrix(dataset, userid, attr, rounds, refps, cost_ids)
   lossList <- lossMatrix(dataset, userid, attr, rounds, refps, cost_ids)
-  gain.loss <- mapply(list, gain = gainList, loss = lossList, SIMPLIFY = F)
+
+  #if (unlist) {
+  #  gain.loss <- mapply(rbind, gainList, lossList, SIMPLIFY = F)
+  #}
+  #else{
+  #  gain.loss <- mapply(list, gain = gainList, loss = lossList, SIMPLIFY = F)
+  gain.loss <- mapply(rbind, gainList, lossList, SIMPLIFY = F)
 
   gain.loss
 }
@@ -467,15 +467,33 @@ norm.gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, re
 
   gainList <- mapply(gainFunction, tMatrixList, refPs, SIMPLIFY = F)
   lossList <- mapply(lossFunction, tMatrixList, refPs, SIMPLIFY = F)
+  #Check if maybe faster with gainLoss unlist= T, think it through before executing
 
-  bindedGain <- mapply(function(tempData7, tempData8) {dim(tempData7) <- c(nrow(tempData8), ncol(tempData8)); tempData7}, gainList, desList, SIMPLIFY = F)
-  bindedLoss <- mapply(function(tempData7, tempData8) {dim(tempData7) <- c(nrow(tempData8), ncol(tempData8)); tempData7}, lossList, desList, SIMPLIFY = F)
+  #bindedGain <- mapply(function(tempData7, tempData8) {dim(tempData7) <- c(nrow(tempData8), ncol(tempData8)); tempData7}, gainList, desList, SIMPLIFY = F)
+  #bindedLoss <- mapply(function(tempData7, tempData8) {dim(tempData7) <- c(nrow(tempData8), ncol(tempData8)); tempData7}, lossList, desList, SIMPLIFY = F)
 
-  rbindedBoth <- mapply(rbind, gainList, lossList, SIMPLIFY = F)
-
+  vectorBoth <- mapply(c, gainList, lossList, SIMPLIFY = F)
+  matrixBoth <- mapply(function(tempData7, tempData8) {dim(tempData7) <- c(nrow(tempData8)*2, ncol(tempData8)); tempData7}, vectorBoth, desList, SIMPLIFY = F)
+  #Goal calculate hmax
   #With info you have create a 'muster' template with correct number of attributes/columns! rows may vary
 
-  rbindedBoth
+  result4max <- lapply(matrixBoth, function(temp) apply(temp, 2, abs))
+  hmaxVector <- lapply(result4max, function(temp) apply(temp, 1, max)) # returns a list with the hmax vector
+  hmaxVector <- lapply(hmaxVector, function(temp2) replace(temp2, temp2==0.0, 1.00)) #remove 0 to avoid NA when dividing
+
+  g.normMatrix <- mapply("/", gainList, hmaxVector, SIMPLIFY = F)
+  l.normMatrix <- mapply("/", lossList, hmaxVector, SIMPLIFY = F)
+
+  # Idea t() in the end
+  g.normMatrix <- lapply(g.normMatrix, t)
+  l.normMatrix <- lapply(l.normMatrix, t)
+  g.normMatrix
+  l.normMatrix
+  #bothMatrix <- lapply(gainLoss(dataset, userid, attr, rounds, refps, cost_ids, unlist=T),t)
+  #bothMatrix <- mapply("%/%", bothMatrix, hmaxVector, SIMPLIFY = F)
+  #bothMatrix <- lapply(bothMatrix, t)
+  #bothMatrix
+
 }
 
 #' Calculates the gain for one attribute
@@ -502,7 +520,7 @@ norm.gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, re
 
 gain_fun_a <- function(s_ij, e_j) {
   if(s_ij >= e_j) {
-  gain <- s_ij - e_j
+    gain <- s_ij - e_j
   }
   else {
     gain <- 0

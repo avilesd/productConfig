@@ -41,7 +41,8 @@
 ##'
 ##' Won't do
 ##'
-
+##' Write: Instead of doing everything on lists, do it on a single data.frame or matrix with an id column,
+##' perhaps faster.
 ##'
 ##'
 ##'
