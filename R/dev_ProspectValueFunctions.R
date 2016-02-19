@@ -16,10 +16,26 @@ overall_pv <- function (dataset, userid = NULL, attr = NULL, rounds = NULL, refp
 
 }
 
-#New function
+#Added new function
 overallPV <- function (dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL,  weight = NULL,
                        alpha = 0.88, beta = 0.88, lambda = 2.25) {
 
+  if(is.null(weight) & is.null(dataset)) {
+    stop("Unable to get weights. You need to enter the weights or provide the dataset for us to calculate them. ")
+  }
+  if(is.null(weight)) {
+    weight <-get_attr_weight(dataset, userid[1], weight,  attr, rounds, cost_ids)
+  }
+  else if(!is.null(weight) & is.vector(weight) & !is.list(weight)) {
+    weight <- weight
+  }
+
+
+  pvMatrices <- pvMatrix(dataset, userid, attr, rounds, refps, cost_ids, alpha, beta, lambda)
+
+  overall_pv <- lapply(pvMatrices,overall_pv_extend, weight)
+
+  overall_pv
 }
 
 ###########
