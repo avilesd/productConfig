@@ -470,8 +470,45 @@ norm_g_l_matrices <- function(data, userid = NULL, attr = NULL, rounds = NULL, r
   result <- list(ngain = n_gain, nloss = n_loss)
   result
 }
+## to be used
+norm.gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL, binded = T) {
+  desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
+  refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)
 
-norm.gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
+  tMatrixList <- lapply(desList, t)
+
+  gainVector <- mapply(gainFunction, tMatrixList, refPs, SIMPLIFY = F)
+  lossVector <- mapply(lossFunction, tMatrixList, refPs, SIMPLIFY = F)
+
+  #Using matrix and lapply is harder, because different amount of rounds and therefore rows.
+  gainList <- mapply(function(temp5, temp6) {dim(temp5) <- c(ncol(temp6), nrow(temp6)); temp5}, gainVector, desList, SIMPLIFY = F)
+  lossList <- mapply(function(temp5, temp6) {dim(temp5) <- c(ncol(temp6), nrow(temp6)); temp5}, lossVector, desList, SIMPLIFY = F)
+
+  gainList <- lapply(gainList, t) # correct form
+  lossList <- lapply(lossList, t)
+
+  bindedUnnorm <- mapply(rbind, gainList, lossList, SIMPLIFY = F)
+
+  #Goal calculate hmax
+  result4max <- lapply(bindedUnnorm, function(temp) apply(temp, 2, abs))
+  hmaxVector <- lapply(result4max, function(temp1) apply(temp1, 2, max)) # returns a list with the hmax vector
+  hmaxVector <- lapply(hmaxVector, function(temp2) replace(temp2, temp2==0.0, 1.00)) #remove 0 to avoid NA when dividing
+
+  g.normMatrix <- mapply(function(aMatrix, aVector) aMatrix / aVector[col(aMatrix)], gainList, hmaxVector, SIMPLIFY = F)
+  l.normMatrix <- mapply(function(aMatrix, aVector) aMatrix / aVector[col(aMatrix)], lossList, hmaxVector, SIMPLIFY = F)
+
+  if (binded) {
+    bothMatrix <-mapply(rbind, g.normMatrix, l.normMatrix, SIMPLIFY = F)
+    bothMatrix
+  }
+  else {
+    bothMatrix <- list(gain = g.normMatrix, loss = l.normMatrix) # use lapply to join gain-loss for each userid
+  }
+  bothMatrix
+}
+
+##Old method, fine, just as quick, but less readable because of multiple t()
+norm.gainLoss.sep <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
   desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
   refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)
 
@@ -504,11 +541,18 @@ norm.gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, re
   #l.normMatrix <- lapply(l.normMatrix, t)
   #g.normMatrix
   #l.normMatrix
+  ###
+  #gainLoss <- mapply(rbind, gainList, lossList, SIMPLIFY = F)
+  #bothMatrix <- mapply(function(aMatrix, aVector) aMatrix / aVector[col(aMatrix)], gainLoss, hmaxVector, SIMPLIFY = F)
+
+  ###
+
   gainLoss <- mapply(rbind, gainList, lossList, SIMPLIFY = F)
   bothMatrix <- lapply(gainLoss,t)
   bothMatrix <- mapply("/", bothMatrix, hmaxVector, SIMPLIFY = F)
   bothMatrix <- lapply(bothMatrix, t)
   bothMatrix
+
 }
 
 #' Calculates the gain for one attribute
