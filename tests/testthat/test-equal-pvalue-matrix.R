@@ -1,8 +1,8 @@
-context("Testing legacy pow_fun with new pvMatrix")
+context("3.Testing legacy pow_fun with new pvMatrix")
 
 
 
-test_that("results are equal", {
+test_that("results are identical", {
   camera2_config <- read.csv("C:/Users/diego/Google Drive/KIT/Seminar_eC_HCI/R/camera2_config.csv")
   all.users <- getAllUserIds(camera2_config)
   randomRounds <- sample(c("first","last","all"), 1)
