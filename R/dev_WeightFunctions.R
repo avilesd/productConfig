@@ -14,7 +14,7 @@ weight_higher_sum_value <- function(dataset, userid = NULL , rounds = NULL, cost
 
     help <- apply(i, 2, sum)
     sum_help <- sum_help + help
-    sum_help <- abs(sum_help)
+    sum_help <- abs(sum_help)1
   }
   almost <- sum_help * c(1,1,1,10.5147)
   result <- almost/sum(almost)
@@ -23,6 +23,14 @@ weight_higher_sum_value <- function(dataset, userid = NULL , rounds = NULL, cost
 }
 
 #######
+####### Idea for new function, normalize decision matrix, then
+##' ndec11 <- norm.gainLoss(myData, 11, rounds="all")
+#ndec11
+#ndiffMatrix11 <- apply(ndec11[[1]], 2, diff)
+#nabsdiffMatrix11 <- apply(ndiffMatrix11, 2, abs)
+#nsumdiffMatrix11 <- apply(ndiffMatrix11, 2, sum)
+#nsumdiffMatrix11 <- apply(nabsdiffMatrix11, 2, sum)
+##'
 
 get_attr_weight <- function(dataset = NULL, userid = NULL, weight = NULL,  attr = NULL, rounds = NULL, cost_ids = NULL) {
 
