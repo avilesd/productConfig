@@ -9,8 +9,11 @@
 ##' lot faster, e.g. system.time(replicate(50,powerful_function(myData, all.users, FUN = gain_loss_matrices))) : user 30.78
 ##' system.time(replicate(50, gainLoss(myData, all.users)) : user 7.88
 ##'
-##'  Writing TODO: DOCU: Weights will only accept a weight vector which equals length of all attributes, if you want to ignore an
-##'  attribute, you have to set its weight to 0.0.
+##' Writing TODO: DOCU: Weights will only accept a weight vector which equals length of all attributes, if you want to ignore an
+##' attribute, you have to set its weight to 0.0.
+##'
+##' Writing TODO:  DOCU: New functions must take into account attributes and calculate accordingly, perhaps it doesn't make sense with our data,
+##  but we have to give the choice
 ##'
 ##' ++ Try and catch dataset parameter input on low level functions.
 ##'
