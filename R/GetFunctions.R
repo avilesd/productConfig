@@ -44,7 +44,7 @@ getTableById <- function(dataset, userid = NULL,...) {
   }
 
   if(FALSE %in%(userid %in% getAllUserIds(dataset))) {
-    logicalVector <-!(userid %in% get_all_userids(dataset))
+    logicalVector <-!(userid %in% getAllUserIds(dataset))
     fatalUserid <- userid[logicalVector]
     fatalUserid <- paste(fatalUserid, collapse = " ")
     stop("At least one userid you specified is not contained within your data: ", fatalUserid)
