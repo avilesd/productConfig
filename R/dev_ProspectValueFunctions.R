@@ -23,16 +23,13 @@ overallPV <- function (dataset, userid = NULL, attr = NULL, rounds = NULL, refps
   if(is.null(weight) & is.null(dataset)) {
     stop("Unable to get weights. You need to enter the weights or provide the dataset for us to calculate them. ")
   }
-  if(is.null(weight)) {
-    weight <-get_attr_weight(dataset, userid[1], weight,  attr, rounds, cost_ids)
-  }
-  else if(!is.null(weight) & is.vector(weight) & !is.list(weight)) {
-    weight <- weight
-  }
+
+  weight <- getAttrWeights(dataset, userid, weight,  attr, rounds, cost_ids)
 
   pvMatrices <- pvMatrix(dataset, userid, attr, rounds, refps, cost_ids, alpha, beta, lambda)
 
   tryCatchResult = tryCatch({
+
     overall_pv <- mapply(overall_pv_extend, pvMatrices, weight, SIMPLIFY = F) ##Perhaps mapply when data.frame, make weights as list?!
 
   }, warning = function(condition) {
@@ -106,7 +103,7 @@ overall_pv_extend <- function(value_matrix, weight = NULL) {
   result = tryCatch({
     result <- apply(value_matrix, 1, function(my_vector) { sum(my_vector*weight)})
   }, warning = function(condition) {
-    text <- paste0("#weights: ", length(weight), " != ", nrow(value_matrix), " rows in valueMatrix")
+    text <- paste0("weights: ", length(weight), " != ", ncol(value_matrix), " rows in valueMatrix")
     message("Amount of weights does not equal the amount of columns/attr: ", text)
   }, error = function(condition) {
     message("An error is unlikely, possible wrong type input.")
