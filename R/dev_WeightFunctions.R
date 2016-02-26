@@ -24,6 +24,9 @@ weight_higher_sum_value <- function(dataset, userid = NULL , rounds = NULL, cost
 
 }
 
+## DOCU: New functions must take into account attributes and calculate accordingly, perhaps it doesn't make sense with our data,
+## but we have to give the choice
+
 #######
 ####### Idea for new function, normalize decision matrix, then
 ##' ndec11 <- norm.gainLoss(myData, 11, rounds="all")
@@ -56,25 +59,25 @@ get_attr_weight <- function(dataset = NULL, userid = NULL, weight = NULL,  attr 
 ## Weights have to be input as list or single vector length(input) == length(allAttr)
 ## Weights will only accept all inputs in x, y equals length of userid.
 ## DOCU: Look at cases in notes, but three cases list1, list2+ or vector as input.
-getAttrWeights <- function(dataset = NULL, userid = NULL, weight = NULL,  attr = NULL, rounds = NULL, cost_ids = NULL, weightFUN = NULL) {
-  if(is.null(dataset) | is.null(userid)) {
-    stop("You need to provide at least one userid + the dataset")
+# If weights are given, it returns them as lists. Must return list.
+getAttrWeights <- function(dataset = NULL, userid = NULL, weight = NULL,  attr = NULL, rounds = NULL, cost_ids = NULL, weightFUN = "deprecated_FUN") {
+  if((is.null(dataset) | is.null(userid)) & is.null(weight)) {
+    stop("You need to provide the weights ('weight =') or userids + dataset for them to be calculated.")
   }
-  #if(length(userid) != length(weight)) {
-  #  errorText <- paste("Amount of userids is different than amount of weight vectors. users:", length(userid), "!=", length(weight), ":weightVectors")
-  #  stop(errorText)
-  #}
   if(is.vector(weight) & !is.list(weight)) {
-      weight <- list("oneVector" = weight)
+    weight <- list("oneVector" = weight)
   }
-  if(!is.vector(weight) & !is.list(weight)) {
+  if(!is.vector(weight) & !is.list(weight) & !is.null(weight)) {
     stop("Input in weight parameter needs to be a list of numeric vectors or just one vector.")
   }
 
   if(is.null(weight)) {
-    if (weightFUN == "HigherSum") {
-      result <- weight_higher_sum_value(dataset, userid, rounds, cost_ids)
+    # ! ToDo check if functions handle correctly inputting userids missing. Old weight_sum_value calls other f(x) that do
+    if (weightFUN == "deprecated_FUN") {
+      result <- powerful_function(dataset, userid, FUN = get_attr_weight, weight, attr, rounds, cost_ids)
     }
+    ## DOCU: New functions must take into account attributes and calculate accordingly, perhaps it doesn't make sense with our data,
+    ## but we have to give the choice
     if (weightFUN == "Test1") {
       result <- weight_higher_sum_value(dataset, userid, rounds, cost_ids)
     }
