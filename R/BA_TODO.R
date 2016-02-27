@@ -32,6 +32,8 @@
 ##'
 #' COuld do
 ##'
+##' Do a quick test for refps and gains/losses (although this is tested in oPV).
+##'
 ##' +Decide: name rows/cols? Missing in gains and losses.
 ##'
 ##' Optimize gain and loss vector-functions @gainFunction to reduce processing time. Compared to powerful, slower for

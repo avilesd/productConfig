@@ -141,7 +141,7 @@ ref_points <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NU
   refps
 
 }
-
+## DOCU check notes, but NA refps will be calculated
 referencePoints <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NULL, forceRefps = TRUE) {
   # Check decision tree
   attrnull <- is.null(attr)
