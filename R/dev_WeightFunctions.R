@@ -1,4 +1,4 @@
-## Not vectorized
+## Not vectorized : deprecated 27.01.16
 
 weight_higher_sum_value <- function(dataset, userid = NULL , rounds = NULL, cost_ids = NULL) {
 
@@ -24,19 +24,7 @@ weight_higher_sum_value <- function(dataset, userid = NULL , rounds = NULL, cost
 
 }
 
-## DOCU: New functions must take into account attributes and calculate accordingly, perhaps it doesn't make sense with our data,
-## but we have to give the choice
-
-#######
-####### Idea for new function, normalize decision matrix, then
-##' ndec11 <- norm.gainLoss(myData, 11, rounds="all")
-#ndec11
-#ndiffMatrix11 <- apply(ndec11[[1]], 2, diff)
-#nabsdiffMatrix11 <- apply(ndiffMatrix11, 2, abs)
-#nsumdiffMatrix11 <- apply(ndiffMatrix11, 2, sum)
-#nsumdiffMatrix11 <- apply(nabsdiffMatrix11, 2, sum)
-##'
-
+# Unncesessary arguments, but perhaps for other functions
 get_attr_weight <- function(dataset = NULL, userid = NULL, weight = NULL,  attr = NULL, rounds = NULL, cost_ids = NULL) {
 
   if(is.null(attr)) attr <- get_attrs_ID(dataset) #Step 1 to handle attr
@@ -45,7 +33,7 @@ get_attr_weight <- function(dataset = NULL, userid = NULL, weight = NULL,  attr 
     stop("You need to provide one user id OR enter your own weights")
   }
   if(is.null(weight)) {
-    result <- weight_higher_sum_value(dataset, userid, rounds, cost_ids)
+    result <- weight_higher_sum_value(dataset, userid, rounds=rounds, cost_ids=cost_ids)
   }
   ## TODO proove if length(w) =length(attributes), proof if numeric and the sum of all = 1 or handle with result[attr]!!!!!!!!
   else{
@@ -63,6 +51,7 @@ get_attr_weight <- function(dataset = NULL, userid = NULL, weight = NULL,  attr 
 ## DOCU Important: Weight parameter allows for not 1 summing and negative inputs, up to
 ## user to check if make sense, result of negative weight is on negativity of some
 ## oPV not on its magnitude
+## DOCU: From @overallPV, attr are not sorted, so attr and weight have to be given in same order.
 getAttrWeights <- function(dataset = NULL, userid = NULL, weight = NULL,  attr = NULL, rounds = NULL, cost_ids = NULL, weightFUN = "deprecated_FUN") {
   if((is.null(dataset) | is.null(userid)) & is.null(weight)) {
     stop("You need to provide the weights ('weight =') or userids + dataset for them to be calculated.")
@@ -77,7 +66,7 @@ getAttrWeights <- function(dataset = NULL, userid = NULL, weight = NULL,  attr =
   if(is.null(weight)) {
     # ! ToDo check if functions handle correctly inputting userids missing. Old weight_sum_value calls other f(x) that do
     if (weightFUN == "deprecated_FUN") {
-      result <- powerful_function(dataset, userid, FUN = get_attr_weight, weight, attr, rounds, cost_ids)
+      result <- powerful_function(dataset, userid, FUN = get_attr_weight, weight, attr = attr, rounds = rounds, cost_ids=cost_ids)
     }
     ## DOCU: New functions must take into account attributes and calculate accordingly, perhaps it doesn't make sense with our data,
     ## but we have to give the choice
@@ -91,3 +80,15 @@ getAttrWeights <- function(dataset = NULL, userid = NULL, weight = NULL,  attr =
   else { result <- weight}
   result
 }
+
+## DOCU: New functions must take into account attributes and calculate accordingly, perhaps it doesn't make sense with our data,
+## but we have to give the choice
+#######
+####### Idea for new function, normalize decision matrix, then
+##' ndec11 <- norm.gainLoss(myData, 11, rounds="all")
+#ndec11
+#ndiffMatrix11 <- apply(ndec11[[1]], 2, diff)
+#nabsdiffMatrix11 <- apply(ndiffMatrix11, 2, abs)
+#nsumdiffMatrix11 <- apply(ndiffMatrix11, 2, sum)
+#nsumdiffMatrix11 <- apply(nabsdiffMatrix11, 2, sum)
+##'
