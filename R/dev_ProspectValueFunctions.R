@@ -95,20 +95,20 @@ pvalue_fun <- function(ngain_ij, nloss_ij, alpha = 0.88, beta = 0.88, lambda = 2
 ######
 
 overall_pv_extend <- function(value_matrix, weight = NULL) {
-  if(length(weight) != ncol(value_matrix)) {
-    warning("Length of weight does not equal amount of attributes, some recycling may have been done here.")
-    ## Could be deleted
+  if (length(weight) != ncol(value_matrix)) {
+    text <- paste0("weights: ", length(weight), " != ", ncol(value_matrix), " rows in valueMatrix.")
+    stop("Amount of weights does not equal the amount of columns/attr: ", text, " Check your arguments")
   }
-
-  result = tryCatch({
-    result <- apply(value_matrix, 1, function(my_vector) { sum(my_vector*weight)})
-  }, warning = function(condition) {
-    text <- paste0("weights: ", length(weight), " != ", ncol(value_matrix), " rows in valueMatrix")
-    message("Amount of weights does not equal the amount of columns/attr: ", text)
-  }, error = function(condition) {
-    message("An error is unlikely, possible wrong type input.")
-  }, finally={
-  })
+  else {
+    result = tryCatch({
+      result <- apply(value_matrix, 1, function(my_vector) { sum(my_vector*weight)})
+    }, warning = function(condition) {
+      message("Amount of weights does not equal the amount of columns/attr: ", text)
+    }, error = function(condition) {
+      message("An error is unlikely, possible wrong type input.")
+    }, finally={
+    })
+  }
 
   result
 }

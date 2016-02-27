@@ -59,7 +59,10 @@ get_attr_weight <- function(dataset = NULL, userid = NULL, weight = NULL,  attr 
 ## Weights have to be input as list or single vector length(input) == length(allAttr)
 ## Weights will only accept all inputs in x, y equals length of userid.
 ## DOCU: Look at cases in notes, but three cases list1, list2+ or vector as input.
-# If weights are given, it returns them as lists. Must return list.
+## If weights are given, it returns them as lists. Must return list.
+## DOCU Important: Weight parameter allows for not 1 summing and negative inputs, up to
+## user to check if make sense, result of negative weight is on negativity of some
+## oPV not on its magnitude
 getAttrWeights <- function(dataset = NULL, userid = NULL, weight = NULL,  attr = NULL, rounds = NULL, cost_ids = NULL, weightFUN = "deprecated_FUN") {
   if((is.null(dataset) | is.null(userid)) & is.null(weight)) {
     stop("You need to provide the weights ('weight =') or userids + dataset for them to be calculated.")
