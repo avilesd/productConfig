@@ -13,7 +13,11 @@
 ##' attribute, you have to set its weight to 0.0.
 ##'
 ##' Writing TODO:  DOCU: New functions must take into account attributes and calculate accordingly, perhaps it doesn't make sense with our data,
-##  but we have to give the choice
+##'  but we have to give the choice
+##'
+##' +++ Writing TODO: Trp is different, it doesn't calculate with gains and losses. But it doesn't matter since where are not
+##'  comparing numeric results, but which framework produces the most accurate decision-making in accordance with empirical data,
+##'  i.e. what the users really chose.
 ##'
 ##' ++ Try and catch dataset parameter input on low level functions.
 ##'
@@ -23,6 +27,8 @@
 ##' -when input @referencePoints refps contains NA and forceRefps = F, weird things happen
 ##'
 #' Should do
+##'
+##' + Correct naming when only one attr selected in decMatrix().
 ##'
 ##' +Allow the possibility to get attrIds by userid. Would work for data with different attributes per user.
 ##' Low-level functions
