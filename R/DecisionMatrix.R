@@ -221,22 +221,22 @@ decisionMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
   else {
     warning("Input in 'rounds' not recognized, calculated with default: first and last rounds")
   }
-  # CUT according to attr, not finished, need some rest, return later to it, write it down
+
+  ## Name columns and rows, test inputting list of vectors other than the strings in 'rounds' argument.
+  ## Should work as in list(0:2), test list out of bounds, and DOCU.
+  tableRows <- lapply(costifiedTables, rownames)
+  round.RowNames <- lapply(tableRows, paste0, "round")
+  namedResult <- lapply(costifiedTables, function(tempData5) {colnames(tempData5) <-colnames(tempData5, do.NULL = F, prefix = "attr"); tempData5})
+  namedResult <- mapply(namedResult[1:length(namedResult)], FUN =  function(tempDataC, tempDataD) {rownames(tempDataC) <- tempDataD; tempDataC}, round.RowNames, SIMPLIFY = FALSE)
+
+   # CUT according to attr, not finished, need some rest, return later to it, write it down
   # current default behavior is getting all rounds.
-  attribute.cut <- lapply(costifiedTables[1:length(costifiedTables)], function(tempData3) tempData3[,attr, drop=FALSE])
+  attribute.cut <- lapply(namedResult[1:length(namedResult)], function(tempData3) tempData3[,attr, drop=FALSE])
 
   #round.cut <- lapply(attribute.cut[1:length(attribute.cut)], function(tempData4) tempData4[rounds[j], , drop=FALSE])
   round.cut <- mapply(attribute.cut[1:length(attribute.cut)], FUN = function(tempDataA, tempDataB) tempDataA[tempDataB, , drop = FALSE], rounds, SIMPLIFY = FALSE)
 
-  ## Name columns and rows, test inputting list of vectors other than the strings in 'rounds' argument.
-  ## Should work as in list(0:2), test list out of bounds, and DOCU.
+  #Get Dimensions -  move to if else cases ??
 
-  #Get Dimensions -  move to if else cases
-  tableRows <- lapply(round.cut, rownames)
-  round.RowNames <- lapply(tableRows, paste0, "round")
-
-  namedResult <- lapply(round.cut, function(tempData5) {colnames(tempData5) <-colnames(tempData5, do.NULL = F, prefix = "attr"); tempData5})
-  namedResult <- mapply(namedResult[1:length(namedResult)], FUN =  function(tempDataC, tempDataD) {rownames(tempDataC) <- tempDataD; tempDataC}, round.RowNames, SIMPLIFY = FALSE)
-
-  namedResult
+  round.cut
   }
