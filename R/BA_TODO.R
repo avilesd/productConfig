@@ -3,7 +3,8 @@
 ##' BA-Liste
 #' MUst do
 ##'
-##' +++ Test overallPV further and then write new value functions.
+##' +++ Add error catching for order of mr < sq < g
+##'
 ##'
 ##' ++ Move to WRITING TODO: vectorized vs non-vectorized, latter faster for small amount of data, but for all users, first is a
 ##' lot faster, e.g. system.time(replicate(50,powerful_function(myData, all.users, FUN = gain_loss_matrices))) : user 30.78
@@ -63,6 +64,8 @@
 ##'
 ##'
 #'  FIXED
+##'
+##' +++ Test overallPV further and then write new value functions.
 ##' --Give labels to some function outputs, e.g. getDefaultRefpsById, old function gave labels. But not that important.
 ##'  in powerful_function it was with loops (sort of cheating and way it was built). [setNames]
 ##'

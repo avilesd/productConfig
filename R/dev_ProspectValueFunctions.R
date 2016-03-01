@@ -96,7 +96,7 @@ pvalue_fun <- function(ngain_ij, nloss_ij, alpha = 0.88, beta = 0.88, lambda = 2
 
 overall_pv_extend <- function(value_matrix, weight = NULL) {
   if (length(weight) != ncol(value_matrix)) {
-    text <- paste0("weights: ", length(weight), " != ", ncol(value_matrix), " rows in valueMatrix.")
+    text <- paste0("weights: ", length(weight), " != ", ncol(value_matrix), " cols in valueMatrix.")
     stop("Amount of weights does not equal the amount of columns/attr: ", text, " Check your arguments")
   }
   else {
