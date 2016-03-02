@@ -4,13 +4,99 @@
 ## you may have different (mr, sq, g) for each attribute, so you have to run the above function with the attribute
 ## that have the same values and then manually bind them.
 
+## DOCU cost_ids still works pretty well, but the tri.refps also have to be
+#changed, explain it on BA # with a nice diagram, mr and g exchange values and
+#change from positive/negative sign. cost_ids, enter normal reference points, we
+#will convert them. cost_ids has to equal the attribute you are inputting
+
+## DOCU: you can enter cost_ids normally, program will recognize for which attr it should use the cost_ids
+
 #Main Interface function as in P.10 from Notes
 
-## DOCU cost_ids still works pretty well, but the tri.refps also have to be changed, explain it on BA
-## with a nice diagram, mr and g exchange values and change from positive/negative sign.
-# cost_ids, enter normal reference points, we will convert them. cost_ids has to equal the attribute you are inputting
+#' Returns a Value Matrix using three reference points
+#'
+#' This function is based on the value function of the tri-reference point (trp)
+#' theory. It first builds a desicion matrix for each user and then applys the
+#' trp-value function over each value using the three given reference points
+#' (MR, SQ, G) and other four free parameters from the value function. See
+#' references.
+#'
+#' @param dataset data.frame with the user generated data from a product
+#'   configurator. See \code{decision_matrix} for specifications of the dataset.
+#' @param userid a vector of integers that gives the information of which users
+#'   the matrix should be calculated. Vectorised.
+#' @param attr attributes IDs, vector of integer numbers corresponding to the
+#'   attributes you desire to use; attr are assumed to be 1-indexed.
+#' @param rounds integer vector or text option. Which steps of the configuration
+#'   process should be shown? Defaults are first and last step. Text options are
+#'   \code{all, first, last}.
+#' @param cost_ids argument used to convert selected cost attributes into
+#'   benefit attributes. Integer vector.
+#' @param mr numeric - Minimum Requirements is the lowest reference point
+#' @param sq numeric - Status Quo reference point
+#' @param g numeric - Goal reference point
+#' @param beta(s) numeric arguments representing the psychological impact of an outcome
+#'   equaling failer (_f), loss (_l), gain (_g) or success (_s). Default values
+#'   are taken from our reference paper \code{(5,1,1,3)}.
+#'
+#'
+#' @details This function only makes sense to use with multiple attributes, it
+#'   those attributes have exactly the same three reference points (mr, sq, g).
+#'   Therefore you will have to manually calculate all the value matrices for
+#'   the different attributes (with different values) and cbind them together
+#'   using mapply. The full matrix can then be given as an input to the
+#'   \code{\link{overallPV_interface}} fucntion to calculate the overall
+#'   prospect values for each round.
+#'
+#'   General: The value matrix has ncol = number of attributes you selected or
+#'   all(default) and nrow = number of rounds you selected or the first and
+#'   last(default) for all selected users.
+#'
+#'   \code{data} We assume the input data.frame has following columns usid =
+#'   User IDs, round = integers indicating which round the user is in (0-index
+#'   works best for 'round'), atid = integer column for referring the attribute
+#'   ID (1 indexed), selected = numeric value of the attribute for a specific,
+#'   given round, selectable = amount of options the user can chose at a given
+#'   round, with the current configuration.
+#'
+#'   \code{userid} is a necessary parameter, without it you'll get a warning.
+#'   Default is NULL.
+#'
+#'   \code{attr} Default calculates with all attributes. Attributes are
+#'   automatically read from provided dataset, it is important you always
+#'   provide the complete data so that the package functions properly. Moreover,
+#'   \code{userid} and \code{attr} will not be sorted and will appear in the
+#'   order you input them.
+#'
+#'   \code{rounds} Default calculates with first and last rounds (initial and
+#'   final product configuration). You can give a vector of arbitrarily chosen
+#'   rounds as well.
+#'
+#'   \code{cost_ids} Default assumes all your attributes are of benefit type,
+#'   that is a higher value in the attribute means the user is better off than
+#'   with a lower value. If one or more of the attributes in your data is of
+#'   cost type, e.g. price, so that lower is better then you should identify
+#'   this attributes as such, providing their id, they'll be converted to
+#'   benefit type (higher amount is better).
+#'
+#'   Note: When converting a cost attribute to a benefit attribute its three reference points change as well, enter the
+#'   unconverted refps, the function transforms them automatically when it detects a \code{cost_ids}
+#'
+#' @return a list of value matrices for each user.
+#'
+#' @references Wang, X. T.; Johnson, Joseph G. (2012) \emph{A tri-reference
+#'   point theory of decision making under risk. }Journal of Experimental
+#'   Psychology
+#'
+#' @examples
+#' trpValueMatrix(pc_config_data, 9:11, mr = 0.5, sq = 0, g = 2.5)
+#' trpValueMatrix(aDataFrame, userid = 100, rounds = "all", mr = 0.5, sq = 0, g = 2.5)
+#' trpValueMatrix(my_data, userid = 11, attr = c(1,3,5), cost_ids = 1:3) #Input accepted but cost_ids = 2 will be ignored
+#' trpValueMatrix(keyboard_data, 60, rounds = "first", attr=1, mr = 0.5, sq = 0, g = 2.5, beta_f = 6)
+#' gain_matrix(data1, 2) # Returns an error since no reference points entered (mr, sq, g)
+#'
+#' @export
 
-#' DOCU: you can enter cost_ids normally, program will recognize for which attr it should use the cost_ids
 trpValueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, cost_ids = NULL,
                             mr = 0.5, sq = 1.5, g = 2.5, beta_f = 5, beta_l = 1, beta_g = 1, beta_s = 3) {
   counter <- 0
@@ -38,6 +124,56 @@ trpValueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
   trp.list
 }
 
+#' Returns a Value Matrix using three reference points (one attribute only)
+#'
+#' This function is a more basic function than \code{trpValueMatrix}, for a
+#' detailed descrpition, go to \code{\link{trpValueMatrix}}. This function is
+#' based on the value function of the tri-reference point (trp) theory. It first
+#' builds a desicion matrix for each user and then applys the trp-value function
+#' over each value using the three given reference points (MR, SQ, G) and other
+#' four free parameters from the value function. See references.
+#'
+#' @param dataset data.frame with the user generated data from a product
+#'   configurator. See \code{decision_matrix} for specifications of the dataset.
+#' @param userid a vector of integers that gives the information of which users
+#'   the matrix should be calculated. Vectorised.
+#' @param attr attributes ID, \emph{one integer} corresponding to the
+#'   attribute you desire to use; attr are assumed to be 1-indexed.
+#' @param rounds integer vector or text option. Which steps of the configuration
+#'   process should be shown? Defaults are first and last step. Text options are
+#'   \code{all, first, last}.
+#' @param cost_ids argument used to convert selected cost attributes into
+#'   benefit attributes. In this function, should be the same as \code{attr}.
+#' @param mr numeric - Minimum Requirements is the lowest reference point
+#' @param sq numeric - Status Quo reference point
+#' @param g numeric - Goal reference point
+#' @param beta(s) numeric arguments representing the psychological impact of an
+#'   outcome equaling failer (_f), loss (_l), gain (_g) or success (_s). Default
+#'   values are taken from our reference paper \code{(5,1,1,3)}.
+#'
+#'  @details This function does the same as \code{\link{trpValueMatrix}} but only
+#'   for one attribute, for more details please see the mentioned function.
+#'
+#'   Note: When converting a cost attribute to a benefit attribute its three
+#'   reference points change as well, enter the unconverted refps, the function
+#'   transforms them automatically when it detects a \code{cost_ids}
+#'
+#' @return a list of value matrices with one attribute for each user.
+#'
+#' @references Wang, X. T.; Johnson, Joseph G. (2012) \emph{A tri-reference
+#'   point theory of decision making under risk. }Journal of Experimental
+#'   Psychology
+#'
+#' @examples
+#' trpValueMatrix.oneAttr(pc_config_data, 9:15, attr = 15, mr = 0.5, sq = 0, g = 2.5)
+#' trpValueMatrix.oneAttr(aDataFrame, userid = 100, rounds = "all",  attr = 1, mr = 0.5, sq = 0, g = 2.5)
+#'
+#' # Return an error, 1.Too many attributes or 2. none entered
+#' trpValueMatrix.oneAttr(keyboard_data, 8:9 , attr = c(10,12,14,16), mr = 0.5, sq = 0, g = 2.5)
+#' trpValueMatrix.oneAttr(data1, 2) # 2. No attribute entered
+#'
+#' @export
+
 trpValueMatrix.oneAttr <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, cost_ids = NULL,
                                    mr = 0.5, sq = 1.5, g = 2.5, beta_f = 5, beta_l = 1, beta_g = 1, beta_s = 3) {
 
@@ -52,8 +188,6 @@ trpValueMatrix.oneAttr <- function(dataset, userid = NULL, attr = NULL, rounds =
     print(sq)
     print(g)
   }
-
-  #if(!is.null(cost_ids) & cost_ids != attr) warning("attribute and cost_ids should be for the same attribute...")
 
   # First Transformation, monotonic transformation such that SQ = 0
   # Transform decision Matrix
@@ -84,6 +218,49 @@ trpValueMatrix.oneAttr <- function(dataset, userid = NULL, attr = NULL, rounds =
 
 }
 
+#' Transform a decision Matrix into a trp value matrix
+#'
+#' This function is based on the value function of the tri-reference point (trp)
+#' theory. It is an auxiliary function, which intends to facilitate the work and
+#' readability of \code{\link{trpValueMatrix.oneAttr, trpValueMatrix}}. It takes
+#' a matrix and the three given reference points (MR, SQ, G) as a vector
+#' \code{tri.refps} and applys the trp value function \code{trpValueFunction} to
+#' each element of the matrix. Also takes into account the for free \code{beta}
+#' parameters of the function.
+#'
+#' @param aMatrix a non-empty matrix, tipically with one column since this
+#'   function is called one attribute at a time by
+#'   \code{trpValueMatrix.oneAttr}.
+#' @param mr numeric - Minimum Requirements is the lowest reference point
+#' @param sq numeric - Status Quo reference point
+#' @param g numeric - Goal reference point
+#' @param beta(s) numeric arguments representing the psychological impact of an
+#'   outcome equaling failer (_f), loss (_l), gain (_g) or success (_s). Default
+#'   values are taken from our reference paper \code{(5,1,1,3)}. See details.
+#'
+#' @details The functions test for MR < SQ < G
+#'
+#' The beta arguments are important arguments that give form to the value function proposed in [1].
+#' A higher number represents a higher relative psychological impact to the decision maker. Since in [1] it is assumed that the
+#' reference point 'Minimum Requierment' has a greater impact when is not reached (failure aversion), it should have a higher beta, so in general
+#' \code{beta_f > beta_l > beta_g > beta_s}. See our reference paper for a detailed theoretical background.
+
+#' @return returns a matrix with the outputs of the trp value function for each of its elements
+#'
+#' @references [1] Wang, X. T.; Johnson, Joseph G. (2012) \emph{A tri-reference
+#'   point theory of decision making under risk. }Journal of Experimental
+#'   Psychology
+#'
+#'   [2]Wang, X. T.; Johnson, Joseph G. (2012) \emph{Supplemental Material for: A tri-reference
+#'   point theory of decision making under risk. }Journal of Experimental
+#'   Psychology
+#'
+#' @examples # Runnable
+#' trpValueFunction(aMatrix = matrix(1:6, 2, 3), triRefps = c(2,3,4.5))
+#' trpValueFunction(matrix(1:16, 16, 1), triRefps = c(4, 8.9, 12.5), beta_f = 7)
+#'
+#' @export
+
 trpValueFunction <- function(aMatrix, triRefps, beta_f = 5, beta_l = 1, beta_g = 1, beta_s = 3) {
   mr <- triRefps[1]
   sq <- triRefps[2]
@@ -93,7 +270,47 @@ trpValueFunction <- function(aMatrix, triRefps, beta_f = 5, beta_l = 1, beta_g =
   result
 }
 
-#Rename -- basic functionality
+#' TTri Reference Point Value Function for one element
+#'
+#' Auxiliary function: it is based on the value function of the tri-reference point (trp)
+#' theory. It's called by \code{\link{trpValueFunction}}, it takes one element
+#' and puts it through the trp value function as seen in reference [1]. Not
+#' vectorised.
+#'
+#' @param x one numeric value
+#' @param mr numeric - Minimum Requirements is the lowest reference point
+#' @param sq numeric - Status Quo reference point
+#' @param g numeric - Goal reference point
+#' @param beta(s) numeric arguments representing the psychological impact of an
+#'   outcome equaling failer (_f), loss (_l), gain (_g) or success (_s). Default
+#'   values are taken from our reference paper \code{(5,1,1,3)}. See references.
+#'
+#' @details The functions test for MR < SQ < G.
+#'
+#'   The beta arguments are important arguments that give form to the value
+#'   function proposed in [1]. A higher number represents a higher relative
+#'   psychological impact to the decision maker. Since in [1] it is assumed that
+#'   the reference point 'Minimum Requierment' has a greater impact when is not
+#'   reached (failure aversion), it should have a higher beta, so in general
+#'   \code{beta_f > beta_l > beta_g > beta_s}. See our reference paper for a detailed
+#'   theoretical background.
+
+#' @return the output of v(x) with v: trp value function([1]).
+#'
+#' @references [1] Wang, X. T.; Johnson, Joseph G. (2012) \emph{A tri-reference
+#'   point theory of decision making under risk. }Journal of Experimental
+#'   Psychology
+#'
+#'   [2]Wang, X. T.; Johnson, Joseph G. (2012) \emph{Supplemental Material for: A tri-reference
+#'   point theory of decision making under risk. }Journal of Experimental
+#'   Psychology
+#'
+#' @examples # Runnable
+#' trpValueFunction_extend(0.18, mr = 0.15, sq = 0.55, g = 1.10)
+#' trpValueFunction_extend(4, mr = 1, sq = 3, g = 8, beta_f = 7, beta_s = 4)
+#'
+#' @export
+
 trpValueFunction_extend <- function(x, mr = 0.5, sq = 1.5, g = 2.5 , beta_f = 5, beta_l = 1, beta_g = 1, beta_s = 3) {
   if(mr >= sq | mr >= g) stop("MR cannot be greater or equal to SQ or G")
 
@@ -111,7 +328,6 @@ trpValueFunction_extend <- function(x, mr = 0.5, sq = 1.5, g = 2.5 , beta_f = 5,
 #' cost_ids, enter normal reference points, we will convert them. cost_ids has to equal the attribute you are inputting
 #' DOCU: Converting tri.refps, no need to convert if attribute is of type cost.
 
-
 #' New function as interface with weights and your trp.valueMatrix
 #' Docu: For the way the trp function works it is a little more complicated than for overallPV for the pt
 #' here we have to manually calculate the AttributeWeights whit your desired function, e.g ww <- getAttrWeights(...)
@@ -121,7 +337,41 @@ trpValueFunction_extend <- function(x, mr = 0.5, sq = 1.5, g = 2.5 , beta_f = 5,
 #' DOCU: Explain what _extends is in pC, singalizes major functions that do not take the normal inputs but user
 #' other functions' results to work.
 
-trp.overallPV_extend <- function (trp.ValueMatrix, weight = NULL) {
+#' Calculates overall prospect values for any given value matrix and weights
+#'
+#' This function was created
+#'
+#' @param dataset data.frame with the user generated data from a product
+#'   configurator. See \code{decision_matrix} for specifications of the dataset.
+#' @param userid a vector of integers that gives the information of which users
+#'   the matrix should be calculated. Vectorised.
+#'
+#'
+#' @details This function only makes sense to use with multiple attributes, it
+#'   those attributes have exactly the same three reference points (mr, sq, g).
+#'   Therefore you will have to manually calculate all the value matrices for
+#'   the different attributes (with different values) and cbind them together
+#'   using mapply. The full matrix can then be given as an input to the
+#'   \code{\link{trp.overallPV_interface}} fucntion to calculate the overall
+#'   prospect values for each round.
+#'
+#'   General: The value matrix has ncol = number of attributes you selected or
+#'   all(default) and nrow = number of rounds you selected or the first and
+#'   last(default) for all selected users.
+#'
+#' @return a vector of overall prospect values
+#'
+#'
+#' @examples
+#' #' trpValueFunction(aMatrix = matrix(1:6, 2, 3), triRefps = c(2,3,4.5))
+#' trpValueFunction(matrix(1:16, 16, 1), triRefps = c(4, 8.9, 12.5), beta_f = 7)
+#' mix these 2
+#' trpValueMatrix(pc_config_data, 9:11, mr = 0.5, sq = 0, g = 2.5)
+#' trpValueMatrix(aDataFrame, userid = 100, rounds = "all", mr = 0.5, sq = 0, g = 2.5)
+#'
+#' @export
+
+overallPV_interface <- function (trp.ValueMatrix, weight = NULL) {
 
   if(is.null(weight) | is.null(trp.ValueMatrix)) {
     stop("You need to provide both arguments: trp.ValueMatrix and their weights")
@@ -141,7 +391,7 @@ trp.overallPV_extend <- function (trp.ValueMatrix, weight = NULL) {
   trp.overallPV
 }
 
-# Doesn't recquire documentation, only an auxiliary function
+# Doesn't recquire documentation, only an auxiliary function to transform tri.refps monotonically so that sq = 0
 substract_sq <- function(x, status_quo) {
   res <- (-status_quo + x)
   res
