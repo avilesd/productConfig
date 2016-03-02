@@ -39,7 +39,10 @@
 ##'
 #' COuld do
 ##'
+##' +Throw a warning when beta_f > beta_l > beta_g > beta_s is not the case, perhaps in trpValueFunction.
 ##' Do a quick test for refps and gains/losses (although this is tested in oPV).
+##'
+##' -Make examples that are able to run, change all data names and somehow make the user load it.
 ##'
 ##' +Decide: name rows/cols? Missing in gains and losses.
 ##'
