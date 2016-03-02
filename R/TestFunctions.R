@@ -62,3 +62,35 @@ lengthp <- function(list1) {
   }
   help
 }
+
+#' Used for test-equal-normalized-matrix-function
+norm.gainLoss.sep <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
+  desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
+  refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)
+
+  tMatrixList <- lapply(desList, t)
+
+  gainList <- mapply(gainFunction, tMatrixList, refPs, SIMPLIFY = F)
+  lossList <- mapply(lossFunction, tMatrixList, refPs, SIMPLIFY = F)
+
+  #desList <- lapply(result, dim, nrow = rounds, ncol= length(attr), byrow = T)
+  gainList <- mapply(function(temp5, temp6) {dim(temp5) <- c(ncol(temp6), nrow(temp6)); temp5}, gainList, desList, SIMPLIFY = F)
+  lossList <- mapply(function(temp5, temp6) {dim(temp5) <- c(ncol(temp6), nrow(temp6)); temp5}, lossList, desList, SIMPLIFY = F)
+  #Until this point is good,, -3 on the corner
+  gainList <- lapply(gainList, t)
+  lossList <- lapply(lossList, t)
+
+  vectorBoth <- mapply(rbind, gainList, lossList, SIMPLIFY = F)
+
+  result4max <- lapply(vectorBoth, function(temp) apply(temp, 2, abs))
+  hmaxVector <- lapply(result4max, function(temp1) apply(temp1, 2, max)) # returns a list with the hmax vector
+  hmaxVector <- lapply(hmaxVector, function(temp2) replace(temp2, temp2==0.0, 1.00)) #remove 0 to avoid NA when dividing
+
+
+  gainLoss <- mapply(rbind, gainList, lossList, SIMPLIFY = F)
+  bothMatrix <- lapply(gainLoss,t)
+  bothMatrix <- mapply("/", bothMatrix, hmaxVector, SIMPLIFY = F)
+  bothMatrix <- lapply(bothMatrix, t)
+  bothMatrix
+
+}
