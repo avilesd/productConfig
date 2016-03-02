@@ -183,6 +183,8 @@ decision_matrix <- function(data, userid = NULL, attr = NULL, rounds = NULL, cos
 # previous function cuts matrix first and then wrongly applies cost_ids to the third attribute,
 # in this case attr4. Cost ids will be calculated before, so dont' have to consider anything
 # before their input.
+#' DOCU New if only inputtin one vector in rounds, it will be converted into a list, if you need
+#' different rounds for different userids, you need to provide them as a list of vectors.
 
 decisionMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, cost_ids = NULL) {
   if(is.null(attr)) {
@@ -209,15 +211,24 @@ decisionMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
       j <- j + 1
     }
   }
-  else if (rounds == "all"){
-    rounds <- lapply(all_rounds, function(tempDataX) tempDataX+1)
+
+  else if (!is.character(rounds) & !is.null(rounds)) {
+    if (is.vector(rounds) & !is.list(rounds)) {
+      rounds <- list("$roundsVector" = rounds)
+    }
   }
-  else if (rounds == "last") {
-    rounds <- lapply(all_rounds, length)
+  else if (is.character(rounds)) {
+    if (rounds == "all"){
+      rounds <- lapply(all_rounds, function(tempDataX) tempDataX+1)
+    }
+    else if (rounds == "last") {
+      rounds <- lapply(all_rounds, length)
+    }
+    else if (rounds == "first") {
+      rounds <- lapply(all_rounds, function(tempDataY) 1)
+    }
   }
-  else if (rounds == "first") {
-    rounds <- lapply(all_rounds, function(tempDataY) 1)
-  }
+
   else {
     warning("Input in 'rounds' not recognized, calculated with default: first and last rounds")
   }
@@ -234,7 +245,16 @@ decisionMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
   attribute.cut <- lapply(namedResult[1:length(namedResult)], function(tempData3) tempData3[,attr, drop=FALSE])
 
   #round.cut <- lapply(attribute.cut[1:length(attribute.cut)], function(tempData4) tempData4[rounds[j], , drop=FALSE])
-  round.cut <- mapply(attribute.cut[1:length(attribute.cut)], FUN = function(tempDataA, tempDataB) tempDataA[tempDataB, , drop = FALSE], rounds, SIMPLIFY = FALSE)
+  tryCatchResult = tryCatch({
+    round.cut <- mapply(attribute.cut[1:length(attribute.cut)], FUN = function(tempDataA, tempDataB) tempDataA[tempDataB, , drop = FALSE], rounds, SIMPLIFY = FALSE)
+
+  }, warning = function(condition) {
+    message("Unknown warning in decisionMatrix by round cutting.")
+  }, error = function(condition) {
+    stop("One round in your 'rounds' input is not contained on your data: subscript out of bounds")
+  }, finally={
+  })
+
 
   #Get Dimensions -  move to if else cases ??
 
