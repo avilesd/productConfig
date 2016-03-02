@@ -507,54 +507,6 @@ norm.gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, re
   bothMatrix
 }
 
-##Old method, fine, just as quick, but less readable because of multiple t()
-norm.gainLoss.sep <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
-  desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
-  refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)
-
-  tMatrixList <- lapply(desList, t)
-
-  gainList <- mapply(gainFunction, tMatrixList, refPs, SIMPLIFY = F)
-  lossList <- mapply(lossFunction, tMatrixList, refPs, SIMPLIFY = F)
-
-  #desList <- lapply(result, dim, nrow = rounds, ncol= length(attr), byrow = T)
-  gainList <- mapply(function(temp5, temp6) {dim(temp5) <- c(ncol(temp6), nrow(temp6)); temp5}, gainList, desList, SIMPLIFY = F)
-  lossList <- mapply(function(temp5, temp6) {dim(temp5) <- c(ncol(temp6), nrow(temp6)); temp5}, lossList, desList, SIMPLIFY = F)
-  #Until this point is good,, -3 on the corner
-  gainList <- lapply(gainList, t)
-  lossList <- lapply(lossList, t)
-
-  vectorBoth <- mapply(rbind, gainList, lossList, SIMPLIFY = F)
-  #matrixBoth <- mapply(function(temp7, temp8) {dim(temp7) <- c(nrow(temp8)*2, ncol(temp8)); temp7}, vectorBoth, desList, SIMPLIFY = F)
-  #Goal calculate hmax
-  #With info you have create a 'muster' template with correct number of attributes/columns! rows may vary
-  #print(matrixBoth)
-  result4max <- lapply(vectorBoth, function(temp) apply(temp, 2, abs))
-  hmaxVector <- lapply(result4max, function(temp1) apply(temp1, 2, max)) # returns a list with the hmax vector
-  hmaxVector <- lapply(hmaxVector, function(temp2) replace(temp2, temp2==0.0, 1.00)) #remove 0 to avoid NA when dividing
-
-  #g.normMatrix <- mapply("/", gainList, hmaxVector, SIMPLIFY = F)
-  #l.normMatrix <- mapply("/", lossList, hmaxVector, SIMPLIFY = F)
-
-  # Idea t() in the end
-  #g.normMatrix <- lapply(g.normMatrix, t)
-  #l.normMatrix <- lapply(l.normMatrix, t)
-  #g.normMatrix
-  #l.normMatrix
-  ###
-  #gainLoss <- mapply(rbind, gainList, lossList, SIMPLIFY = F)
-  #bothMatrix <- mapply(function(aMatrix, aVector) aMatrix / aVector[col(aMatrix)], gainLoss, hmaxVector, SIMPLIFY = F)
-
-  ###
-
-  gainLoss <- mapply(rbind, gainList, lossList, SIMPLIFY = F)
-  bothMatrix <- lapply(gainLoss,t)
-  bothMatrix <- mapply("/", bothMatrix, hmaxVector, SIMPLIFY = F)
-  bothMatrix <- lapply(bothMatrix, t)
-  bothMatrix
-
-}
-
 #' Calculates the gain for one attribute
 #'
 #' A simple function that given the value of an attribute (s_ij) and the
