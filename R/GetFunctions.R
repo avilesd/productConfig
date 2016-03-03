@@ -24,20 +24,6 @@
 #' get_table_by_ID(as.data.frame(matrix_full), 12)
 #' @export
 
-get_table_by_ID <- function(x, userid = NULL,...) {
-  if(is.null(userid)) {
-    stop("You need to specify one userid.")
-  }
-  ## Check if given userid is in the data
-  if(!userid %in% get_all_userids(x)) {
-    print(userid)
-    stop("The userid you specified is not contained in your data.")
-  }
-
-  result <- x[x$usid == userid, ]
-  result
-}
-
 getTableById <- function(dataset, userid = NULL,...) {
   if(is.null(userid)) {
     stop("You need to specify at least one userid.")
@@ -116,21 +102,6 @@ get_attrs_ID <- function(dataset) {
 #'
 #'@export
 
-get_rounds_by_ID <- function(x, userid = NULL) {
-  if(is.null(userid)) {
-    stop("You need to specify at least one userid.")
-  }
-  ## Check if given userid is in the data
-  if(!userid %in% get_all_userids(x)) {
-    print(userid)
-    stop("The userid you specified is not contained in your data.")
-  }
-
-  table_by_ID <- get_table_by_ID(x, userid)
-  result <- unique(table_by_ID$round)
-  result
-}
-
 getRoundsById <- function(dataset, userid = NULL) {
   # Userid error catching already done in below function 'getTableById'
 
@@ -159,12 +130,6 @@ getRoundsById <- function(dataset, userid = NULL) {
 #' @references ProductConfig Github page:
 #'   https://github.com/avilesd/productConfig
 #' @export
-
-get_all_userids <- function(dataset) {
-  table_unique <- sapply(dataset, unique)
-  result <- table_unique$usid
-  result
-}
 
 getAllUserIds <- function(dataset) {
   table_unique <- sapply(dataset, unique)
@@ -196,34 +161,6 @@ getAllUserIds <- function(dataset) {
 #' get_all_default_rps(camera2_config_data, 100)
 #' get_all_default_rps(as.data.frame(matrix_full), 55)
 #'@export
-get_all_default_rps <- function(dataset, userid) {
-  if(is.null(userid)) {
-    stop("You need to specify one userid.")
-  }
-  ## Check if given userid is in the data
-  if(!userid %in% get_all_userids(dataset)) {
-    print(userid)
-    stop("The userid you specified is not contained in your data.")
-  }
-
-  table_unique <- get_table_by_ID(dataset, userid)
-  table_0 <- table_unique[table_unique$round == 0, ]
-  result <- table_0$selected
-
-  ##Give Reference Points names according to attribute they belong to
-  m <- 1
-  help <- get_attrs_ID(dataset)
-  rp_names <- character(0)
-
-  for(rp in result){
-    rp_number <- help[m]
-    rp_names <- c(rp_names, paste("rp", rp_number, seq="", collapse=""))
-    m <- m + 1
-  }
-  names(result) <- rp_names
-
-  result
-}
 
 getDefaultRefps <- function(dataset, userid = NULL) {
 
@@ -260,15 +197,6 @@ getDefaultRefps <- function(dataset, userid = NULL) {
 #'   https://github.com/avilesd/productConfig
 #' @export
 
-get_normalized_vec <- function(num_vector) {
-  if(is.vector(num_vector, mode="numeric")) {
-    sum <- sum(abs(num_vector))
-    result <- num_vector/sum
-    result
-  }
-  else warning("Entered argument not a numeric vector.")
-}
-
 ## Renewed function , eventually to put in other R script with functional functions below
 normalize <- function(num_vector) {
   if(is.vector(num_vector, mode="numeric")) {
@@ -297,24 +225,6 @@ normalize <- function(num_vector) {
 #'
 #' @export
 
-get_attr_values <-function(dataset, attrid = NULL) {
-  if(is.null(attrid)) {
-    stop("You need to specify one attrid")
-  }
-  if(is.null(dataset)) {
-    stop("You need to provide the dataset")
-  }
-  ## Check if given userid is in the data
-  if(!attrid %in% get_attrs_ID(dataset)) {
-    print(attrid)
-    stop("The attrid you specified is not contained in your data.")
-  }
-
-  help1 <- tapply(dataset$selected, dataset$atid == attrid, unique)
-  result <- help1$'TRUE'
-  result
-}
-
 getAttrValues <-function(dataset, attrid = NULL) {
   if(is.null(dataset)) {
     stop("You need to provide the dataset")
@@ -336,8 +246,6 @@ getAttrValues <-function(dataset, attrid = NULL) {
 }
 
 #' HEader
-#'
-#'
 #'
 #' @param da
 #' @param at
@@ -381,16 +289,9 @@ benefitToCostAttr <- function(dataset, aList, cost_ids = NULL) {
   }
   costifiedList
 }
+
 ## New function
 replaceNotNA <- function(x, y, boolean.vector) {
   x[boolean.vector] <- y[boolean.vector]
   x
 }
-
-##cache
-#m <- 1
-#for(m in 1:length(defaultRefps)) {
-#defaultRefps[[m]][boolean.vector] <- refps[boolean.vector]
-# resultresult <- lapply(defaultRefps, FUN = function(tempData) tempData[boolean.vector] <- refps[boolean.vector])
-#}
-

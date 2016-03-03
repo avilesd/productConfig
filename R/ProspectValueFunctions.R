@@ -1,20 +1,4 @@
 
-overall_pv <- function (dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL,  weight = NULL,
-                        alpha = 0.88, beta = 0.88, lambda = 2.25) {
-  if(is.null(weight) & is.null(dataset)) {
-    stop("Unable to get weights. You need to enter the weights or provide the dataset for us to calculate them. ")
-  }
-  if(is.null(weight) & !is.null(dataset)) {
-    weight <-get_attr_weight(dataset, userid, weight,  attr, rounds, cost_ids)
-  }
-
-  v_matrix <- pvalue_matrix(dataset, userid, attr, rounds, refps, cost_ids, alpha, beta, lambda)
-
-  overall_pv <- overall_pv_extend(v_matrix, weight)
-
-  overall_pv
-
-}
 
 #Added new function
 # DOCU: This nor any other vectorized function sort attributes!!!!!, that is the results are printed in the order they were given! Impacts
@@ -42,18 +26,6 @@ overallPV <- function (dataset, userid = NULL, attr = NULL, rounds = NULL, refps
   })
 
   overall_pv
-}
-
-###########
-
-pvalue_matrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL,
-                          alpha = 0.88, beta = 0.88, lambda = 2.25) {
-  ngain <- norm_g_l_matrices(dataset, userid, attr, rounds, refps, cost_ids)$ngain
-  nloss <- norm_g_l_matrices(dataset, userid, attr, rounds, refps, cost_ids)$nloss
-
-  v_matrix <- prospect_value_matrix_extend(ngain, nloss, alpha, beta, lambda)
-  v_matrix
-
 }
 
 #########
@@ -84,16 +56,14 @@ pvMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps =
   pvMatrixList
 }
 
-
-##Auxiliary function, not necessary to document right now.
+# Still used in vectorialised. Auxiliary function, not necessary to document right now.
 pvalue_fun <- function(ngain_ij, nloss_ij, alpha = 0.88, beta = 0.88, lambda = 2.25) {
   result <- ((ngain_ij)^alpha) + (-lambda*((-nloss_ij)^beta))
   result
 
 }
 
-######
-
+#Still used in vectorialised
 overall_pv_extend <- function(value_matrix, weight = NULL) {
   if (length(weight) != ncol(value_matrix)) {
     text <- paste0("weights: ", length(weight), " != ", ncol(value_matrix), " cols in valueMatrix.")

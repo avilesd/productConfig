@@ -78,69 +78,6 @@
 #' @export
 #'
 
-ref_points <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NULL, ...) {
-  ## Handle attributes
-  attrnull <- is.null(attr)
-  if(attrnull) {
-    ##Get all the attributes. Default = get all attributes.
-    attr <- get_attrs_ID(dataset)
-  }
-  else {
-    var1 <- length(attr)
-    var2 <- attr %in% get_attrs_ID(dataset)
-    var2 <- var2[var2 == TRUE]
-    var2 <- length(var2)
-    if(var1 == var2) {
-      attr <- sort(attr)
-    }
-    else {
-      rest <- var1 - var2
-      stop(paste(rest ,"of the attribute IDs you entered in attr are not to be found in your data."))
-    }
-  }
-  ## Actual getting of the Reference Points begins here
-  fullattr <- identical(sort(get_attrs_ID(dataset)), sort(attr))
-
-  if(is.null(refps) & fullattr) {
-    refps <- get_all_default_rps(dataset, userid)
-  }
-  else if(is.null(refps) & !fullattr) {
-    refps <- get_all_default_rps(dataset, userid)
-    refps <- refps[attr]
-  }
-  else {
-    #Bug fixed
-    if(length(attr) != length(refps)){
-      if(attrnull) {
-        stop("Amount of RefPoints entered doesn't equal amount of attributes in your table. Enter equal amount of attributes and RefPoints or all RefPoints.")
-      }
-      else {
-        stop("Amount of RefPoints entered doesn't equal amount of attributes you entered. Enter equal amount of attributes and RefPoints or none.")
-
-      }
-    }
-
-    m <- 1
-    rp_names <- character(0)
-
-    for(rp in refps){
-      rp_names <- c(rp_names, paste("rp", m, seq="", collapse=""))
-      m <- m + 1
-    }
-    names(refps) <- rp_names
-  }
-
-  n <- 1
-  if(!is.null(cost_ids)) {
-    for(n in 1:length(cost_ids)) {
-      if(!is.null(cost_ids)) {
-        refps[cost_ids[n]] <- refps[cost_ids[n]] * (-1)
-      }
-    }
-  }
-  refps
-
-}
 ## DOCU check notes, but NA refps will be calculated
 referencePoints <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NULL, forceRefps = TRUE) {
   # Check decision tree
