@@ -28,7 +28,8 @@ ProductConfig Github page:
   https://github.com/avilesd/productConfig
 }
 \seealso{
-Other get functions: \code{\link{get_all_default_rps}},
+Other get functions: \code{\link{benefitToCostAttr}},
+  \code{\link{get_all_default_rps}},
   \code{\link{get_all_userids}},
   \code{\link{get_attr_values}},
   \code{\link{get_attrs_ID}},

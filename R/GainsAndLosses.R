@@ -78,28 +78,18 @@
 #' gain_matrix(data1, 2, rounds = "last", attr = 1)
 #' @export
 
-gain_matrix <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
-  ## Calculate decision matrix based on inputs
-  des_matrix <- decision_matrix(data, userid, attr, rounds, cost_ids)
+gainMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
+  desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
+  refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)
 
+  tMatrixList <- lapply(desList, t)
 
-  ## Get reference points(aspiration-levels) from input
-  refps_vector <-ref_points(data, userid, refps, attr, cost_ids)
+  result <- mapply(gainFunction, tMatrixList, refPs, SIMPLIFY = F)
 
-  ## Create empty result Gain matrix
-  dim_matrix <- dim(des_matrix)
-  gain_matrix <- matrix(2, dim_matrix[1],dim_matrix[2])
-
-  ## TODO: 1. name the matrix
-  m <- 1
-  ## Fill the matrix
-  for(n in 1:dim_matrix[1]) {
-    gain_matrix[m, ] <- mapply(gain_fun_a, des_matrix[m, ], refps_vector)
-    m <- m + 1
-  }
-
-  gain_matrix
-
+  #desList <- lapply(result, dim, nrow = rounds, ncol= length(attr), byrow = T)
+  res <- mapply(function(tempData7, tempData8) {dim(tempData7) <- c(ncol(tempData8), nrow(tempData8)); tempData7}, result, desList, SIMPLIFY = F)
+  finalRes <- lapply(res, t)
+  finalRes
 }
 
 #' Loss matrix
@@ -182,28 +172,18 @@ gain_matrix <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps =
 #' loss_matrix(data1, 2, rounds = "last", attr = 1)
 #' @export
 
-loss_matrix <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
-  ## Calculate decision matrix based on inputs
-  des_matrix <- decision_matrix(data, userid, attr, rounds, cost_ids)
+lossMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
+  desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
+  refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)
 
+  tMatrixList <- lapply(desList, t)
 
-  ## Get reference points(aspiration-levels) from input
-  refps_vector <-ref_points(data, userid, refps, attr, cost_ids)
+  result <- mapply(lossFunction, tMatrixList, refPs, SIMPLIFY = F)
 
-  ## Create empty result Gain matrix
-  dim_matrix <- dim(des_matrix)
-  loss_matrix <- matrix(2, dim_matrix[1],dim_matrix[2])
-
-  ## TODO: 1. name the matrix
-  m <- 1
-  ## Fill the matrix
-  for(n in 1:dim_matrix[1]) {
-    loss_matrix[m, ] <- mapply(loss_fun_a, des_matrix[m, ], refps_vector)
-    m <- m + 1
-  }
-  loss_matrix
-
-
+  #This should be a standalone function
+  res <- mapply(function(tempData7, tempData8) {dim(tempData7) <- c(ncol(tempData8), nrow(tempData8)); tempData7}, result, desList, SIMPLIFY = F)
+  finalRes <- lapply(res, t)
+  finalRes
 }
 
 #' Merges gain and loss matrices
@@ -293,23 +273,28 @@ loss_matrix <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps =
 #' gain_loss_matrices(data1, 40, attr = 1)
 #' gain_loss_matrices(data, 3, result_type = "cbind", attr = c(1,2,3,4) )
 #' @export
-gain_loss_matrices <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, result_type = NULL, cost_ids = NULL) {
 
-  g_matrix <- gain_matrix(data, userid, attr, rounds, refps, cost_ids)
-  l_matrix <- loss_matrix(data, userid, attr, rounds, refps, cost_ids)
+gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL, unlist = T) {
+  gainList <- gainMatrix(dataset, userid, attr, rounds, refps, cost_ids) # here is probably the bottlenech
+  lossList <- lossMatrix(dataset, userid, attr, rounds, refps, cost_ids) # and here
 
-  ##Depending on result_type return matrices accordingly
-  if(is.null(result_type)){
-    result <- list(gain = g_matrix, loss = l_matrix)
-  }
-  else if(result_type == "rbind") {
-    result <- rbind(g_matrix, l_matrix)
-  }
-  else if(result_type == "cbind") {
-    result <- cbind(g_matrix, l_matrix)
-  }
-  result
+  desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
+  refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)
 
+  tMatrixList <- lapply(desList, t)
+
+  #gainList2 <- mapply(gainFunction, tMatrixList, refPs, SIMPLIFY = F)
+  #lossList2 <- mapply(lossFunction, tMatrixList, refPs, SIMPLIFY = F)
+
+  #if (unlist) {
+    #gain.loss <- mapply(rbind, gainList, lossList, SIMPLIFY = F)
+  #}
+  #else{
+  #gain.loss <- mapply(list, gain = gainList, loss = lossList, SIMPLIFY = F)
+  #gain.loss <- mapply(rbind, gainList, lossList, SIMPLIFY = F)
+  #}
+  gain.loss <- mapply(rbind, gainList, lossList, SIMPLIFY = F)
+  gain.loss
 }
 
 #' Normalizes gain and loss matrices
@@ -367,27 +352,41 @@ gain_loss_matrices <- function(data, userid = NULL, attr = NULL, rounds = NULL, 
 #'
 #' @export
 
-norm_g_l_matrices <- function(data, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
-  g_l_matrix <- gain_loss_matrices(data, userid, attr, rounds, refps, result_type="rbind", cost_ids)
+## to be used
+norm.gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL, binded = T) {
+  desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
+  refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)
 
-  n_gain <- gain_matrix(data, userid, attr, rounds, refps, cost_ids)
-  n_loss <- loss_matrix(data, userid, attr, rounds, refps, cost_ids)
+  tMatrixList <- lapply(desList, t)
 
-  hmax_vector <- numeric(0)
-  number_col <-  dim(g_l_matrix)[2]
+  gainVector <- mapply(gainFunction, tMatrixList, refPs, SIMPLIFY = F)
+  lossVector <- mapply(lossFunction, tMatrixList, refPs, SIMPLIFY = F)
 
-  for(n in 1:number_col) {
-    hmax_vector <- c(hmax_vector, max(abs(g_l_matrix[,n])))
-    if(hmax_vector[n] == 0) {
+  #Using matrix and lapply is harder, because different amount of rounds and therefore rows.
+  gainList <- mapply(function(temp5, temp6) {dim(temp5) <- c(ncol(temp6), nrow(temp6)); temp5}, gainVector, desList, SIMPLIFY = F)
+  lossList <- mapply(function(temp5, temp6) {dim(temp5) <- c(ncol(temp6), nrow(temp6)); temp5}, lossVector, desList, SIMPLIFY = F)
 
-    }
-    else {
-      n_gain[,n] <- n_gain[,n]/hmax_vector[n]
-      n_loss[,n] <- n_loss[,n]/hmax_vector[n]
-    }
+  gainList <- lapply(gainList, t) # correct form
+  lossList <- lapply(lossList, t)
+
+  bindedUnnorm <- mapply(rbind, gainList, lossList, SIMPLIFY = F)
+
+  #Goal calculate hmax
+  result4max <- lapply(bindedUnnorm, function(temp) apply(temp, 2, abs))
+  hmaxVector <- lapply(result4max, function(temp1) apply(temp1, 2, max)) # returns a list with the hmax vector
+  hmaxVector <- lapply(hmaxVector, function(temp2) replace(temp2, temp2==0.0, 1.00)) #remove 0 to avoid NA when dividing
+
+  g.normMatrix <- mapply(function(aMatrix, aVector) aMatrix / aVector[col(aMatrix)], gainList, hmaxVector, SIMPLIFY = F)
+  l.normMatrix <- mapply(function(aMatrix, aVector) aMatrix / aVector[col(aMatrix)], lossList, hmaxVector, SIMPLIFY = F)
+
+  if (binded) {
+    bothMatrix <-mapply(rbind, g.normMatrix, l.normMatrix, SIMPLIFY = F)
+    bothMatrix
   }
-  result <- list(ngain = n_gain, nloss = n_loss)
-  result
+  else {
+    bothMatrix <- list(gain = g.normMatrix, loss = l.normMatrix) # use lapply to join gain-loss for each userid
+  }
+  bothMatrix
 }
 
 #' Calculates the gain for one attribute
@@ -412,14 +411,9 @@ norm_g_l_matrices <- function(data, userid = NULL, attr = NULL, rounds = NULL, r
 #'
 #' @export
 
-gain_fun_a <- function(s_ij, e_j) {
-  if(s_ij >= e_j) {
-    gain <- s_ij - e_j
-  }
-  else {
-    gain <- 0
-  }
-  gain
+gainFunction <- function(v1, v2) {
+  gainVector <- mapply(gain_fun_a, v1, v2)
+  gainVector
 }
 
 #' Calculates the loss for one attribute
@@ -443,12 +437,8 @@ gain_fun_a <- function(s_ij, e_j) {
 #' loss_fun_a(2, 3)  # returns: -1
 #'
 #' @export
-loss_fun_a <- function(s_ij, e_j) {
-  if(s_ij >= e_j) {
-    loss <- 0
-  }
-  else {
-    loss <- s_ij - e_j
-  }
-  loss
+
+lossFunction <- function(v1, v2) {
+  lossVector <- mapply(loss_fun_a, v1, v2)
+  lossVector
 }

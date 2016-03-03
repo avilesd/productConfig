@@ -24,19 +24,23 @@
 #' get_table_by_ID(as.data.frame(matrix_full), 12)
 #' @export
 
-get_table_by_ID<- function(x, userid = NULL,...) {
+getTableById <- function(dataset, userid = NULL,...) {
   if(is.null(userid)) {
-    stop("You need to specify one userid.")
-  }
-  ## Check if given userid is in the data
-  if(!userid %in% get_all_userids(x)) {
-    print(userid)
-    stop("The userid you specified is not contained in your data.")
+    stop("You need to specify at least one userid.")
   }
 
-  result <- x[x$usid == userid, ]
+  if(FALSE %in%(userid %in% getAllUserIds(dataset))) {
+    logicalVector <-!(userid %in% getAllUserIds(dataset))
+    fatalUserid <- userid[logicalVector]
+    fatalUserid <- paste(fatalUserid, collapse = " ")
+    stop("At least one userid you specified is not contained within your data: ", fatalUserid)
+  }
+
+  result <- split(dataset, f = dataset$usid)
+  result <- result[as.character(userid)]
   result
 }
+
 
 #' Get the amount of attributes and their IDs
 #'
@@ -47,7 +51,7 @@ get_table_by_ID<- function(x, userid = NULL,...) {
 #' \code{$atid}. It also assumes, that all users interacted with the same amount
 #' of attributes.
 #'
-#' @param x the data.frame you want to input.
+#' @param dataset the data.frame you want to input.
 #'
 #' @return a vector of integers representing all existing attribute IDs.
 #'
@@ -61,14 +65,14 @@ get_table_by_ID<- function(x, userid = NULL,...) {
 #' @export
 #'
 
-get_attrs_ID<- function(x) {
-  help <- lapply(x, unique)
+get_attrs_ID <- function(dataset) {
+  help <- lapply(dataset, unique)
   result <- help$atid
 
   if(!is.vector(result) & class(result) != "integer") {
     warning("Result of function not a vector of integers, attributes IDs should only be integers.")
   }
-
+  result <- sort(result)
   result
 }
 
@@ -98,18 +102,11 @@ get_attrs_ID<- function(x) {
 #'
 #'@export
 
-get_rounds_by_ID <- function(x, userid = NULL) {
-  if(is.null(userid)) {
-    stop("You need to specify one userid.")
-  }
-  ## Check if given userid is in the data
-  if(!userid %in% get_all_userids(x)) {
-    print(userid)
-    stop("The userid you specified is not contained in your data.")
-  }
+getRoundsById <- function(dataset, userid = NULL) {
+  # Userid error catching already done in below function 'getTableById'
 
-  table_by_ID <- get_table_by_ID(x, userid)
-  result <- unique(table_by_ID$round)
+  tablesById <- getTableById(dataset, userid)
+  result <- lapply(tablesById, function(tempData) unique(tempData$round))
   result
 }
 
@@ -134,8 +131,8 @@ get_rounds_by_ID <- function(x, userid = NULL) {
 #'   https://github.com/avilesd/productConfig
 #' @export
 
-get_all_userids <- function(dataset) {
-  table_unique <- sapply(play_data, unique)
+getAllUserIds <- function(dataset) {
+  table_unique <- sapply(dataset, unique)
   result <- table_unique$usid
   result
 }
@@ -164,36 +161,22 @@ get_all_userids <- function(dataset) {
 #' get_all_default_rps(camera2_config_data, 100)
 #' get_all_default_rps(as.data.frame(matrix_full), 55)
 #'@export
-get_all_default_rps <- function(dataset, userid) {
-  if(is.null(userid)) {
-    stop("You need to specify one userid.")
-  }
-  ## Check if given userid is in the data
-  if(!userid %in% get_all_userids(dataset)) {
-    print(userid)
-    stop("The userid you specified is not contained in your data.")
-  }
 
-  table_unique <- get_table_by_ID(dataset, userid)
-  table_0 <- table_unique[table_unique$round == 0, ]
-  result <- table_0$selected
+getDefaultRefps <- function(dataset, userid = NULL) {
 
-  ##Give Reference Points names according to attribute they belong to
-  m <- 1
-  help <- get_attrs_ID(dataset)
-  rp_names <- character(0)
+  tablesById <- getTableById(dataset, userid)
+  tablesDefaultRound <- lapply(tablesById, function(tempData) tempData[tempData$round == 0, ])
+  result <- lapply(tablesDefaultRound, function(tempData2) tempData2$selected)
 
-  for(rp in result){
-    rp_number <- help[m]
-    rp_names <- c(rp_names, paste("rp", rp_number, seq="", collapse=""))
-    m <- m + 1
-  }
-  names(result) <- rp_names
+  ## Get Names, depending on how many attributes and set them on a vector
+  allAttr <- get_attrs_ID(dataset)
+  refpsNames <- paste("rp", allAttr)
+
+  result <- lapply(result, setNames, refpsNames)
 
   result
 
 }
-
 #' Normalize a vector
 #'
 #' Divide all given vectors with the absolute sum of all the elements in the
@@ -214,7 +197,8 @@ get_all_default_rps <- function(dataset, userid) {
 #'   https://github.com/avilesd/productConfig
 #' @export
 
-get_normalized_vec <- function(num_vector) {
+## Renewed function , eventually to put in other R script with functional functions below
+normalize <- function(num_vector) {
   if(is.vector(num_vector, mode="numeric")) {
     sum <- sum(abs(num_vector))
     result <- num_vector/sum
@@ -241,21 +225,73 @@ get_normalized_vec <- function(num_vector) {
 #'
 #' @export
 
-get_attr_values <-function(dataset, attrid = NULL) {
-  if(is.null(attrid)) {
-    stop("You need to specify one attrid")
-  }
+getAttrValues <-function(dataset, attrid = NULL) {
   if(is.null(dataset)) {
     stop("You need to provide the dataset")
   }
-  ## Check if given userid is in the data
-  if(!attrid %in% get_attrs_ID(dataset)) {
-    print(attrid)
-    stop("The attrid you specified is not contained in your data.")
+
+  allAttributes <- get_attrs_ID(dataset)
+
+  if(is.null(attrid)) {
+    attrid <- allAttributes
+  }
+  if(FALSE %in%(attrid %in% allAttributes)) {
+    allAttributes <- paste(allAttributes, sep=",", collapse = " ")
+    stop("One of the attrid you specified is not contained in your data. Valid Attibute Ids are: ", allAttributes)
   }
 
-  help1 <- tapply(dataset$selected, play_data$atid == attrid, unique)
-  result <- help1$'TRUE'
+  help1 <- split(dataset, f = dataset$atid)
+  result <- lapply(help1[attrid], function(tempData) unique(tempData$selected))
   result
 }
 
+#' HEader
+#'
+#' @param da
+#' @param at
+#'
+#' @return Uni
+#'
+#' @family get functions
+#' @examples tbd
+#'
+#' @export
+
+#New function it can handle two types of lists, important for RefPoints and for decisionMatrix. It handles
+# with list-elements as a. vectors, e.g. refps or as b. matrices like in a decision matrix.
+benefitToCostAttr <- function(dataset, aList, cost_ids = NULL) {
+  allAttrs <- get_attrs_ID(dataset)
+  booleanVector <- cost_ids %in% allAttrs
+
+  if(FALSE %in% booleanVector  & class(cost_ids) == "numeric") {
+    attrAndCostIds <- cost_ids[!booleanVector]
+    attrAndCostIds <- paste(attrAndCostIds, sep=",", collapse = " ")
+    stop("some cost/attribute IDs you entered in cost_ids are not to be found in your data: ", attrAndCostIds)
+  }
+
+  if(is.null(cost_ids)) {
+    costifiedList <- aList
+  }
+  else {
+    n <- 1
+    if(is.vector(aList[[1]]) & !is.list(aList[[1]])) {
+      for(n in 1:length(aList)) {
+        aList[[n]][cost_ids] <- aList[[n]][cost_ids]*(-1)
+        costifiedList <- aList
+      }
+    }
+    else {
+      for(n in 1:length(aList)) {
+        aList[[n]][,cost_ids] <- aList[[n]][,cost_ids]*(-1)
+        costifiedList <- aList
+      }
+    }
+  }
+  costifiedList
+}
+
+## New function
+replaceNotNA <- function(x, y, boolean.vector) {
+  x[boolean.vector] <- y[boolean.vector]
+  x
+}

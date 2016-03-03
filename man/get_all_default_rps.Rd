@@ -34,7 +34,8 @@ get_all_default_rps(as.data.frame(matrix_full), 55)
 \code{\link{powerful_function}} allows you to run this and any other
  function in this package for more than one user.
 
-Other get functions: \code{\link{get_all_userids}},
+Other get functions: \code{\link{benefitToCostAttr}},
+  \code{\link{get_all_userids}},
   \code{\link{get_attr_values}},
   \code{\link{get_attrs_ID}},
   \code{\link{get_normalized_vec}},

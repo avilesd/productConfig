@@ -78,67 +78,74 @@
 #' @export
 #'
 
-ref_points <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NULL, ...) {
-  ## Handle attributes
+## DOCU check notes, but NA refps will be calculated
+referencePoints <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NULL, forceRefps = TRUE) {
+  # Check decision tree
   attrnull <- is.null(attr)
+  fillAfterCut <- FALSE
+
   if(attrnull) {
-    ##Get the attributes of given ID. Default = get all attributes.
-    attr <- get_attrs_ID(dataset)
-    attr <- sort(attr)
+    attr <- get_attrs_ID(dataset) #Get all the attributes: Default behavior.
   }
   else {
-    var1 <- length(attr)
-    var2 <- attr %in% get_attrs_ID(dataset)
-    var2 <- var2[var2 == TRUE]
-    var2 <- length(var2)
-    if(var1 == var2) {
-      attr <- sort(attr)
+    if(FALSE %in% (attr %in% get_attrs_ID(dataset))) {
+      attr <- get_attrs_ID(dataset)
+      attr <- paste(attr, sep=",", collapse = " ")
+      stop("of the attribute IDs you entered in attr are not to be found in your data.
+           Valid attr Ids are: ", attr)
+    }
+  }
+  fullattr <- identical(sort(get_attrs_ID(dataset)), sort(attr)) #Check if there are fullattr, either inputed or as default (line150)
+  defaultRefps <- getDefaultRefps(dataset, userid) #Handels userid input errors
+
+  if(forceRefps) {
+    if (!is.null(refps)) {
+      lengthDefValues <- length(defaultRefps[[1]])
+      if(lengthDefValues != length(refps)) {
+        warning("Alternatively set forceRefps to FALSE", call. = FALSE)
+        stop("You need to enter a numeric or NA value for all refps, total amount of attributes: ", lengthDefValues, call. = FALSE)
+      }
+      boolean.vector <- !is.na(refps)
+      defaultRefps <- lapply(defaultRefps, FUN = replaceNotNA, refps, boolean.vector)
+    }
+    else { # refps is null
+      defaultRefps <- defaultRefps
+    }
+  }
+
+  if(!forceRefps) {
+    if(length(attr) != length(refps) & !is.null(refps)) {
+      stop("Amount of RefPoints entered doesn't equal amount of attributes you entered. Enter equal amount of attributes and RefPoints or none.")
     }
     else {
-      rest <- var1 - var2
-      stop(paste(rest ,"of the attribute IDs you entered in attr are not to be found in your data."))
+      fillAfterCut <- TRUE
     }
   }
-  ## Actual getting of the Reference Points begins here
-  fullattr <- all(sort(get_attrs_ID(play_data)) == attr)
 
-  if(is.null(refps) & fullattr) {
-    refps <- get_all_default_rps(dataset, userid)
-  }
-  else if(is.null(refps) & !fullattr) {
-    refps <- get_all_default_rps(dataset, userid)
-    refps <- refps[attr]
+  defAndCostIdRefps <- benefitToCostAttr(dataset, defaultRefps, cost_ids)
+
+  #CUT according to attribute
+  if (fullattr) {
+    cutTable <- defAndCostIdRefps
   }
   else {
-    #Bug fixed
-    if(length(attr) != length(refps)){
-      if(attrnull) {
-        stop("Amount of RefPoints entered doesn't equal amount of attributes in your table. Enter equal amount of attributes and RefPoints or all RefPoints.")
-      }
-      else {
-        stop("Amount of RefPoints entered doesn't equal amount of attributes you entered. Enter equal amount of attributes and RefPoints or none.")
-
-      }
-    }
-
-    m <- 1
-    rp_names <- character(0)
-
-    for(rp in refps){
-      rp_names <- c(rp_names, paste("rp", m, seq="", collapse=""))
-      m <- m + 1
-    }
-    names(refps) <- rp_names
+    cutTable <- defAndCostIdRefps
+    cutTable <- lapply(cutTable[1:length(cutTable)], "[", attr)
   }
 
-  n <- 1
-  if(!is.null(cost_ids)) {
-    for(n in 1:length(cost_ids)) {
-      if(!is.null(cost_ids)) {
-        refps[cost_ids[n]] <- refps[cost_ids[n]] * (-1)
-      }
+  if(fillAfterCut & !is.null(refps)) {
+    boolean.vector2 <- !is.na(refps)
+    result <- lapply(cutTable, FUN = replaceNotNA, refps, boolean.vector2)
+    print("here is the error, Na + forceRefps = T")
+    costCharacter <- paste("rp", cost_ids)
+    result <- benefitToCostAttr(dataset, result, costCharacter)
+
+    if(length(cost_ids) > length(attr)) {
+      warning("You have entered more cost_ids than attributes", call. = FALSE)
     }
   }
-  refps
-
+  else {
+    result <- cutTable
+  }
+  result
 }

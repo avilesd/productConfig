@@ -180,7 +180,6 @@ powerful_function <- function(dataset, userid = NULL, FUN = decision_matrix, att
   else {
     stop("You need to provide at least 1 userid.")
   }
-
 }
 
 

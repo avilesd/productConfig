@@ -4,10 +4,10 @@
 \alias{get_attrs_ID}
 \title{Get the amount of attributes and their IDs}
 \usage{
-get_attrs_ID(x)
+get_attrs_ID(dataset)
 }
 \arguments{
-\item{x}{the data.frame you want to input.}
+\item{dataset}{the data.frame you want to input.}
 }
 \value{
 a vector of integers representing all existing attribute IDs.
@@ -29,7 +29,8 @@ ProductConfig Github page:
   https://github.com/avilesd/productConfig
 }
 \seealso{
-Other get functions: \code{\link{get_all_default_rps}},
+Other get functions: \code{\link{benefitToCostAttr}},
+  \code{\link{get_all_default_rps}},
   \code{\link{get_all_userids}},
   \code{\link{get_attr_values}},
   \code{\link{get_normalized_vec}},

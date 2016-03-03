@@ -1,11 +1,17 @@
+# Exceptions
+!new_BA.RData
+
 #Seminar and paper files, stored in the Cloud - G Drive
 /Seminar Files
 .log
 .Rmd
 .tex
 
+#BA files used for writing and Dependencies
+/BAFiles
+
 # History files
-.Rhistory
+#.Rhistory
 .Rapp.history
 
 # Session Data files

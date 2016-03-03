@@ -79,101 +79,84 @@
 #'
 #' @export
 
+#New function: different than previous version is for example by the handling of the cost_ids
+# argument, e.g. decision_matrix(myData, 60, attr=c(1,2,4) ,rounds="all", cost_ids = 3),
+# previous function cuts matrix first and then wrongly applies cost_ids to the third attribute,
+# in this case attr4. Cost ids will be calculated before, so dont' have to consider anything
+# before their input.
+#' DOCU New if only inputtin one vector in rounds, it will be converted into a list, if you need
+#' different rounds for different userids, you need to provide them as a list of vectors.
 
-
-decision_matrix <- function(data, userid = NULL, attr = NULL, rounds = NULL, cost_ids = NULL) {
-
-  if(is.null(userid)) {
-    stop("You need to specify one userid.")
-  }
-  ## Check if given userid is in the data
-  if(!userid %in% get_all_userids(data)) {
-    print(userid)
-    stop("The userid you specified is not contained in your data.")
-  }
-  ##Works even if you give the already usid-filtered table
-  dataset <- get_table_by_ID(data, userid)
-
+#Docu from old function
+decisionMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, cost_ids = NULL) {
   if(is.null(attr)) {
-    ##Get the attributes of given ID. Default = get all attributes.
-    attr <- get_attrs_ID(dataset)
-    attr <- sort(attr)
+    attr <- sort(get_attrs_ID(dataset))
   }
-  else {
-    var1 <- length(attr)
-    var2 <- attr %in% get_attrs_ID(dataset)
-    var2 <- var2[var2 == TRUE]
-    var2 <- length(var2)
-    if(var1 == var2) {
-      attr <- sort(attr)
-    }
-    else {
-      rest <- var1 - var2
-      stop(paste(rest ,"of the attributes you entered in attr are not to be found in your data."))
-    }
-  }
-  ##Default setting first and last round
+  completeTables <- getTableById(dataset, userid)
+
+  orderedLists <- lapply(completeTables, function(tempData) tapply(tempData$selected, tempData$round, FUN = "["))
+  bindedTables <- lapply(orderedLists, function(tempData2) do.call(rbind, tempData2))
+
+  costifiedTables <- benefitToCostAttr(dataset, bindedTables, cost_ids)
+  costifiedTables
+
+  #Consider names beforing cutting
+
+  #Rounds
+  all_rounds <- getRoundsById(dataset, userid)
+
+  j <- 1
   if(is.null(rounds)) {
-    all_rounds <- get_rounds_by_ID(dataset, userid)
-    rounds <- c(all_rounds[1], all_rounds[length(all_rounds)])
-  }
-
-  else if (rounds == "all"){
-    rounds <- get_rounds_by_ID(dataset, userid)
-  }
-  else if (rounds == "last") {
-    all_rounds <- get_rounds_by_ID(dataset, userid)
-    rounds <- all_rounds[length(all_rounds)]
-  }
-  else if (rounds == "first") {
-    all_rounds <- get_rounds_by_ID(dataset, userid)
-    rounds <- c(all_rounds[1])
-  }
-  ##TODO create for first and last
-
-  ## Create dummy matrix
-  result_matrix <- matrix(0, length(rounds), length(attr))
-
-  ## Create column names vector
-  col_names <- character(0)
-  for(a in attr){
-    col_names <- c(col_names, paste("attr", a, sep="", collapse=""))
-  }
-
-  ## Create rows names vector
-  row_names <- character(0)
-  for(b in rounds){
-    row_names <- c(row_names, paste("round", b, sep="", collapse=""))
-  }
-
-  ## Name columns and rows
-  colnames(result_matrix) <- col_names
-  rownames(result_matrix) <- row_names
-
-  m <- 1
-
-  for(i in rounds) {
-
-    table_round <- dataset[dataset$round == i, ]
-    table_attribute <- table_round[table_round$atid %in% attr ,]
-    row_complete <- table_attribute$selected
-    result_matrix[m,] <- row_complete
-    m <- m + 1
-
-  }
-  ## Convert cost attribute/s into benefit attribute/s.
-  n <- 1
-  if(!is.null(cost_ids)) {
-    for(n in 1:length(cost_ids)) {
-      if(!is.null(cost_ids)) {
-        result_matrix[,cost_ids[n]] <- result_matrix[,cost_ids[n]] * (-1)
-      }
+    rounds <- list()
+    for (i in userid) {
+      rounds[[j]] <- c(1, length(all_rounds[[j]]))
+      j <- j + 1
     }
   }
 
-  ##result <- list(matrix1 = matrix1)
-  ##append(result, what,)
+  else if (!is.character(rounds) & !is.null(rounds)) {
+    if (is.vector(rounds) & !is.list(rounds)) {
+      rounds <- list("$roundsVector" = rounds)
+    }
+  }
+  else if (is.character(rounds)) {
+    if (rounds == "all"){
+      rounds <- lapply(all_rounds, function(tempDataX) tempDataX+1)
+    }
+    else if (rounds == "last") {
+      rounds <- lapply(all_rounds, length)
+    }
+    else if (rounds == "first") {
+      rounds <- lapply(all_rounds, function(tempDataY) 1)
+    }
+  }
 
-  result_matrix
+  else {
+    warning("Input in 'rounds' not recognized, calculated with default: first and last rounds")
+  }
 
-}
+  ## Name columns and rows, test inputting list of vectors other than the strings in 'rounds' argument.
+  ## Should work as in list(0:2), test list out of bounds, and DOCU.
+  tableRows <- lapply(costifiedTables, rownames)
+  round.RowNames <- lapply(tableRows, paste0, "round")
+  namedResult <- lapply(costifiedTables, function(tempData5) {colnames(tempData5) <-colnames(tempData5, do.NULL = F, prefix = "attr"); tempData5})
+  namedResult <- mapply(namedResult[1:length(namedResult)], FUN =  function(tempDataC, tempDataD) {rownames(tempDataC) <- tempDataD; tempDataC}, round.RowNames, SIMPLIFY = FALSE)
+
+   # CUT according to attr, not finished, need some rest, return later to it, write it down
+  # current default behavior is getting all rounds.
+  attribute.cut <- lapply(namedResult[1:length(namedResult)], function(tempData3) tempData3[,attr, drop=FALSE])
+
+  #round.cut <- lapply(attribute.cut[1:length(attribute.cut)], function(tempData4) tempData4[rounds[j], , drop=FALSE])
+  tryCatchResult = tryCatch({
+    round.cut <- mapply(attribute.cut[1:length(attribute.cut)], FUN = function(tempDataA, tempDataB) tempDataA[tempDataB, , drop = FALSE], rounds, SIMPLIFY = FALSE)
+
+  }, warning = function(condition) {
+    message("Unknown warning in decisionMatrix by round cutting.")
+  }, error = function(condition) {
+    stop("One round in your 'rounds' input is not contained on your data: subscript out of bounds")
+  }, finally={
+  })
+
+  #Get Dimensions -  move to if else cases ??
+  round.cut
+  }
