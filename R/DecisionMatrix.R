@@ -255,7 +255,6 @@ decisionMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
   }, finally={
   })
 
-
   #Get Dimensions -  move to if else cases ??
 
   round.cut

@@ -337,38 +337,44 @@ trpValueFunction_extend <- function(x, mr = 0.5, sq = 1.5, g = 2.5 , beta_f = 5,
 #' DOCU: Explain what _extends is in pC, singalizes major functions that do not take the normal inputs but user
 #' other functions' results to work.
 
-#' Calculates overall prospect values for any given value matrix and weights
+#' Runs a simple additive weighting function over matrices
 #'
-#' This function was created
+#' Auxiliary function: Takes a matrix and a numeric vector and returns the
+#' overall weighted values for each row of the matrix by means of a simple
+#' additiv weighting function.
 #'
-#' @param dataset data.frame with the user generated data from a product
-#'   configurator. See \code{decision_matrix} for specifications of the dataset.
-#' @param userid a vector of integers that gives the information of which users
-#'   the matrix should be calculated. Vectorised.
-#'
-#'
-#' @details This function only makes sense to use with multiple attributes, it
-#'   those attributes have exactly the same three reference points (mr, sq, g).
-#'   Therefore you will have to manually calculate all the value matrices for
-#'   the different attributes (with different values) and cbind them together
-#'   using mapply. The full matrix can then be given as an input to the
-#'   \code{\link{trp.overallPV_interface}} fucntion to calculate the overall
-#'   prospect values for each round.
-#'
-#'   General: The value matrix has ncol = number of attributes you selected or
-#'   all(default) and nrow = number of rounds you selected or the first and
-#'   last(default) for all selected users.
-#'
-#' @return a vector of overall prospect values
+#' @param trp.ValueMatrix generally a \emph{list} of matrices from different
+#'   users, such as the output of \code{\link{trpValueMatrix}}. One matrix is
+#'   accepted as input but it will be coerced to a list.
+#' @param weight generally a \emph{list} of weights from different users, such
+#'   as the output of \code{\link{getAttrWeights}}. One vector is also accepted,
+#'   if there are more than one matrices, the function will try to recycle the
+#'   weight vector.
 #'
 #'
-#' @examples
-#' #' trpValueFunction(aMatrix = matrix(1:6, 2, 3), triRefps = c(2,3,4.5))
-#' trpValueFunction(matrix(1:16, 16, 1), triRefps = c(4, 8.9, 12.5), beta_f = 7)
-#' mix these 2
-#' trpValueMatrix(pc_config_data, 9:11, mr = 0.5, sq = 0, g = 2.5)
-#' trpValueMatrix(aDataFrame, userid = 100, rounds = "all", mr = 0.5, sq = 0, g = 2.5)
+#' @details The columns of the matrix should be different attributes of a
+#'   product or setup and the weight vector should contain a numeric value for
+#'   each attribute, so that \code{ncol(trp.ValueMatrix)=length(weight)}. Both
+#'   parameters are vectorised so you can enter a list of matrices in
+#'   \code{trp.ValueMatrix} and a list of vector in \code{weight}. A matrix in
+#'   the first argument or a vector in the second will be coerced into a list.
 #'
+#'   If some elements of the output list are called \code{$<NA>}, then try to
+#'   avoid recycling by checking your \code{weight} input.
+#'
+#' @return a (list of) vector(s) of overall prospect values
+#'
+#' @examples #Runnable
+#' overallPV_interface(trp.ValueMatrix = matrix(1:8, 2, 4), weight = c(0.25, 0.3, 0.15, 0.3))
+#' overallPV_interface(matrix(1:32, 16, 2), c(0.72, 0.25))
+#' overallPV_interface(list(m1 = matrix(1:32, 16, 2), m2 = matrix(1:14, 7, 2)),
+#'                          weight = c(100, 200)) # weight will be recycled: used on both matrices
+#' overallPV_interface(list(m1 = matrix(1:32, 16, 2), m2 = matrix(1:14, 7, 2)),
+#'                          list(weight1 = c(100, 200), weight2 = c(20, 50)))
+#'
+#' #Not Runnable
+#' overallPV_interface(aLargeListOfMatrices, weight = c(0.1, 0.2, 0.62, 0.05, 0.03))
+#' overallPV_interface(aLargeListOfMatrices, aLargeListOfVectors) #both arguments should have equal length
 #' @export
 
 overallPV_interface <- function (trp.ValueMatrix, weight = NULL) {
@@ -376,15 +382,22 @@ overallPV_interface <- function (trp.ValueMatrix, weight = NULL) {
   if(is.null(weight) | is.null(trp.ValueMatrix)) {
     stop("You need to provide both arguments: trp.ValueMatrix and their weights")
   }
+  if(is.vector(weight) & !is.list(weight)) {
+    weight <- list("oneVector" = weight)
+  }
+  if(is.matrix(trp.ValueMatrix) & !is.list(trp.ValueMatrix)) {
+    trp.ValueMatrix <- list(oneMatrix = trp.ValueMatrix)
+  }
 
   tryCatchResult = tryCatch({
     trp.overallPV <- mapply(overall_pv_extend, trp.ValueMatrix, weight, SIMPLIFY = F) ##Perhaps mapply when data.frame, make weights as list?!
 
   }, warning = function(condition) {
     message("Probably amount of users differs from amount of weightVectors and they cannot be recycled.")
-    message("Result most likely not accurrate, check your arguments.")
   }, error = function(condition) {
-    stop("The input in the weight parameters can be flexible but check if you are entering the right amount of weightVectors, users and attributes")
+    errorText <- paste0("Number of columns on your matrices:", ncol(trp.ValueMatrix[[1]])," differs from the length of at least one weight vector")
+    message("Also possible: amount of matrices (users) differs from amount of weightVectors and the latter could not be recycled.")
+    stop(errorText)
   }, finally={
   })
 
