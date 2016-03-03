@@ -3,9 +3,9 @@ context("10.Equality for get_attr_weight and getAttrWeight(weightFUN='deprecated
 
 
 test_that("results are equal, input and calculated weights", {
-  # laptop # camera2_config <- read.csv("C:/Users/diego/Google Drive/KIT/Seminar_eC_HCI/R/camera2_config.csv")
-  # CIP Pool #
-  camera2_config <- read.csv("U:/Development/BA_files/camera2_config.csv")
+  # laptop #
+  camera2_config <- read.csv("C:/Users/diego/Google Drive/KIT/Seminar_eC_HCI/R/camera2_config.csv")
+  # CIP Pool #  camera2_config <- read.csv("U:/Development/BA_files/camera2_config.csv")
   all.users <- getAllUserIds(camera2_config)
   all.attr <- get_attrs_ID(camera2_config)
 

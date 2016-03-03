@@ -6,9 +6,9 @@ test_that("results are numerically the same", {
   #' ToDo make result from legacy functions into a list to make comparable or extract from list
   #' with for loop or easiest way.
 
-  # laptop # camera2_config <- read.csv("C:/Users/diego/Google Drive/KIT/Seminar_eC_HCI/R/camera2_config.csv")
-  # CIP Pool #
-  camera2_config <- read.csv("U:/Development/BA_files/camera2_config.csv")
+  # laptop #
+  camera2_config <- read.csv("C:/Users/diego/Google Drive/KIT/Seminar_eC_HCI/R/camera2_config.csv")
+  # CIP Pool #camera2_config <- read.csv("U:/Development/BA_files/camera2_config.csv")
   all.users <- getAllUserIds(camera2_config)
   all.attr <- get_attrs_ID(camera2_config)
 
