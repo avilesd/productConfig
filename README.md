@@ -1,4 +1,4 @@
-Currently developing on 'vectorize' branch
+Back to developing on 'master'
 
 # productConfig
 R Package for mining behavioral patterns from product configurators 
