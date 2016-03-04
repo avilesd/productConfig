@@ -20,12 +20,10 @@ tbd
 
 }
 \seealso{
-Other get functions: \code{\link{get_all_default_rps}},
-  \code{\link{get_all_userids}},
-  \code{\link{get_attr_values}},
-  \code{\link{get_attrs_ID}},
-  \code{\link{get_normalized_vec}},
-  \code{\link{get_rounds_by_ID}},
-  \code{\link{get_table_by_ID}}
+Other get.functions: \code{\link{getAllUserIds}},
+  \code{\link{getAttrValues}},
+  \code{\link{getDefaultRefps}},
+  \code{\link{getRoundsById}}, \code{\link{getTableById}},
+  \code{\link{get_attrs_ID}}, \code{\link{normalize}}
 }
 

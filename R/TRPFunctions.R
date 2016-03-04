@@ -35,9 +35,9 @@
 #' @param mr numeric - Minimum Requirements is the lowest reference point
 #' @param sq numeric - Status Quo reference point
 #' @param g numeric - Goal reference point
-#' @param beta(s) numeric arguments representing the psychological impact of an outcome
-#'   equaling failer (_f), loss (_l), gain (_g) or success (_s). Default values
-#'   are taken from our reference paper \code{(5,1,1,3)}.
+#' @param beta(s) numeric arguments representing the psychological impact of an
+#'   outcome equaling failer (_f), loss (_l), gain (_g) or success (_s). Default
+#'   values are taken from our reference paper \code{(5,1,1,3)}.
 #'
 #'
 #' @details This function only makes sense to use with multiple attributes, it
@@ -79,8 +79,15 @@
 #'   this attributes as such, providing their id, they'll be converted to
 #'   benefit type (higher amount is better).
 #'
-#'   Note: When converting a cost attribute to a benefit attribute its three reference points change as well, enter the
-#'   unconverted refps, the function transforms them automatically when it detects a \code{cost_ids}
+#'   About reference points with cost_ids: For a cost attribute it should be
+#'   true, that a lower value is better for the user, this should also hold for
+#'   the three reference points. So contrary to normal/benefit attributes \code{
+#'   for cost attributes} reference points should follow that: \code{mr > sq >
+#'   g}.
+#'
+#'   Note: When converting a cost attribute to a benefit attribute its three
+#'   reference points change as well, enter the unconverted refps, the function
+#'   transforms them automatically when it detects a \code{cost_ids}
 #'
 #' @return a list of value matrices for each user.
 #'
@@ -91,7 +98,8 @@
 #' @examples
 #' trpValueMatrix(pc_config_data, 9:11, mr = 0.5, sq = 0, g = 2.5)
 #' trpValueMatrix(aDataFrame, userid = 100, rounds = "all", mr = 0.5, sq = 0, g = 2.5)
-#' trpValueMatrix(my_data, userid = 11, attr = c(1,3,5), cost_ids = 1:3) #Input accepted but cost_ids = 2 will be ignored
+#' trpValueMatrix(my_data, userid = 11, attr = c(1,3,5), cost_ids = 2) #Input accepted but cost_ids = 2 will be ignored
+#' trpValueMatrix(my_data, userid = 11, attr =  1, cost_ids = 1, mr = 10, sq = 5, g =3) # Note that for cost attributes: MR > SQ > G
 #' trpValueMatrix(keyboard_data, 60, rounds = "first", attr=1, mr = 0.5, sq = 0, g = 2.5, beta_f = 6)
 #' gain_matrix(data1, 2) # Returns an error since no reference points entered (mr, sq, g)
 #'
@@ -137,13 +145,17 @@ trpValueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
 #'   configurator. See \code{decision_matrix} for specifications of the dataset.
 #' @param userid a vector of integers that gives the information of which users
 #'   the matrix should be calculated. Vectorised.
-#' @param attr attributes ID, \emph{one integer} corresponding to the
-#'   attribute you desire to use; attr are assumed to be 1-indexed.
+#' @param attr attributes ID, \emph{one integer} corresponding to the attribute
+#'   you desire to use; attr are assumed to be 1-indexed.
 #' @param rounds integer vector or text option. Which steps of the configuration
 #'   process should be shown? Defaults are first and last step. Text options are
 #'   \code{all, first, last}.
 #' @param cost_ids argument used to convert selected cost attributes into
 #'   benefit attributes. In this function, should be the same as \code{attr}.
+#'   For a cost attribute it should be true, that a lower value is better for
+#'   the user, this should also hold for the three reference points. So contrary
+#'   to normal/benefit attributes \code{ for cost attributes} reference points
+#'   should follow that: \code{mr > sq > g}.
 #' @param mr numeric - Minimum Requirements is the lowest reference point
 #' @param sq numeric - Status Quo reference point
 #' @param g numeric - Goal reference point
@@ -151,7 +163,7 @@ trpValueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
 #'   outcome equaling failer (_f), loss (_l), gain (_g) or success (_s). Default
 #'   values are taken from our reference paper \code{(5,1,1,3)}.
 #'
-#'  @details This function does the same as \code{\link{trpValueMatrix}} but only
+#' @details This function does the same as \code{\link{trpValueMatrix}} but only
 #'   for one attribute, for more details please see the mentioned function.
 #'
 #'   Note: When converting a cost attribute to a benefit attribute its three
@@ -180,13 +192,12 @@ trpValueMatrix.oneAttr <- function(dataset, userid = NULL, attr = NULL, rounds =
   if(length(attr)!= 1) stop("Please insert (only) one attribute ID.")
 
   if(!is.null(cost_ids)) {
-    old.mr <- (-1)*mr
-    mr <- (-1)*g
-    g <- old.mr
+    if(mr <= sq | mr <= g) stop("For cost attributes, since lower is better: Initial MR should be greater or equal to SQ or G")
+    if(sq <= g) stop("For cost attributes, since lower is better: SQ cannot be smaller or equal to G")
+
+    mr <- (-1)*mr
+    g <- (-1)*g
     sq <- (-1)*sq
-    print(mr)
-    print(sq)
-    print(g)
   }
 
   # First Transformation, monotonic transformation such that SQ = 0
@@ -272,10 +283,10 @@ trpValueFunction <- function(aMatrix, triRefps, beta_f = 5, beta_l = 1, beta_g =
 
 #' TTri Reference Point Value Function for one element
 #'
-#' Auxiliary function: it is based on the value function of the tri-reference point (trp)
-#' theory. It's called by \code{\link{trpValueFunction}}, it takes one element
-#' and puts it through the trp value function as seen in reference [1]. Not
-#' vectorised.
+#' Auxiliary function: it is based on the value function of the tri-reference
+#' point (trp) theory. It's called by \code{\link{trpValueFunction}}, it takes
+#' one element and puts it through the trp value function as seen in reference
+#' [1]. Not vectorised.
 #'
 #' @param x one numeric value
 #' @param mr numeric - Minimum Requirements is the lowest reference point
@@ -292,8 +303,14 @@ trpValueFunction <- function(aMatrix, triRefps, beta_f = 5, beta_l = 1, beta_g =
 #'   psychological impact to the decision maker. Since in [1] it is assumed that
 #'   the reference point 'Minimum Requierment' has a greater impact when is not
 #'   reached (failure aversion), it should have a higher beta, so in general
-#'   \code{beta_f > beta_l > beta_g > beta_s}. See our reference paper for a detailed
-#'   theoretical background.
+#'   \code{beta_f > beta_l > beta_g > beta_s}. See our reference paper for a
+#'   detailed theoretical background.
+#'
+#'   On reference points by cost type \code{attr}: For a cost attribute it should be
+#'   true, that a lower value is better for the user, this should also hold for
+#'   the three reference points. So contrary to normal/benefit attributes \code{
+#'   for cost attributes} reference points should follow that: \code{mr > sq >
+#'   g}.
 
 #' @return the output of v(x) with v: trp value function([1]).
 #'
@@ -313,9 +330,8 @@ trpValueFunction <- function(aMatrix, triRefps, beta_f = 5, beta_l = 1, beta_g =
 
 trpValueFunction_extend <- function(x, mr = 0.5, sq = 1.5, g = 2.5 , beta_f = 5, beta_l = 1, beta_g = 1, beta_s = 3) {
   if(mr >= sq | mr >= g) stop("MR cannot be greater or equal to SQ or G")
-
   if(sq >= g) stop("SQ cannot be greater or equal to G")
-  # Add error catching for order of mr < sq < g
+
   if (x < mr) result <- mr*beta_f
   if (x >= mr & x < sq) result <- x*beta_l
   if (x >= sq & x < g) result <- x*beta_g

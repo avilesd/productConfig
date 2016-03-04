@@ -15,15 +15,19 @@ configurator. See \code{decision_matrix} for specifications of the dataset.}
 \item{userid}{a vector of integers that gives the information of which users
 the matrix should be calculated. Vectorised.}
 
-\item{attr}{attributes ID, \emph{one integer} corresponding to the
-attribute you desire to use; attr are assumed to be 1-indexed.}
+\item{attr}{attributes ID, \emph{one integer} corresponding to the attribute
+you desire to use; attr are assumed to be 1-indexed.}
 
 \item{rounds}{integer vector or text option. Which steps of the configuration
 process should be shown? Defaults are first and last step. Text options are
 \code{all, first, last}.}
 
 \item{cost_ids}{argument used to convert selected cost attributes into
-benefit attributes. In this function, should be the same as \code{attr}.}
+benefit attributes. In this function, should be the same as \code{attr}.
+For a cost attribute it should be true, that a lower value is better for
+the user, this should also hold for the three reference points. So contrary
+to normal/benefit attributes \code{ for cost attributes} reference points
+should follow that: \code{mr > sq > g}.}
 
 \item{mr}{numeric - Minimum Requirements is the lowest reference point}
 
@@ -32,15 +36,8 @@ benefit attributes. In this function, should be the same as \code{attr}.}
 \item{g}{numeric - Goal reference point}
 
 \item{beta(s)}{numeric arguments representing the psychological impact of an
-  outcome equaling failer (_f), loss (_l), gain (_g) or success (_s). Default
-  values are taken from our reference paper \code{(5,1,1,3)}.
-
- @details This function does the same as \code{\link{trpValueMatrix}} but only
-  for one attribute, for more details please see the mentioned function.
-
-  Note: When converting a cost attribute to a benefit attribute its three
-  reference points change as well, enter the unconverted refps, the function
-  transforms them automatically when it detects a \code{cost_ids}}
+outcome equaling failer (_f), loss (_l), gain (_g) or success (_s). Default
+values are taken from our reference paper \code{(5,1,1,3)}.}
 }
 \value{
 a list of value matrices with one attribute for each user.
@@ -52,6 +49,14 @@ based on the value function of the tri-reference point (trp) theory. It first
 builds a desicion matrix for each user and then applys the trp-value function
 over each value using the three given reference points (MR, SQ, G) and other
 four free parameters from the value function. See references.
+}
+\details{
+This function does the same as \code{\link{trpValueMatrix}} but only
+  for one attribute, for more details please see the mentioned function.
+
+  Note: When converting a cost attribute to a benefit attribute its three
+  reference points change as well, enter the unconverted refps, the function
+  transforms them automatically when it detects a \code{cost_ids}
 }
 \examples{
 trpValueMatrix.oneAttr(pc_config_data, 9:15, attr = 15, mr = 0.5, sq = 0, g = 2.5)

@@ -29,12 +29,10 @@ ProductConfig Github page:
   https://github.com/avilesd/productConfig
 }
 \seealso{
-Other get functions: \code{\link{benefitToCostAttr}},
-  \code{\link{get_all_default_rps}},
-  \code{\link{get_all_userids}},
-  \code{\link{get_attr_values}},
-  \code{\link{get_normalized_vec}},
-  \code{\link{get_rounds_by_ID}},
-  \code{\link{get_table_by_ID}}
+Other get.functions: \code{\link{benefitToCostAttr}},
+  \code{\link{getAllUserIds}}, \code{\link{getAttrValues}},
+  \code{\link{getDefaultRefps}},
+  \code{\link{getRoundsById}}, \code{\link{getTableById}},
+  \code{\link{normalize}}
 }
 

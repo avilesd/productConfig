@@ -31,9 +31,9 @@ benefit attributes. Integer vector.}
 
 \item{g}{numeric - Goal reference point}
 
-\item{beta(s)}{numeric arguments representing the psychological impact of an outcome
-equaling failer (_f), loss (_l), gain (_g) or success (_s). Default values
-are taken from our reference paper \code{(5,1,1,3)}.}
+\item{beta(s)}{numeric arguments representing the psychological impact of an
+outcome equaling failer (_f), loss (_l), gain (_g) or success (_s). Default
+values are taken from our reference paper \code{(5,1,1,3)}.}
 }
 \value{
 a list of value matrices for each user.
@@ -85,13 +85,21 @@ This function only makes sense to use with multiple attributes, it
   this attributes as such, providing their id, they'll be converted to
   benefit type (higher amount is better).
 
-  Note: When converting a cost attribute to a benefit attribute its three reference points change as well, enter the
-  unconverted refps, the function transforms them automatically when it detects a \code{cost_ids}
+  About reference points with cost_ids: For a cost attribute it should be
+  true, that a lower value is better for the user, this should also hold for
+  the three reference points. So contrary to normal/benefit attributes \code{
+  for cost attributes} reference points should follow that: \code{mr > sq >
+  g}.
+
+  Note: When converting a cost attribute to a benefit attribute its three
+  reference points change as well, enter the unconverted refps, the function
+  transforms them automatically when it detects a \code{cost_ids}
 }
 \examples{
 trpValueMatrix(pc_config_data, 9:11, mr = 0.5, sq = 0, g = 2.5)
 trpValueMatrix(aDataFrame, userid = 100, rounds = "all", mr = 0.5, sq = 0, g = 2.5)
-trpValueMatrix(my_data, userid = 11, attr = c(1,3,5), cost_ids = 1:3) #Input accepted but cost_ids = 2 will be ignored
+trpValueMatrix(my_data, userid = 11, attr = c(1,3,5), cost_ids = 2) #Input accepted but cost_ids = 2 will be ignored
+trpValueMatrix(my_data, userid = 11, attr =  1, cost_ids = 1, mr = 10, sq = 5, g =3) # Note that for cost attributes: MR > SQ > G
 trpValueMatrix(keyboard_data, 60, rounds = "first", attr=1, mr = 0.5, sq = 0, g = 2.5, beta_f = 6)
 gain_matrix(data1, 2) # Returns an error since no reference points entered (mr, sq, g)
 

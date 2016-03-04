@@ -24,10 +24,10 @@ values are taken from our reference paper \code{(5,1,1,3)}. See references.}
 the output of v(x) with v: trp value function([1]).
 }
 \description{
-Auxiliary function: it is based on the value function of the tri-reference point (trp)
-theory. It's called by \code{\link{trpValueFunction}}, it takes one element
-and puts it through the trp value function as seen in reference [1]. Not
-vectorised.
+Auxiliary function: it is based on the value function of the tri-reference
+point (trp) theory. It's called by \code{\link{trpValueFunction}}, it takes
+one element and puts it through the trp value function as seen in reference
+[1]. Not vectorised.
 }
 \details{
 The functions test for MR < SQ < G.
@@ -37,8 +37,14 @@ The functions test for MR < SQ < G.
   psychological impact to the decision maker. Since in [1] it is assumed that
   the reference point 'Minimum Requierment' has a greater impact when is not
   reached (failure aversion), it should have a higher beta, so in general
-  \code{beta_f > beta_l > beta_g > beta_s}. See our reference paper for a detailed
-  theoretical background.
+  \code{beta_f > beta_l > beta_g > beta_s}. See our reference paper for a
+  detailed theoretical background.
+
+  On reference points by cost type \code{attr}: For a cost attribute it should be
+  true, that a lower value is better for the user, this should also hold for
+  the three reference points. So contrary to normal/benefit attributes \code{
+  for cost attributes} reference points should follow that: \code{mr > sq >
+  g}.
 }
 \examples{
 # Runnable
