@@ -3,22 +3,7 @@
 ##' BA-Liste
 #' MUst do
 ##'
-##' +++ Add error catching for order of mr < sq < g
-##'
-##'
-##' ++ Move to WRITING TODO: vectorized vs non-vectorized, latter faster for small amount of data, but for all users, first is a
-##' lot faster, e.g. system.time(replicate(50,powerful_function(myData, all.users, FUN = gain_loss_matrices))) : user 30.78
-##' system.time(replicate(50, gainLoss(myData, all.users)) : user 7.88
-##'
-##' Writing TODO: DOCU: Weights will only accept a weight vector which equals length of all attributes, if you want to ignore an
-##' attribute, you have to set its weight to 0.0.
-##'
-##' Writing TODO:  DOCU: New functions must take into account attributes and calculate accordingly, perhaps it doesn't make sense with our data,
-##'  but we have to give the choice
-##'
-##' +++ Writing TODO: Trp is different, it doesn't calculate with gains and losses. But it doesn't matter since where are not
-##'  comparing numeric results, but which framework produces the most accurate decision-making in accordance with empirical data,
-##'  i.e. what the users really chose.
+##' ++ Make consumption_fun in dualVM.oneAttr useful, do not transform, just run the function over it.
 ##'
 ##' ++ Try and catch dataset parameter input on low level functions.
 ##'
@@ -61,12 +46,17 @@
 ##'
 ##' Won't do
 ##'
+##' +++ For later iterations: Allow to enter data.matrix refps or as a list, to avoid ...oneAttr functions, make
+##' it al quicker and to run it only with one function, instead of with overallPV_interace.
+##'
 ##' Write: Instead of doing everything on lists, do it on a single data.frame or matrix with an id column,
 ##' perhaps faster.
 ##'
 ##'
 ##'
 #'  FIXED
+##'
+##' +++ Add error catching for order of mr < sq < g (05.03.16)
 ##'
 ##' +++ Test overallPV further and then write new value functions.
 ##' --Give labels to some function outputs, e.g. getDefaultRefpsById, old function gave labels. But not that important.
