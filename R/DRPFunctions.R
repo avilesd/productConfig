@@ -12,37 +12,26 @@ dualValueMatrix.oneAttr <- function(dataset, userid = NULL, attr = NULL, rounds 
   if(length(attr)!= 1) stop("Please insert (only) one attribute ID.")
   if(is.na(sq) | is.na(g)) stop("Please provide both reference points (sq, g)")
 
-  # This function does not checks if sq < g, since not required in the model
+  if(!is.null(cost_ids)) {
+    # This function does not checks if sq < g, since not required in the model
+    g <- (-1)*g
+    sq <- (-1)*sq
+  }
 
   if (is.null(consumption_fun)) {
     # Check if negative, through peeking data and cost_ids (already applied in dM), cost_ids not need explicit.
     # When all positive procede with f1 and then f2
-
-  #Delete after test
     list.decMatrices <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
-    smallerEqualZeroDM <- lapply(list.decMatrices, greaterThanZero)
-    smallerEqualZeroRP <- greaterThanZero(dual.refps)
-    smallerEqualZero <- lapply(smallerEqualZeroDM, c, smallerEqualZeroRP)
-    smallest <- lapply(smallerEqualZero, min, na.rm = T)
-    #print(smallest)
-    absOfSmallest <- lapply(smallest, abs)
-    absOfSmallestPlus1 <- lapply(absOfSmallest, function(t) t+1)
-    #Transform dm and dual.refps if
-    list.decMatricesTransf <- mapply("+", list.decMatrices, absOfSmallestPlus1)
-    sq_mod <- sq + absOfSmallest[[1]]
-    g_mod <- g + absOfSmallest[[1]]
-    #print(sq)
-    #print(sq_mod)
-    #print(g)
-    #print(g_mod)
-  ##list.decMatricesTransf
+    valueMatrices <- lapply(list.decMatrices, smallerThanZero, dual.refps, lambda, delta)
+    valueMatrices
+
   }
   else {
     # Do not transform anything, cost_ids act as usual since negative values are accepted
   }
 }
 #### Delete later: THis comment marks the state before uniting dual function with smallterThanZero
-smallerThanZero <- function(aMatrix, dual.refps) {
+smallerThanZero <- function(aMatrix, dual.refps, lambda = 2.25, delta = 0.8) {
   if(all(aMatrix > 0) & all(dual.refps > 0)) {}
     # aMatrix and dual.refps stay the same
   else {
@@ -59,10 +48,13 @@ smallerThanZero <- function(aMatrix, dual.refps) {
      dual.refps <- dual.refps + absOfSmallestPlus1
   }
   gainLossMatrix <- dualGainLossFunction(aMatrix, dual.refps)
-  gainLossMatrix
+  dual.vMatrix <- dualLossAversionFun(gainLossMatrix, aMatrix, lambda, delta)
+  dual.vMatrix
+
+  #Call from here and return valueMatrix, give argument to return gain? or another equal function?
 }
 
-dualGainLossFunction <- function(aMatrix, dual.refps) {
+dualGainLossFunction <- function(aMatrix, dual.refps, lambda = 2.25, delta = 0.8) {
   x <- aMatrix
   if(any(x < 0)) warning("x should not be smaller than 0.")
   sq <- dual.refps[1]
@@ -71,7 +63,12 @@ dualGainLossFunction <- function(aMatrix, dual.refps) {
   result
 }
 
-dualLossAversionFun <- function(...) {}
+dualLossAversionFun <- function(gainLossMatrix, aMatrix, lambda = 2.25, delta = 0.8) {
+  yMatrix <- apply(gainLossMatrix, 1:2, function(y) if(y < 0) {delta*lambda*y} else {delta*y})
+  xMatrix <- apply(aMatrix, 1:2, function(x) (1-delta)*(x + log(x)))
+  valueM <- yMatrix + xMatrix
+  valueM
+}
 
 #Vectorialised if empty, returns NA
 greaterThanZero <- function(x) {
