@@ -1,4 +1,4 @@
-context("4.Testing legacy @attr_weight with new @getAttrWeights with 'deprecated_FUN'")
+context("5.Testing legacy @attr_weight with new @getAttrWeights with 'deprecated_FUN'")
 
 
 
