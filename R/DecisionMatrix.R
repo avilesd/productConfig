@@ -94,6 +94,8 @@ decisionMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
   }
   completeTables <- getTableById(dataset, userid)
 
+  catchCommonErrors(dataset, userid, attr, rounds, cost_ids)
+
   orderedLists <- lapply(completeTables, function(tempData) tapply(tempData$selected, tempData$round, FUN = "["))
   bindedTables <- lapply(orderedLists, function(tempData2) do.call(rbind, tempData2))
 
@@ -159,4 +161,25 @@ decisionMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
 
   #Get Dimensions -  move to if else cases ??
   round.cut
+}
+
+#Auxiliary function, not necessary to document
+catchCommonErrors <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, cost_ids = NULL) {
+  # USERID catched by getTableID in dM
+  # ATTR
+  allAttr <- get_attrs_ID(dataset)
+  if(FALSE %in%(attr %in% allAttr)) {
+    logicalVector <-!(attr %in% allAttr)
+    fatalAttr <- attr[logicalVector]
+    fatalAttr <- paste(fatalAttr, collapse = " ")
+    stop("At least one 'attr' you specified is not contained within your data: ", fatalAttr)
   }
+  # COST_IDS
+  if(FALSE %in%(cost_ids %in% allAttr)) {
+    logicalVector <-!(cost_ids %in% allAttr)
+    fatalCostId <- cost_ids[logicalVector]
+    fatalCostId <- paste(fatalCostId, collapse = " ")
+    stop("At least one 'cost_ids' you specified is not contained within your data: ", fatalCostId)
+  }
+
+}
