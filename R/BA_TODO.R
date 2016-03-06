@@ -3,6 +3,8 @@
 ##' BA-Liste
 #' MUst do
 ##'
+##' ++ Move overallPV_interface to ProspectValuefunctions and change arguments name and docu for dual and trp.
+##'
 ##' ++ Make consumption_fun in dualVM.oneAttr useful, do not transform, just run the function over it.
 ##'
 ##' ++ Try and catch dataset parameter input on low level functions.

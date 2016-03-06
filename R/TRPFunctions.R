@@ -22,7 +22,7 @@
 #' references.
 #'
 #' @param dataset data.frame with the user generated data from a product
-#'   configurator. See \code{decision_matrix} for specifications of the dataset.
+#'   configurator. See \code{decisionMatrix} for specifications of the dataset.
 #' @param userid a vector of integers that gives the information of which users
 #'   the matrix should be calculated. Vectorised.
 #' @param attr attributes IDs, vector of integer numbers corresponding to the
@@ -40,8 +40,8 @@
 #'   values are taken from our reference paper \code{(5,1,1,3)}.
 #'
 #'
-#' @details This function only makes sense to use with multiple attributes, it
-#'   those attributes have exactly the same three reference points (mr, sq, g).
+#' @details This function only makes sense to use with multiple attributes if those
+#'   attributes have exactly the same three reference points (mr, sq, g).
 #'   Therefore you will have to manually calculate all the value matrices for
 #'   the different attributes (with different values) and cbind them together
 #'   using mapply. The full matrix can then be given as an input to the
@@ -87,21 +87,21 @@
 #'
 #'   Note: When converting a cost attribute to a benefit attribute its three
 #'   reference points change as well, enter the unconverted refps, the function
-#'   transforms them automatically when it detects a \code{cost_ids}
+#'   transforms them automatically when it detects a \code{cost_ids != NULL}
 #'
 #' @return a list of value matrices for each user.
 #'
-#' @references Wang, X. T.; Johnson, Joseph G. (2012) \emph{A tri-reference
+#' @references [1]Wang, X. T.; Johnson, Joseph G. (2012) \emph{A tri-reference
 #'   point theory of decision making under risk. }Journal of Experimental
 #'   Psychology
 #'
 #' @examples
-#' trpValueMatrix(pc_config_data, 9:11, mr = 0.5, sq = 0, g = 2.5)
-#' trpValueMatrix(aDataFrame, userid = 100, rounds = "all", mr = 0.5, sq = 0, g = 2.5)
+#' trpValueMatrix(pc_config_data, 9:11, mr = 0.5, sq = 2, g = 4.7)
+#' trpValueMatrix(aDataFrame, userid = 100, rounds = "all", mr = 0.5, sq = 1.8, g = 2.5)
 #' trpValueMatrix(my_data, userid = 11, attr = c(1,3,5), cost_ids = 2) #Input accepted but cost_ids = 2 will be ignored
 #' trpValueMatrix(my_data, userid = 11, attr =  1, cost_ids = 1, mr = 10, sq = 5, g =3) # Note that for cost attributes: MR > SQ > G
-#' trpValueMatrix(keyboard_data, 60, rounds = "first", attr=1, mr = 0.5, sq = 0, g = 2.5, beta_f = 6)
-#' gain_matrix(data1, 2) # Returns an error since no reference points entered (mr, sq, g)
+#' trpValueMatrix(keyboard_data, 60, rounds = "first", attr=1, mr = 0.5, sq = 1.8, g = 2.5, beta_f = 6)
+#' trpValueMatrix(data1, 2) # Returns an error since no reference points entered (mr, sq, g)
 #'
 #' @export
 
@@ -142,7 +142,7 @@ trpValueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
 #' four free parameters from the value function. See references.
 #'
 #' @param dataset data.frame with the user generated data from a product
-#'   configurator. See \code{decision_matrix} for specifications of the dataset.
+#'   configurator. See \code{decisionMatrix} for specifications of the dataset.
 #' @param userid a vector of integers that gives the information of which users
 #'   the matrix should be calculated. Vectorised.
 #' @param attr attributes ID, \emph{one integer} corresponding to the attribute
@@ -168,7 +168,7 @@ trpValueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
 #'
 #'   Note: When converting a cost attribute to a benefit attribute its three
 #'   reference points change as well, enter the unconverted refps, the function
-#'   transforms them automatically when it detects a \code{cost_ids}
+#'   transforms them automatically when it detects a \code{cost_ids  != NULL}
 #'
 #' @return a list of value matrices with one attribute for each user.
 #'
@@ -177,11 +177,12 @@ trpValueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
 #'   Psychology
 #'
 #' @examples
-#' trpValueMatrix.oneAttr(pc_config_data, 9:15, attr = 15, mr = 0.5, sq = 0, g = 2.5)
-#' trpValueMatrix.oneAttr(aDataFrame, userid = 100, rounds = "all",  attr = 1, mr = 0.5, sq = 0, g = 2.5)
+#' trpValueMatrix.oneAttr(pc_config_data, 9:15, attr = 15, mr = -1, sq = 0, g = 2.5)
+#' trpValueMatrix.oneAttr(aDataFrame, userid = 100, rounds = "all",  attr = 1, mr = 0.5, sq = 1.8, g = 2.5)
+#' trpValueMatrix.oneAttr(myData, 10, attr = 3, cost_ids = 3, mr=4, sq=2, g=0.5) # Note for cost_ids mr > sq > g
 #'
 #' # Return an error, 1.Too many attributes or 2. none entered
-#' trpValueMatrix.oneAttr(keyboard_data, 8:9 , attr = c(10,12,14,16), mr = 0.5, sq = 0, g = 2.5)
+#' trpValueMatrix.oneAttr(keyboard_data, 8:9 , attr = c(10,12,14,16), mr = 0.5, sq = 1.8, g = 2.5)
 #' trpValueMatrix.oneAttr(data1, 2) # 2. No attribute entered
 #'
 #' @export
