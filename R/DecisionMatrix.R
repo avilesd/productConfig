@@ -79,6 +79,7 @@
 #'
 #' @export
 
+
 #New function: different than previous version is for example by the handling of the cost_ids
 # argument, e.g. decision_matrix(myData, 60, attr=c(1,2,4) ,rounds="all", cost_ids = 3),
 # previous function cuts matrix first and then wrongly applies cost_ids to the third attribute,

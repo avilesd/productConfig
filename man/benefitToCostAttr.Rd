@@ -7,7 +7,9 @@
 benefitToCostAttr(dataset, aList, cost_ids = NULL)
 }
 \arguments{
-\item{at}{}
+\item{da}{d}
+
+\item{at}{a}
 }
 \value{
 Uni

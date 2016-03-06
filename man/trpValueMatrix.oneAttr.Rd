@@ -10,7 +10,7 @@ trpValueMatrix.oneAttr(dataset, userid = NULL, attr = NULL, rounds = NULL,
 }
 \arguments{
 \item{dataset}{data.frame with the user generated data from a product
-configurator. See \code{decision_matrix} for specifications of the dataset.}
+configurator. See \code{decisionMatrix} for specifications of the dataset.}
 
 \item{userid}{a vector of integers that gives the information of which users
 the matrix should be calculated. Vectorised.}
@@ -56,14 +56,15 @@ This function does the same as \code{\link{trpValueMatrix}} but only
 
   Note: When converting a cost attribute to a benefit attribute its three
   reference points change as well, enter the unconverted refps, the function
-  transforms them automatically when it detects a \code{cost_ids}
+  transforms them automatically when it detects a \code{cost_ids  != NULL}
 }
 \examples{
-trpValueMatrix.oneAttr(pc_config_data, 9:15, attr = 15, mr = 0.5, sq = 0, g = 2.5)
-trpValueMatrix.oneAttr(aDataFrame, userid = 100, rounds = "all",  attr = 1, mr = 0.5, sq = 0, g = 2.5)
+trpValueMatrix.oneAttr(pc_config_data, 9:15, attr = 15, mr = -1, sq = 0, g = 2.5)
+trpValueMatrix.oneAttr(aDataFrame, userid = 100, rounds = "all",  attr = 1, mr = 0.5, sq = 1.8, g = 2.5)
+trpValueMatrix.oneAttr(myData, 10, attr = 3, cost_ids = 3, mr=4, sq=2, g=0.5) # Note for cost_ids mr > sq > g
 
 # Return an error, 1.Too many attributes or 2. none entered
-trpValueMatrix.oneAttr(keyboard_data, 8:9 , attr = c(10,12,14,16), mr = 0.5, sq = 0, g = 2.5)
+trpValueMatrix.oneAttr(keyboard_data, 8:9 , attr = c(10,12,14,16), mr = 0.5, sq = 1.8, g = 2.5)
 trpValueMatrix.oneAttr(data1, 2) # 2. No attribute entered
 
 }

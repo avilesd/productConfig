@@ -302,31 +302,30 @@ smallerThanZero <- function(aMatrix, dual.refps, lambda = 2.25, delta = 0.8) {
   #Call from here and return valueMatrix, give argument to return gain? or another equal function?
 }
 
-#' Title
+#' Calculates the gain-loss matrix from a decision matrix
 #'
-#' @param aMatrix
-#' @param dual.refps
+#' This function is called by \code{\link{smallerThanZero}} for its second step. It
+#' takes a matrix and runs the gain-loss function over each value of the matrix. The gain-loss
+#' function returns a positive value (gain) for values larger than the status-quo and negative values (loss)
+#' for smaller than the \code{sq}.
 #'
-#' @details *The transformation changes all values, but keeps the differences
-#'   between them as they were.
+#' @param aMatrix the decision matrix, with \code{attr} as columns and
+#'   \code{rounds} as rows.
+#' @param dual.refps two numeric reference points (status-quo, goal).
 #'
-#' @return a value matrix with equal dimensions as the input \code{aMatrix}
+#' @details The matematical function used here is the one given by [1] and since it is composed
+#' of a logarithmic function it does not accept negative values.
+#'
+#' @return a gain-loss matrix with equal dimensions as the input \code{aMatrix}
 #'
 #' @references [1] Golman, R., & Loewenstein, G. (2011). Explaining Nonconvex
 #'   Preferences with Aspirational and Status Quo Reference Dependence. Mimeo,
 #'   Carnegie Mellon University.
 #'
-#'   [2] Tversky, A., & Kahneman, D. (1992). Advances in prospect theory:
-#'   Cumulative representation of uncertainty. Journal of Risk and uncertainty,
-#'   5(4), 297-323.
-#'
 #' @examples #Runnable
-#' smallerThanZero(matrix(16:31, 4, 4), dual.refps= c(22, 28))
-#' smallerThanZero(matrix(16:31, 4, 4), dual.refps= c(22, 28), delta= 0.6)
-#' smallerThanZero(matrix(1:100, 5, 20, byrow= T), dual.refps= c(sq=45, g=88))
+#' dualGainLossFunction(matrix(101:300, 20, 10, byrow= T), dual.refps= c(142, 195))
+#' dualGainLossFunction(matrix(16:31, 4, 4), dual.refps= c(20, 25))
 #'
-#' #Not runnable yet
-#' smallerThanZero <- function(decisionMatrix(myData, 9, rounds="all"), c(1.5, 2.5), lambda = 5, delta = 0.8)
 #' @export
 
 dualGainLossFunction <- function(aMatrix, dual.refps) {
@@ -338,17 +337,25 @@ dualGainLossFunction <- function(aMatrix, dual.refps) {
   result
 }
 
-#' Title
+#' Takes a gain-loss matrix and outputs a value matrix
 #'
-#' @param gainLossMatrix
-#' @param aMatrix
-#' @param lambda
-#' @param delta
+#' This function is called by \code{\link{smallerThanZero}} for its third step.
+#' It runs the 'loss-aversion' function over the values of the gain-loss matrix,
+#' and a consumption utility function over the values of the second parameter,
+#' as shown in [1]. Both input matrices must have the same dimensions.
+#' Altogether it returns a value matrix.
 #'
-#' @details *The transformation changes all values, but keeps the differences
-#'   between them as they were.
+#' @param gainLossMatrix a gain-loss matrix, such as the output from
+#'   \code{\link{dualGainLossFunction}}. Format: \code{attr} are the columns and
+#'   \code{rounds} as rows. (Numerical)
+#' @param decMatrix the decision matrix.
+#' @param lambda numeric - parameter of loss aversion for the value function as
+#'   given by reference[1]. Default value is 2.25 as given by [2].
+#' @param delta numeric - expresses the relative importance of the aspiration
+#'   level to other factors. Default is 0.8 and it should satisfy \code{0 <
+#'   delta <1}.
 #'
-#' @return a value matrix with equal dimensions as the input \code{aMatrix}
+#' @return a value matrix with equal dimensions as \code{gainLossMatrix}
 #'
 #' @references [1] Golman, R., & Loewenstein, G. (2011). Explaining Nonconvex
 #'   Preferences with Aspirational and Status Quo Reference Dependence. Mimeo,
@@ -359,17 +366,18 @@ dualGainLossFunction <- function(aMatrix, dual.refps) {
 #'   5(4), 297-323.
 #'
 #' @examples #Runnable
-#' smallerThanZero(matrix(16:31, 4, 4), dual.refps= c(22, 28))
-#' smallerThanZero(matrix(16:31, 4, 4), dual.refps= c(22, 28), delta= 0.6)
-#' smallerThanZero(matrix(1:100, 5, 20, byrow= T), dual.refps= c(sq=45, g=88))
+#' dualLossAversionFun(matrix(16:31, 4, 4), matrix(51:36, 4, 4))
+#' dualLossAversionFun(matrix(16:31, 4, 4), matrix(1:16, 4, 4), lambda = 5, delta = 0.7)
+#' dualLossAversionFun(matrix(1:100, 5, 20, byrow= T), matrix(150:51, 5, 20),delta = 0.3)
 #'
 #' #Not runnable yet
-#' smallerThanZero <- function(decisionMatrix(myData, 9, rounds="all"), c(1.5, 2.5), lambda = 5, delta = 0.8)
+#' dualGainLossFunction(aGainLossMatrix, itsDecisionMatrix)
+#'
 #' @export
 
-dualLossAversionFun <- function(gainLossMatrix, aMatrix, lambda = 2.25, delta = 0.8) {
+dualLossAversionFun <- function(gainLossMatrix, decMatrix, lambda = 2.25, delta = 0.8) {
   yMatrix <- apply(gainLossMatrix, 1:2, function(y) if(y < 0) {delta*lambda*y} else {delta*y})
-  xMatrix <- apply(aMatrix, 1:2, function(x) (1-delta)*(x + log(x)))
+  xMatrix <- apply(decMatrix, 1:2, function(x) (1-delta)*(x + log(x)))
   valueM <- yMatrix + xMatrix
   valueM
 }
