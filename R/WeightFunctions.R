@@ -91,4 +91,29 @@ getAttrWeights <- function(dataset = NULL, userid = NULL, weight = NULL,  attr =
 #nabsdiffMatrix11 <- apply(ndiffMatrix11, 2, abs)
 #nsumdiffMatrix11 <- apply(ndiffMatrix11, 2, sum)
 #nsumdiffMatrix11 <- apply(nabsdiffMatrix11, 2, sum)
-##'
+
+weight.differenceToIdeal <- function(dataset, userid = NULL , attr = NULL, rounds = NULL, cost_ids = NULL) {
+
+  ##Calculate with always 4 attribute so that function works properly, take attr into account at result level.
+
+
+}
+
+normalize.altMethod <- function(aMatrix, attr, cost_ids) {
+
+    aMatrix[,cost_ids] <- apply(aMatrix[,cost_ids], 2, function(t) { a_max <- max(t); a_min <- min(t); res <- (a_max-t)/(a_max-a_min); res})
+
+    benefitAttr <- attr[!attr %in% cost_ids]
+    print(benefitAttr)
+    aMatrix[ ,benefitAttr] <- apply(aMatrix[ ,benefitAttr], 2, function(t) { a_max <- max(t); a_min <- min(t); res <- (t-a_min)/(a_max-a_min); res})
+
+    aMatrix
+}
+
+differenceToIdeal <- function(normalizedMatrix) {
+  vector2_0 <- apply(normalizedMatrix, 2, function(t) { b_max <- max(t); sumOfDiff <- (sum((b_max - t)^2))  })
+  vector2_1 <- 1/vector2_0
+  vector3 <- sum(vector2_1)
+  weightVector <- vector2_1/vector3
+  weightVector
+}
