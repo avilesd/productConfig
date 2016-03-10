@@ -61,10 +61,10 @@
 #' This function is for one user only, for more or all users see
 #' \code{\link{powerful_function}}
 #'
-#'
 #' @return A decision matrix for selected user with rows.length =
 #'   length(\code{rounds}) and column.length = length(\code{attr}). Colnames =
 #'   attrIDs and rownames = chosen rounds.
+#'
 #' @examples
 #' decision_matrix(camera2_config_data, 11) # Necessary arguments dataset and userid
 #' decision_matrix(my_data, userid = 11, attr = c(1,3,5))
