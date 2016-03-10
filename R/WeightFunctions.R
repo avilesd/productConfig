@@ -173,8 +173,8 @@ getAttrWeights <- function(dataset = NULL, userid = NULL, weight = NULL,  attr =
 weight.differenceToIdeal <- function(dataset, userid = NULL , attr = NULL, rounds = "all", cost_ids = NULL) {
 
   # Common Errors catched in dM (Tested: attr, rounds, all.users, cost_ids)
-  if (!all(cost_ids %in% attr)) warning("One of your cost_ids is not in your attributes. Is this still your intended result?")
   if (is.null(attr)) attr <- get_attrs_ID(dataset)
+  if (!all(cost_ids %in% attr)) warning("One of your cost_ids is not in your attributes. Is this still your intended result?")
 
   decisionList <- decisionMatrix(dataset, userid, attr = NULL, rounds)
   normList <- lapply(decisionList, normalize.altMethod, attr, cost_ids)
