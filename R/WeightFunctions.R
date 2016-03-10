@@ -130,7 +130,13 @@ getAttrWeights <- function(dataset = NULL, userid = NULL, weight = NULL,  attr =
 #' @param userid a vector of integers that gives the information of which users
 #'   the matrix should be calculated. Vectorised.
 #' @param attr attributes IDs, vector of integer numbers corresponding to the
-#'   attributes you desire to use; attr are assumed to be 1-indexed.
+#'   attributes you desire to use; attr are assumed to be 1-indexed. This
+#'   function will calculate with all attributes and do the subsetting a
+#'   posteriori.
+#'
+#'   If you want to get the weights for only two attributes you will have to
+#'   first use \code{\link{decisionMatrix}} and then pass it on to
+#'   \code{\link{normalize.altMethod}} and \code{\link{differenceToIdeal}}.
 #' @param rounds integer vector or text option. Which steps of the configuration
 #'   process should be taken into account? Defaults are "all" in order to have
 #'   more data to calculate with. If \code{"first"} or \code{"last"} are entered
@@ -157,10 +163,10 @@ getAttrWeights <- function(dataset = NULL, userid = NULL, weight = NULL,  attr =
 #'
 #' @references [1]Ma, J., Fan, Z. P., & Huang, L. H. (1999). A subjective and
 #'   objective integrated approach to determine attribute weights. European
-#'   journal of operational research, 112(2), 397-404.
-#'   [2] Fan, Z. P. (1996). Complicated multiple attribute decision making:
-#'   theory and applications (Doctoral dissertation, Ph. D. Dissertation,
-#'   North-eastern University, Shenyang, PRC).
+#'   journal of operational research, 112(2), 397-404. [2] Fan, Z. P. (1996).
+#'   Complicated multiple attribute decision making: theory and applications
+#'   (Doctoral dissertation, Ph. D. Dissertation, North-eastern University,
+#'   Shenyang, PRC).
 #'
 #' @examples # Not runnable yet
 #' weight.differenceToIdeal(myData, 15:22)
@@ -291,5 +297,52 @@ differenceToIdeal <- function(normalizedMatrix, attr) {
   vector3 <- sum(vector2_1)
   vector3 <- replace(vector3, vector3==0.0, 1)
   weightVector <- vector2_1/vector3
+  weightVector
+}
+
+#' Calculates decision weights using the entropy method[1]
+#'
+#' @param dataset
+#' @param userid
+#' @param attr
+#' @param rounds
+#' @param cost_ids
+#'
+#' @return
+#' @export
+#'
+#' @examples
+
+weight.entropy <- function(dataset, userid = NULL , attr = NULL, rounds = "all", cost_ids = NULL) {
+
+  # Common Errors catched in dM (Tested: attr, rounds, all.users, cost_ids)
+  if (is.null(attr)) attr <- get_attrs_ID(dataset)
+  if (!all(cost_ids %in% attr)) warning("One of your cost_ids is not in your attributes. Is this still your intended result?")
+
+  decisionList <- decisionMatrix(dataset, userid, attr = NULL, rounds)
+  normList <- lapply(decisionList, normalize.altMethod, attr, cost_ids)
+  weightList <- lapply(normList, entropy)
+  weightList <- lapply(weightList, function(t) t[attr])
+  weightList
+}
+# Reference the book!
+entropy <- function(normalizedMatrix) {
+  #One column is unlikely since weight should be 1, one row is likely, catch row
+  if(!is.matrix(normalizedMatrix)) stop("Input must be a matrix")
+  if (nrow(normalizedMatrix)==1) {
+    numberCol <- ncol(normalizedMatrix)
+    weightVector <- rep(1, numberCol)
+    weightVector <- weightVector/numberCol
+  }
+  else {
+    normalizedMatrix <- replace(normalizedMatrix, normalizedMatrix==0.0, 1) #As in paper, log 0 should be equal 0 which is = log(1)
+    kk <- 1/(log(nrow(normalizedMatrix)))
+
+    e_j_secondTerm <- apply(normalizedMatrix, 2, function(x) sum(x*log(x)))
+    e_j <- -kk*e_j_secondTerm
+    d_j <- 1-e_j
+    sumOfd_j <- sum(d_j)
+    weightVector <- d_j/sumOfd_j
+  }
   weightVector
 }
