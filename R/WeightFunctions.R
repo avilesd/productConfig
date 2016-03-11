@@ -144,13 +144,12 @@ getAttrWeights <- function(dataset = NULL, userid = NULL, weight = NULL,  attr =
 #'   attribtues will have the same weight.
 #' @param cost_ids argument used to convert selected cost attributes into
 #'   benefit attributes. Integer vector. This functions uses an alternative
-#'   method \code{\link{normalize.altMethod}} that does not produce negative
-#'   values.
+#'   normalizing method \code{\link{normalize.altMethod}} that does not produce
+#'   negative values.
 #'
 #' @details This function rewards attributes which values do not change much
 #'   throughtout the decision matrix, even if the value is the lowest value for
-#'   that attribute. For an opposite implicit effect see \code{\link{}}
-#'   #####################################################reminder
+#'   that attribute. For an opposite implicit effect see \code{\link{weight.entropy}}
 #'
 #'   \code{cost_ids} As in the other functions, if you enter a cost_ids that is
 #'   not in your entered attributes, the functions will calculate the output
@@ -192,7 +191,7 @@ weight.differenceToIdeal <- function(dataset, userid = NULL , attr = NULL, round
 #' Alternative method for normalizing matrices
 #'
 #' This function is used as the first step in
-#' \code{\link{weight.differenceToIdeal}} for normalizing a matrix.
+#' \code{\link{weight.differenceToIdeal}} and \code{\link{weight.entropy}} for normalizing a matrix.
 #'
 #' @param aMatrix a numeric (decision) matrix - if matrix has only one row, then
 #'   all values will be normalized to 1 even if the initial value is 0.
@@ -275,12 +274,6 @@ normalize.altMethod <- function(aMatrix, attr, cost_ids = NULL) {
 #'
 #' @return a decision weight (numeric vector with a sum of 1)
 #'
-#' @examples #Runnable
-#' differenceToIdeal(matrix(c(1.0, 0.85, 0.42, 0, 0.5, 0, 1, 0.7), 4, 2), attr=1:4)
-#' weights <- differenceToIdeal(matrix(c(1.0, 0.85, 0.42, 0, 0.5, 0, 1, 0.7), 2, 4), attr=1:4)
-#' sum(weights) should return 1
-#'
-#'
 #' @references [1]Ma, J., Fan, Z. P., & Huang, L. H. (1999). A subjective and
 #'   objective integrated approach to determine attribute weights. European
 #'   journal of operational research, 112(2), 397-404.
@@ -288,6 +281,12 @@ normalize.altMethod <- function(aMatrix, attr, cost_ids = NULL) {
 #'   [2] Fan, Z. P. (1996). Complicated multiple attribute decision making:
 #'   theory and applications (Doctoral dissertation, Ph. D. Dissertation,
 #'   North-eastern University, Shenyang, PRC).
+#'
+#' @examples #Runnable
+#' differenceToIdeal(matrix(c(1.0, 0.85, 0.42, 0, 0.5, 0, 1, 0.7), 4, 2), attr=1:4)
+#' weights <- differenceToIdeal(matrix(c(1.0, 0.85, 0.42, 0, 0.5, 0, 1, 0.7), 2, 4), attr=1:4)
+#' sum(weights) should return 1
+#'
 #' @export
 
 differenceToIdeal <- function(normalizedMatrix, attr) {
@@ -301,17 +300,71 @@ differenceToIdeal <- function(normalizedMatrix, attr) {
 }
 
 #' Calculates decision weights using the entropy method[1]
+#' ############################
+#' This function first normalizes a list of matrices and then calculates the
+#' decision weight for each attribute, using the 'objective approach' as given
+#' by [1] and [2]. The objective approach, in this case, uses only data gathered
+#' from the decision matrix and it does not need a 'subjective' preference
+#' matrix from the decision maker. The sum of a weight vector should always
+#' equal 1.
 #'
-#' @param dataset
-#' @param userid
-#' @param attr
-#' @param rounds
-#' @param cost_ids
+#' The result is a list of vectors with the same length as the number of columns
+#' of the input matrices, i.e. each column gets a weight.
+#' ################################################ change description, everything else is done
 #'
-#' @return
+#' @param dataset data.frame with the user generated data from a product
+#'   configurator. See \code{decisionMatrix} for specifications of the dataset.
+#' @param userid a vector of integers that gives the information of which users
+#'   the matrix should be calculated. Vectorised.
+#' @param attr attributes IDs, vector of integer numbers corresponding to the
+#'   attributes you desire to use; attr are assumed to be 1-indexed. This
+#'   function will calculate with all attributes and do the subsetting a
+#'   posteriori.
+#'
+#'   If you want to get the weights for only two attributes you will have to
+#'   first use \code{\link{decisionMatrix}} and then pass it on to
+#'   \code{\link{normalize.altMethod}} and \code{\link{entropy}}.
+#' @param rounds integer vector or text option. Which steps of the configuration
+#'   process should be taken into account? Defaults are "all" in order to have
+#'   more data to calculate with. If \code{"first"} or \code{"last"} are entered
+#'   there will be only one rounds to gather data from, consequently all
+#'   attribtues will have the same weight.
+#'
+#' @param cost_ids argument used to convert selected cost attributes into
+#'   benefit attributes. Integer vector. This functions uses an alternative
+#'   normalizing method \code{\link{normalize.altMethod}} that does not produce
+#'   negative values.
+#'
+#' @details In contrast to \code{\link{weight.differenceToIdeal}}, this function
+#'   distributes lower weights to those attributes, which have similar values
+#'   throughout the decision matrix.
+#'
+#'   \code{cost_ids} As in the other functions, if you enter a cost_ids that is
+#'   not in your entered attributes, the functions will calculate the output
+#'   with all attributes in your data, including the cost(s) attributes and only
+#'   after the calculations does the function subset the result according to the
+#'   \code{attr} input. When the attributes and cost_ids differ, the function
+#'   allows the calculation but it will throw a warning.
+#'
+#' @return a list of weight vector(s)
+#'
+#' @references [1]Hwang, C. L., & Yoon, K. (2012). Multiple attribute decision
+#'   making: methods and applications a state-of-the-art survey (Vol. 186).
+#'   Springer Science & Business Media.
+#'
+#'   [2]Shannon, C. E. (2001). A mathematical theory of communication. ACM
+#'   SIGMOBILE Mobile Computing and Communications Review, 5(1), 35.
+#'
+#'   [3]Lotfi, F. H., & Fallahnejad, R. (2010). Imprecise Shannon’s entropy and
+#'   multi attribute decision making. Entropy, 12(1), 53-62.
+#'
+#' @examples # Not runnable yet
+#' weight.entropy(myData, 15:22)
+#' weight.entropy(laptop_data, 40:45, attr= c(1, 3, 4), cost_ids = 4)
+#' savedWeights <- weight.entropy(myData, c(6, 15, 18, 20, 26), attr = 1:4, cost_ids = 4, rounds=1:8)
+#' lapply(savedWeights, sum) # Should return 1 for any output of this function
+#'
 #' @export
-#'
-#' @examples
 
 weight.entropy <- function(dataset, userid = NULL , attr = NULL, rounds = "all", cost_ids = NULL) {
 
@@ -325,6 +378,8 @@ weight.entropy <- function(dataset, userid = NULL , attr = NULL, rounds = "all",
   weightList <- lapply(weightList, function(t) t[attr])
   weightList
 }
+
+
 # Reference the book!
 entropy <- function(normalizedMatrix) {
   #One column is unlikely since weight should be 1, one row is likely, catch row
