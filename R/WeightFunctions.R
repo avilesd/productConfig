@@ -122,8 +122,8 @@ getAttrWeights <- function(dataset = NULL, userid = NULL, weight = NULL,  attr =
 #' matrix from the decision maker. The sum of a weight vector should always
 #' equal 1.
 #'
-#' The result is a list of vectors with the same length as the number of columns
-#' of the input matrices, i.e. each column gets a weight.
+#' The result is a list of vectors, each vector with the same length as the
+#' number of columns of the input matrices, i.e. each column gets a weight.
 #'
 #' @param dataset data.frame with the user generated data from a product
 #'   configurator. See \code{decisionMatrix} for specifications of the dataset.
@@ -149,14 +149,15 @@ getAttrWeights <- function(dataset = NULL, userid = NULL, weight = NULL,  attr =
 #'
 #' @details This function rewards attributes which values do not change much
 #'   throughtout the decision matrix, even if the value is the lowest value for
-#'   that attribute. For an opposite implicit effect see \code{\link{weight.entropy}}
+#'   that attribute. For an opposite implicit effect see
+#'   \code{\link{weight.entropy}}
 #'
 #'   \code{cost_ids} As in the other functions, if you enter a cost_ids that is
 #'   not in your entered attributes, the functions will calculate the output
 #'   with all attributes in your data, including the cost(s) attributes and only
 #'   after the calculations does the function subset the result according to the
-#'   \code{attr} input. When the attributes and cost_ids differ, the function
-#'   allows the calculation but it will throw a warning.
+#'   \code{attr} When the attributes and cost_ids differ, the function allows
+#'   the calculation but it will throw a warning.
 #'
 #' @return a list of weight vector(s)
 #'
@@ -265,7 +266,7 @@ normalize.altMethod <- function(aMatrix, attr, cost_ids = NULL) {
 #'   attributes you desire to use; attr are assumed to be 1-indexed. Here it
 #'   represents the number of columns of the input matrix.
 #' @details It measures the distance of each column value against the best value
-#'   for a given attribute. A smaller difference means that for that attribute a
+#'   for a given attribute. A smaller difference should mean that for that attribute a
 #'   high value was \emph{consistently} taking in consideration, thus resulting
 #'   in a higher weight. Two unintended consequences are: 1. matrices with one
 #'   row will result in the same weight for all columns and 2. for an attribute
@@ -299,18 +300,18 @@ differenceToIdeal <- function(normalizedMatrix, attr) {
   weightVector
 }
 
-#' Calculates decision weights using the entropy method[1]
-#' ############################
-#' This function first normalizes a list of matrices and then calculates the
-#' decision weight for each attribute, using the 'objective approach' as given
-#' by [1] and [2]. The objective approach, in this case, uses only data gathered
-#' from the decision matrix and it does not need a 'subjective' preference
-#' matrix from the decision maker. The sum of a weight vector should always
-#' equal 1.
+#' Calculates decision weights using the entropy method
 #'
-#' The result is a list of vectors with the same length as the number of columns
-#' of the input matrices, i.e. each column gets a weight.
-#' ################################################ change description, everything else is done
+#' This function first normalizes a
+#' list of matrices and then calculates the decision weight for each attribute,
+#' using an entropy approach [1, 2], which can be categorised as an objective
+#' approach, just as \code{\link{weight.differenceToIdeal}}. This type of weight
+#' functions use only the information within the decision matrix to calculate
+#' weights. It does not need information about the decision maker's preferences.
+#'
+#' The result is a list of vectors, each vector with the same length as the number of columns
+#' of the input matrices, i.e. each column gets a weight. The sum of a weight
+#' vector should always equal 1.
 #'
 #' @param dataset data.frame with the user generated data from a product
 #'   configurator. See \code{decisionMatrix} for specifications of the dataset.
@@ -324,6 +325,7 @@ differenceToIdeal <- function(normalizedMatrix, attr) {
 #'   If you want to get the weights for only two attributes you will have to
 #'   first use \code{\link{decisionMatrix}} and then pass it on to
 #'   \code{\link{normalize.altMethod}} and \code{\link{entropy}}.
+#'
 #' @param rounds integer vector or text option. Which steps of the configuration
 #'   process should be taken into account? Defaults are "all" in order to have
 #'   more data to calculate with. If \code{"first"} or \code{"last"} are entered
@@ -343,8 +345,8 @@ differenceToIdeal <- function(normalizedMatrix, attr) {
 #'   not in your entered attributes, the functions will calculate the output
 #'   with all attributes in your data, including the cost(s) attributes and only
 #'   after the calculations does the function subset the result according to the
-#'   \code{attr} input. When the attributes and cost_ids differ, the function
-#'   allows the calculation but it will throw a warning.
+#'   \code{attr} When the attributes and cost_ids differ, the function allows
+#'   the calculation but it will throw a warning.
 #'
 #' @return a list of weight vector(s)
 #'
@@ -379,8 +381,41 @@ weight.entropy <- function(dataset, userid = NULL , attr = NULL, rounds = "all",
   weightList
 }
 
+#' Calculates decision weights using the entrophy method
+#'
+#' This function is used as the second step in \code{\link{weight.entropy}} for
+#' calculating a decision weight for each \code{\link{attr}} in the decision
+#' matrix. The methodology of the entropy method [2] for determining the weights
+#' out of a decision matrix is given by references [1] and [3]. See Details.
+#'
+#' The sum of the output of this functions should always equal 1.
+#'
+#' @param normalizedMatrix a numeric matrix. If indeed normalized it should only
+#'   contain values between \code{0} and \code{1}.
+#'
+#' @details Contrasting with \code{\link{differenceToIdeal}} small differences
+#'   between value attributes are rewarded a lower value and thus a relative
+#'   lower weight.
+#'
+#' @return a decision weight (numeric vector with a sum of 1)
+#'
+#' @references [1]Hwang, C. L., & Yoon, K. (2012). Multiple attribute decision
+#'   making: methods and applications a state-of-the-art survey (Vol. 186).
+#'   Springer Science & Business Media.
+#'
+#'   [2]Shannon, C. E. (2001). A mathematical theory of communication. ACM
+#'   SIGMOBILE Mobile Computing and Communications Review, 5(1), 35.
+#'
+#'   [3]Lotfi, F. H., & Fallahnejad, R. (2010). Imprecise Shannon’s entropy and
+#'   multi attribute decision making. Entropy, 12(1), 53-62.
+#'
+#' @examples #Runnable
+#' entropy(matrix(c(1.0, 0.85, 0.42, 0, 0.5, 0, 1, 0.7), 4, 2))
+#' weights <- entropy(matrix(c(1.0, 0.85, 0.42, 0, 0.5, 0, 1, 0.7), 2, 4))
+#' sum(entropy) should return 1
+#'
+#' @export
 
-# Reference the book!
 entropy <- function(normalizedMatrix) {
   #One column is unlikely since weight should be 1, one row is likely, catch row
   if(!is.matrix(normalizedMatrix)) stop("Input must be a matrix")
