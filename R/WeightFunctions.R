@@ -91,7 +91,7 @@ getAttrWeights <- function(dataset = NULL, userid = NULL, weight = NULL,  attr =
     if (weightFUN == "differenceToIdeal") {
       result <- weight.differenceToIdeal(dataset, userid, attr, rounds, cost_ids)
     }
-    if (weightFUN == "Test2") {
+    if (weightFUN == "entropy") {
       result <- weight_higher_sum_value(dataset, userid, attr, rounds, cost_ids)
     }
     if (weightFUN == "Test3") {
@@ -324,7 +324,7 @@ differenceToIdeal <- function(normalizedMatrix, attr) {
 #'
 #'   If you want to get the weights for only two attributes you will have to
 #'   first use \code{\link{decisionMatrix}} and then pass it on to
-#'   \code{\link{normalize.altMethod}} and \code{\link{entropy}}.
+#'   \code{\link{normalize.sum}} and \code{\link{entropy}}.
 #'
 #' @param rounds integer vector or text option. Which steps of the configuration
 #'   process should be taken into account? Defaults are "all" in order to have
@@ -375,7 +375,7 @@ weight.entropy <- function(dataset, userid = NULL , attr = NULL, rounds = "all",
   if (!all(cost_ids %in% attr)) warning("One of your cost_ids is not in your attributes. Is this still your intended result?")
 
   decisionList <- decisionMatrix(dataset, userid, attr = NULL, rounds, cost_ids)
-  normList <- lapply(decisionList, normalize.minMax, attr, cost_ids)
+  normList <- lapply(decisionList, normalize.sum)
   weightList <- lapply(normList, entropy)
   weightList <- lapply(weightList, function(t) t[attr])
   weightList
@@ -426,7 +426,7 @@ entropy <- function(normalizedMatrix) {
   }
   else {
     normalizedMatrix <- replace(normalizedMatrix, normalizedMatrix==0, 1) #As in paper, log 0 should be equal 0 which is = log(1)
-    kk <- 1/(log(nrow(normalizedMatrix)))
+    kk <- 1/(nrow(normalizedMatrix)/2)
     e_j_secondTerm <- apply(normalizedMatrix, 2, function(x) sum(x*log(x)))
     e_j <- -kk*e_j_secondTerm
     d_j <- 1-e_j
@@ -459,36 +459,33 @@ weight.standard <- function(dataset, userid = NULL , attr = NULL, rounds = "all"
   if (!all(cost_ids %in% attr)) warning("One of your cost_ids is not in your attributes. Is this still your intended result?")
 
   decisionList <- decisionMatrix(dataset, userid, attr = NULL, rounds)
-  normList <- lapply(decisionList, normalize.altMethod, attr, cost_ids)
+  normList <- lapply(decisionList, normalize.altMethod, attr, cost_ids) # altMethod chosen because gives more weight to lots of changes.
   weightList <- lapply(normList, standardDeviation)
   weightList <- lapply(weightList, function(t) t[attr])
   weightList
 }
 
-normalize.minMax <- function(aMatrix, attr, cost_ids = NULL) {
+#' Title
+#'
+#' This function is indifferent as to where it is a cost_ids or not, since the same formula
+#' works for both. It does have a limitation, i.e. if on a single attribute, there are
+#' simultaneously negative and positive values
+#'
+#' @param aMatrix
+#' @param attr
+#' @param cost_ids
+#'
+#' @return
+#' @export
+#'
+#' @examples
+normalize.sum <- function(aMatrix) {
   if (nrow(aMatrix) == 1) {
     aMatrix <- apply(aMatrix, 1:2, function(t) 1)
   }
   sumVector <- apply(aMatrix, 2, sum)
-  print(sumVector)
+  sumVector <- replace(sumVector, sumVector==0.0, 1)
   aMatrix <- apply(aMatrix, 1, function(t) t/sumVector)
 
-  #else{
-   # aMatrix[,cost_ids] <- apply(aMatrix[,cost_ids, drop = F], 2, function(t) { a_max <- max(t); a_min <- min(t);
-  #  if (a_max == 0 & a_min == 0) {a_max <- 1; a_min <- 1}
-  #  if (a_max == a_min) {res <- t/a_max}
-  #  else {res <- a_min/t}; res})
-
-   # if(!is.null(cost_ids)) {
-   #   benefitAttr <- attr[!attr %in% cost_ids]
-  #  }
-  #  else {
-  #    benefitAttr <- 1:ncol(aMatrix)
-   ## }
-  #  aMatrix[,benefitAttr] <- apply(aMatrix[,benefitAttr, drop = F], 2, function(t) { a_max <- max(t); a_min <- min(t);
-  #  if (a_max == 0 & a_min == 0) {a_max <- 1; a_min <- 1}
-  #  if (a_max == a_min) {res <- t/a_max}
-   # else {res <- t/a_max}; res})
-  #}
   t(aMatrix)
 }
