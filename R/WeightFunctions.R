@@ -302,16 +302,16 @@ differenceToIdeal <- function(normalizedMatrix, attr) {
 
 #' Calculates decision weights using the entropy method
 #'
-#' This function first normalizes a
-#' list of matrices and then calculates the decision weight for each attribute,
-#' using an entropy approach [1, 2], which can be categorised as an objective
-#' approach, just as \code{\link{weight.differenceToIdeal}}. This type of weight
-#' functions use only the information within the decision matrix to calculate
-#' weights. It does not need information about the decision maker's preferences.
+#' This function first normalizes a list of matrices and then calculates the
+#' decision weight for each attribute, using an entropy approach [1, 2], which
+#' can be categorised as an objective approach, just as
+#' \code{\link{weight.differenceToIdeal}}. This type of weight functions use
+#' only the information within the decision matrix to calculate weights. It does
+#' not need information about the decision maker's preferences.
 #'
-#' The result is a list of vectors, each vector with the same length as the number of columns
-#' of the input matrices, i.e. each column gets a weight. The sum of a weight
-#' vector should always equal 1.
+#' The result is a list of vectors, each vector with the same length as the
+#' number of columns of the input matrices, i.e. each column gets a weight. The
+#' sum of a weight vector should always equal 1.
 #'
 #' @param dataset data.frame with the user generated data from a product
 #'   configurator. See \code{decisionMatrix} for specifications of the dataset.
@@ -334,12 +334,18 @@ differenceToIdeal <- function(normalizedMatrix, attr) {
 #'
 #' @param cost_ids argument used to convert selected cost attributes into
 #'   benefit attributes. Integer vector. This functions uses an alternative
-#'   normalizing method \code{\link{normalize.altMethod}} that does not produce
-#'   negative values.
+#'   normalizing method \code{\link{normalize.sum}} that does not produce
+#'   negative values. However, it has one limitation, if within a same attribute
+#'   there are negative and positive values, the function will likely produce a
+#'   \code{NaN}.
 #'
 #' @details In contrast to \code{\link{weight.differenceToIdeal}}, this function
 #'   distributes lower weights to those attributes, which have similar values
 #'   throughout the decision matrix.
+#'
+#'   Note: the normalizing function used here \code{\link{normalize.sum}} has
+#'   one limitation, if within a same attribute there are negative and positive
+#'   values, the function will likely produce a \code{NaN}.
 #'
 #'   \code{cost_ids} As in the other functions, if you enter a cost_ids that is
 #'   not in your entered attributes, the functions will calculate the output
@@ -467,15 +473,17 @@ weight.standard <- function(dataset, userid = NULL , attr = NULL, rounds = "all"
 
 #' Title
 #'
-#' This function is indifferent as to where it is a cost_ids or not, since the same formula
-#' works for both. It does have a limitation, i.e. if on a single attribute, there are
-#' simultaneously negative and positive values
+#' This function is indifferent as to where it is a cost_ids or not, since the
+#' same formula works for both. It does have a limitation, i.e. if on a single
+#' attribute, there are simultaneously negative and positive values, in details?
 #'
 #' @param aMatrix
-#' @param attr
-#' @param cost_ids
 #'
 #' @return
+#'
+#' @details Note: this function has one important limitation, if within a same
+#'   attribute there are negative and positive values, the function will likely
+#'   produce a \code{NaN}.
 #' @export
 #'
 #' @examples
