@@ -3,7 +3,7 @@
 weight_higher_sum_value <- function(dataset, userid = NULL , rounds = NULL, cost_ids = NULL) {
 
   ##Calculate with always 4 attribute so that function works properly, take attr into account at result level.
-  all_dec_matrices <- powerful_function(dataset, userid, FUN = decision_matrix, attr = NULL, rounds = "all", refps = NULL, cost_ids,
+  all_dec_matrices <- powerful_function(dataset, userid, FUN = norm , attr = NULL, rounds = "all", refps = NULL, cost_ids,
                                         weight = NULL, alpha = 0.88, beta = 0.88, lambda = 2.25, gainm = TRUE, result_type = NULL)
 
   if(length(userid) != 1) stop("Please enter only one userid, for more see powerful_function.")
@@ -84,7 +84,7 @@ getAttrWeights <- function(dataset = NULL, userid = NULL, weight = NULL,  attr =
   if(is.null(weight)) {
     # ! ToDo check if functions handle correctly inputting userids missing. Old weight_sum_value calls other f(x) that do
     if (weightFUN == "deprecated_FUN") {
-      result <- powerful_function(dataset, userid, FUN = get_attr_weight, weight, attr = attr, rounds = rounds, cost_ids=cost_ids)
+      result <- powerful_function(dataset, userid, FUN =get_attr_weight, weight, attr = attr, rounds = rounds, cost_ids=cost_ids)
     }
     ## DOCU: New functions must take into account attributes and calculate accordingly, perhaps it doesn't make sense with our data,
     ## but we have to give the choice
@@ -374,8 +374,8 @@ weight.entropy <- function(dataset, userid = NULL , attr = NULL, rounds = "all",
   if (is.null(attr)) attr <- get_attrs_ID(dataset)
   if (!all(cost_ids %in% attr)) warning("One of your cost_ids is not in your attributes. Is this still your intended result?")
 
-  decisionList <- decisionMatrix(dataset, userid, attr = NULL, rounds)
-  normList <- lapply(decisionList, normalize.altMethod, attr, cost_ids)
+  decisionList <- decisionMatrix(dataset, userid, attr = NULL, rounds, cost_ids)
+  normList <- lapply(decisionList, normalize.minMax, attr, cost_ids)
   weightList <- lapply(normList, entropy)
   weightList <- lapply(weightList, function(t) t[attr])
   weightList
@@ -425,9 +425,8 @@ entropy <- function(normalizedMatrix) {
     weightVector <- weightVector/numberCol
   }
   else {
-    normalizedMatrix <- replace(normalizedMatrix, normalizedMatrix==0.0, 1) #As in paper, log 0 should be equal 0 which is = log(1)
+    normalizedMatrix <- replace(normalizedMatrix, normalizedMatrix==0, 1) #As in paper, log 0 should be equal 0 which is = log(1)
     kk <- 1/(log(nrow(normalizedMatrix)))
-
     e_j_secondTerm <- apply(normalizedMatrix, 2, function(x) sum(x*log(x)))
     e_j <- -kk*e_j_secondTerm
     d_j <- 1-e_j
@@ -435,4 +434,61 @@ entropy <- function(normalizedMatrix) {
     weightVector <- d_j/sumOfd_j
   }
   weightVector
+}
+
+standardDeviation <- function(aMatrix) {
+  #One column is unlikely since weight should be 1, one row is likely, catch row
+  if(!is.matrix(aMatrix)) stop("Input must be a matrix")
+  if (nrow(aMatrix)==1) {
+    numberCol <- ncol(aMatrix)
+    weightVector <- rep(1, numberCol)
+    weightVector <- weightVector/numberCol
+  }
+  else {
+    deviations <- apply(aMatrix, 2, sd)
+    sumOfDeviations <- sum(deviations)
+    weightVector <- deviations/sumOfDeviations
+  }
+  weightVector
+}
+
+weight.standard <- function(dataset, userid = NULL , attr = NULL, rounds = "all", cost_ids = NULL) {
+
+  # Common Errors catched in dM (Tested: attr, rounds, all.users, cost_ids)
+  if (is.null(attr)) attr <- get_attrs_ID(dataset)
+  if (!all(cost_ids %in% attr)) warning("One of your cost_ids is not in your attributes. Is this still your intended result?")
+
+  decisionList <- decisionMatrix(dataset, userid, attr = NULL, rounds)
+  normList <- lapply(decisionList, normalize.altMethod, attr, cost_ids)
+  weightList <- lapply(normList, standardDeviation)
+  weightList <- lapply(weightList, function(t) t[attr])
+  weightList
+}
+
+normalize.minMax <- function(aMatrix, attr, cost_ids = NULL) {
+  if (nrow(aMatrix) == 1) {
+    aMatrix <- apply(aMatrix, 1:2, function(t) 1)
+  }
+  sumVector <- apply(aMatrix, 2, sum)
+  print(sumVector)
+  aMatrix <- apply(aMatrix, 1, function(t) t/sumVector)
+
+  #else{
+   # aMatrix[,cost_ids] <- apply(aMatrix[,cost_ids, drop = F], 2, function(t) { a_max <- max(t); a_min <- min(t);
+  #  if (a_max == 0 & a_min == 0) {a_max <- 1; a_min <- 1}
+  #  if (a_max == a_min) {res <- t/a_max}
+  #  else {res <- a_min/t}; res})
+
+   # if(!is.null(cost_ids)) {
+   #   benefitAttr <- attr[!attr %in% cost_ids]
+  #  }
+  #  else {
+  #    benefitAttr <- 1:ncol(aMatrix)
+   ## }
+  #  aMatrix[,benefitAttr] <- apply(aMatrix[,benefitAttr, drop = F], 2, function(t) { a_max <- max(t); a_min <- min(t);
+  #  if (a_max == 0 & a_min == 0) {a_max <- 1; a_min <- 1}
+  #  if (a_max == a_min) {res <- t/a_max}
+   # else {res <- t/a_max}; res})
+  #}
+  t(aMatrix)
 }
