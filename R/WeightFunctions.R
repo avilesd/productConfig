@@ -497,3 +497,72 @@ normalize.sum <- function(aMatrix) {
 
   t(aMatrix)
 }
+# Just like other functions, we cut at the end not when normalizing
+# Fix attribute, why different output when no attr and when attr=1:4?????????
+#  ADD GAMMA
+weight.highestValue <- function(dataset, userid = NULL , attr = NULL, rounds = "all", cost_ids = NULL) {
+  # Common Errors catched in dM (Tested: attr, rounds, all.users, cost_ids)
+  fullAttr <- get_attrs_ID(dataset)
+  if (!all(cost_ids %in% fullAttr)) warning("One of your cost_ids is not in your attributes. Is this still your intended result?")
+
+  maxValuePerAttr <- sapply(getAttrValues(myData, fullAttr), max, USE.NAMES = F)
+  minValuePerAttr <- sapply(getAttrValues(myData, fullAttr), min, USE.NAMES = F) # provides them as is, without sorting
+  decisionList <- decisionMatrix(dataset, userid, attr = NULL, rounds)
+  decisionList <- lapply(decisionList, function(t, maxV, minV) {rbind(maxV, minV , t)} , maxValuePerAttr, minValuePerAttr)
+
+  normList <- lapply(decisionList, normalize.highestValue, attr, cost_ids)
+  weightList <- lapply(normList, highestValue)
+  print(weightList)
+  #weightList <- lapply(weightList, function(t) t[attr])
+  weightList
+}
+# When only one round, all normalize to 1 which in turn makes all attribtus have the same weight
+normalize.highestValue <- function(aMatrix, attr, cost_ids = NULL) {
+  dontCut <- F
+  if (nrow(aMatrix) == 3) {
+    aMatrix <- matrix(1, 1, ncol(aMatrix))
+    dontCut <- T
+  }
+  else{
+    aMatrix[,cost_ids] <- apply(aMatrix[,cost_ids, drop = F], 2, function(t) { a_max <- t[1]; a_min <- t[2];
+    if (a_max == 0 & a_min == 0) {a_max <- 1; a_min <- 1}
+    if (a_max == a_min) {res <- t/a_max}
+    else {res <- (a_max-t)/(a_max-a_min)}; res})
+
+    if(!is.null(cost_ids)) {
+      benefitAttr <- attr[!attr %in% cost_ids]
+    }
+    else {
+      benefitAttr <- 1:ncol(aMatrix)
+    }
+    aMatrix[,benefitAttr] <- apply(aMatrix[,benefitAttr, drop = F], 2, function(t) {a_max <- t[1]; a_min <- t[2];
+    if (a_max == 0 & a_min == 0) {a_max <- 1; a_min <- 1}
+    if (a_max == a_min) {res <- t/a_max}
+    else {res <- (t-a_min)/(a_max-a_min)}; res})
+  }
+  if (!dontCut) aMatrix <- aMatrix[-c(1,2), ]
+  aMatrix
+}
+
+highestValue <- function(normalizedMatrix) {
+  #One column is unlikely since weight should be 1, one row is likely, catch row
+  if(!is.matrix(normalizedMatrix)) stop("Input must be a matrix")
+  if (nrow(normalizedMatrix)==1) {
+    numberCol <- ncol(normalizedMatrix)
+    weightVector <- rep(1, numberCol)
+    weightVector <- weightVector/numberCol
+  }
+  else {
+    sumOfColumns <- apply(normalizedMatrix, 2, sum)
+    sumTotal <- sum(sumOfColumns)
+    weightVector <- sumOfColumns/sumTotal
+  }
+  weightVector
+}
+
+weight.highAndStandard <- function(dataset, userid = NULL , attr = NULL, rounds = "all", cost_ids = NULL, gamma = 0.5) {
+  weight1 <- weight.highestValue(dataset, userid, attr, rounds, cost_ids)
+  weight2 <- weight.standard(dataset, userid, attr, rounds, cost_ids)
+  weightVector <- gamma*weight1 + (1-gamma)*weight2 # correct, since weight1 are lists!!!
+  weightVector
+}
