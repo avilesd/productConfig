@@ -497,23 +497,25 @@ normalize.sum <- function(aMatrix) {
 
   t(aMatrix)
 }
+# Fix cost_ids normalizing method returns all 0.33, alt.Method does not
 # Just like other functions, we cut at the end not when normalizing
-# Fix attribute, why different output when no attr and when attr=1:4?????????
+# Normalizin
 #  ADD GAMMA
+#attr cuts at the end, tested, so weight will not add up to 1.
 weight.highestValue <- function(dataset, userid = NULL , attr = NULL, rounds = "all", cost_ids = NULL) {
   # Common Errors catched in dM (Tested: attr, rounds, all.users, cost_ids)
   fullAttr <- get_attrs_ID(dataset)
-  if (!all(cost_ids %in% fullAttr)) warning("One of your cost_ids is not in your attributes. Is this still your intended result?")
+  if (is.null(attr)) attr <- get_attrs_ID(dataset)
+  if (!all(cost_ids %in% attr)) warning("One of your cost_ids is not in your attributes. Is this still your intended result?")
 
   maxValuePerAttr <- sapply(getAttrValues(myData, fullAttr), max, USE.NAMES = F)
   minValuePerAttr <- sapply(getAttrValues(myData, fullAttr), min, USE.NAMES = F) # provides them as is, without sorting
   decisionList <- decisionMatrix(dataset, userid, attr = NULL, rounds)
   decisionList <- lapply(decisionList, function(t, maxV, minV) {rbind(maxV, minV , t)} , maxValuePerAttr, minValuePerAttr)
 
-  normList <- lapply(decisionList, normalize.highestValue, attr, cost_ids)
+  normList <- lapply(decisionList, normalize.highestValue, fullAttr, cost_ids)
   weightList <- lapply(normList, highestValue)
-  print(weightList)
-  #weightList <- lapply(weightList, function(t) t[attr])
+  weightList <- lapply(weightList, function(t) t[attr])
   weightList
 }
 # When only one round, all normalize to 1 which in turn makes all attribtus have the same weight
@@ -560,9 +562,10 @@ highestValue <- function(normalizedMatrix) {
   weightVector
 }
 
+# corrected correct, since weight1 are lists!!!
 weight.highAndStandard <- function(dataset, userid = NULL , attr = NULL, rounds = "all", cost_ids = NULL, gamma = 0.5) {
   weight1 <- weight.highestValue(dataset, userid, attr, rounds, cost_ids)
   weight2 <- weight.standard(dataset, userid, attr, rounds, cost_ids)
-  weightVector <- gamma*weight1 + (1-gamma)*weight2 # correct, since weight1 are lists!!!
+  weightVector <- mapply(function(w1, w2) gamma*w1 + (1-gamma)*w2, weight1, weight2, SIMPLIFY = F)
   weightVector
 }
