@@ -29,7 +29,7 @@ ProductConfig Github page:
   https://github.com/avilesd/productConfig
 }
 \seealso{
-Other get.functions: \code{\link{benefitToCostAttr}},
+Other get functions: \code{\link{benefitToCostAttr}},
   \code{\link{getAllUserIds}}, \code{\link{getAttrValues}},
   \code{\link{getDefaultRefps}},
   \code{\link{getRoundsById}}, \code{\link{getTableById}},

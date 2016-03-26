@@ -25,7 +25,7 @@ get_attr_values(other_data, 100) #Possible catched error: The attrID you specifi
 
 }
 \seealso{
-Other get.functions: \code{\link{benefitToCostAttr}},
+Other get functions: \code{\link{benefitToCostAttr}},
   \code{\link{getAllUserIds}},
   \code{\link{getDefaultRefps}},
   \code{\link{getRoundsById}}, \code{\link{getTableById}},

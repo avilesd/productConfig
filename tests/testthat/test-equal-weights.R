@@ -25,7 +25,7 @@ test_that("results are numerically the same", {
   renewed.oPV <- unname(overallPV(camera2_config, randomUsers, rounds=randomRounds))
 
   #' Test overall Prospect Value without any weight parameters
-  expect_identical(legacy.oPV, renewed.oPV)
+  expect_equal(legacy.oPV, renewed.oPV)
 
   # deprecated_FUN : Expect same results with random weight parameters, with length(weightVector) == length(attr)
   legacy.sameLength <- unname(powerful_function(camera2_config, userid = randomUsers, FUN=overall_pv, rounds=randomRounds, attr = randomAttr, weight = randomWeightVector))

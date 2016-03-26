@@ -33,7 +33,7 @@ get_table_by_ID(as.data.frame(matrix_full), 12)
 \code{\link{powerful_function}} allows you to run this and any other
   function in this package for more than one user.
 
-Other get.functions: \code{\link{benefitToCostAttr}},
+Other get functions: \code{\link{benefitToCostAttr}},
   \code{\link{getAllUserIds}}, \code{\link{getAttrValues}},
   \code{\link{getDefaultRefps}},
   \code{\link{getRoundsById}}, \code{\link{get_attrs_ID}},

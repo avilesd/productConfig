@@ -17,14 +17,5 @@ test_that("results are equal, input and calculated weights", {
   random4 <- runif(4, 0.0 , 500.0)
 
   #' Test weight functions with input
-  legacy.get_attr <-list(oneVector = get_attr_weight(camera2_config, randomUsers[1], random4))
-  new.getAttr <- getAttrWeights(weight=random4, weightFUN = "deprecated_FUN")
-
-  expect_identical(legacy.get_attr, new.getAttr)
-  #' Without input
-  legacy.attr <- powerful_function(camera2_config, randomUsers, FUN =get_attr_weight, attr = randomAttr)
-  new.Attr <- getAttrWeights(camera2_config, randomUsers, attr=randomAttr)
-
-  expect_identical(legacy.attr, new.Attr)
 
 })
