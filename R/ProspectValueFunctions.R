@@ -3,14 +3,14 @@
 #Added new function
 # DOCU: This nor any other vectorized function sort attributes!!!!!, that is the results are printed in the order they were given! Impacts
 # tests, since they have to be sorted, such as before in powerful_function and other not vectorized fun.
-overallPV <- function (dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL,  weight = NULL, weightFUN = "deprecated_FUN",
-                       alpha = 0.88, beta = 0.88, lambda = 2.25) {
+overallPV <- function (dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL,  weight = NULL, weightFUN = "differenceToIdeal",
+                       alpha = 0.88, beta = 0.88, lambda = 2.25, gamma) {
 
   if(is.null(weight) & is.null(dataset)) {
     stop("Unable to get weights. You need to enter the weights or provide the dataset for us to calculate them.")
   }
 
-  weight <- getAttrWeights(dataset, userid, weight,  attr, rounds, cost_ids, weightFUN)
+  weight <- getAttrWeights(dataset, userid, weight,  attr, rounds, cost_ids, weightFUN, gamma)
 
   pvMatrices <- pvMatrix(dataset, userid, attr, rounds, refps, cost_ids, alpha, beta, lambda)
 
