@@ -96,14 +96,6 @@ getAttrWeights <- function(dataset = NULL, userid = NULL, weight = NULL,  attr =
 
 ## DOCU: New functions must take into account attributes and calculate accordingly, perhaps it doesn't make sense with our data,
 ## but we have to give the choice
-#######
-####### Idea for new function, normalize decision matrix, then
-##' ndec11 <- norm.gainLoss(myData, 11, rounds="all")
-#ndec11
-#ndiffMatrix11 <- apply(ndec11[[1]], 2, diff)
-#nabsdiffMatrix11 <- apply(ndiffMatrix11, 2, abs)
-#nsumdiffMatrix11 <- apply(ndiffMatrix11, 2, sum)
-#nsumdiffMatrix11 <- apply(nabsdiffMatrix11, 2, sum)
 
 #' Calculates attribute weights using the 'objective approach'
 #'
@@ -553,7 +545,6 @@ weight.highestValue <- function(dataset, userid = NULL , attr = NULL, rounds = "
   weightList <- lapply(normList, highestValue)
   weightList <- lapply(weightList, function(t) t[attr])
   weightList
-  normList
 }
 
 #' Calculates weights relative to the highest sum relative to other attributes
@@ -588,20 +579,32 @@ highestValue <- function(normalizedMatrix) {
   weightVector
 }
 
-
-#' Calculates weights relative to the highest sum relative to other attributes
+#' Calculates weights using two weighted sub-functions
 #'
-#' @param dataset
-#' @param userid
-#' @param attr
-#' @param rounds
-#' @param cost_ids
-#' @param gamma
+#' This function calculates two separate weight vectors and merges them together
+#' with a weighted parameter \code{gamma}.
 #'
-#' @return
+#' The first weight function \code{\link{weight.highestValue}} rewards those
+#' attributes which have values (consistenly) closer to the highest possible value.
+#' The second function \code{\link{weight.standard}} uses the standard deviation
+#' to assign weights. The more the values differ from one another within an attribute, the better the
+#' assigned weight will be.
+#'
+#' The \code{gamma} parameter measures the importance you want to give to the first
+#' function. It acts also as a weight since the final weight vector is given by
+#' \code{result = gamma * weight.highestValue + (1-gamma) * weight.standard}
+#'
+#' @inheritParams getAttrWeights
+#'
+#' @return a list of weight vectors (one per user)
+#'
+#' @examples #Not runnable yet
+#' weight.highAndStandard(myData, userid=10)
+#' weight.highAndStandard(someData, 11, rounds="all")
+#' weight.highAndStandard(laptop_data, 15, cost_ids=4, gamma = 0.3)
+#' weight.highAndStandard(myData, 15, attr=1:4, "all", cost_ids=4, gamma = 0.75)
+#'
 #' @export
-#'
-#' @examples
 
 weight.highAndStandard <- function(dataset, userid = NULL , attr = NULL, rounds = "all", cost_ids = NULL, gamma = 0.5) {
   weight1 <- weight.highestValue(dataset, userid, attr, rounds, cost_ids)
