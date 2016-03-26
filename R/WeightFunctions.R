@@ -326,6 +326,10 @@ weight.entropy <- function(dataset, userid = NULL , attr = NULL, rounds = "all",
 #'   between value attributes are rewarded a lower value and thus a relative
 #'   lower weight.
 #'
+#'   Note: the normalizing function used here \code{\link{normalize.sum}} has
+#'   one limitation, if within a same attribute there are negative and positive
+#'   values, the function will likely produce a \code{NaN}.
+#'
 #' @return a decision weight (numeric vector with a sum of 1)
 #'
 #' @references [1]Hwang, C. L., & Yoon, K. (2012). Multiple attribute decision
