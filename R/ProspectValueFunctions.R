@@ -28,41 +28,6 @@ overallPV <- function (dataset, userid = NULL, attr = NULL, rounds = NULL, refps
   overall_pv
 }
 
-#########
-# Do not delete this function in vectorialize, could still be useful
-prospect_value_matrix_extend <- function(ngain = NULL, nloss = NULL, alpha = 0.88, beta = 0.88, lambda = 2.25)  {
-  if((is.null(ngain) || is.null(nloss)) ) {
-    stop("You need to provide both normalized gain and loss matrices. Helpful functions: norm_g_l_matrices, gain_matrix,
-         loss_matrix, gain_loss_matrices")
-  }
-  if(!identical(dim(ngain), dim(nloss))) {
-    stop("The input matrices do not have equal dimensions.")
-  }
-  else {
-    value_matrix <- matrix(NA, nrow(ngain), ncol(ngain))
-
-    for(n in 1:nrow(ngain)) {
-      value_matrix[n, ] <- mapply(pvalue_fun, ngain[n, ], nloss[n, ], alpha, beta, lambda)
-    }
-  }
-  value_matrix
-}
-
-#Added function pvMatrix_extend to input ngain and nloss was deprecated, but still accessible.
-pvMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL,
-                     alpha = 0.88, beta = 0.88, lambda = 2.25) {
-  normalizedgainLoss <- norm.gainLoss(dataset, userid, attr, rounds, refps, cost_ids, binded = F)
-  pvMatrixList <- with(normalizedgainLoss, mapply(pvalue_fun, gain, loss, alpha, beta, lambda, SIMPLIFY = F))
-  pvMatrixList
-}
-
-# Still used in vectorialised. Auxiliary function, not necessary to document right now.
-pvalue_fun <- function(ngain_ij, nloss_ij, alpha = 0.88, beta = 0.88, lambda = 2.25) {
-  result <- ((ngain_ij)^alpha) + (-lambda*((-nloss_ij)^beta))
-  result
-
-}
-
 #Still used in vectorialised
 overall_pv_extend <- function(value_matrix, weight = NULL) {
   if (length(weight) != ncol(value_matrix)) {
