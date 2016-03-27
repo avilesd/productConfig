@@ -201,7 +201,8 @@ trpValueMatrix.oneAttr <- function(dataset, userid = NULL, attr = NULL, rounds =
     sq <- (-1)*sq
   }
 
-  # First Transformation, monotonic transformation such that SQ = 0
+  # First Transformation, monotonic transformation such that SQ = 0, this is an imoprtant step
+  # see appendix, because it acts as the Gain and Loss matrix. Write it on the Documentation
   # Transform decision Matrix
   list.decMatrices <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
   list.decMatrices <- lapply(list.decMatrices, function(t) apply(t, 1:2, substract_sq, sq))
@@ -219,7 +220,6 @@ trpValueMatrix.oneAttr <- function(dataset, userid = NULL, attr = NULL, rounds =
   hmaxVector <- lapply(list.decMatrices, function(temp) apply(temp, 2, abs))
   hmaxVector <- lapply(hmaxVector, function(temp1) if(is.null(ncol(temp1))) {temp1} else {apply(temp1, 2, max)})
   hmaxVector <- lapply(hmaxVector, function(temp2) replace(temp2, temp2==0.0, 1.00)) #remove 0 to avoid NA when dividing
-
   list.decMatrices <- mapply(function(aMatrix, aVector) aMatrix / aVector[col(aMatrix)], list.decMatrices, hmaxVector, SIMPLIFY = F)
 
   # Second-Transformartion of reference points, DOCU?? Doesn't affect the user, just how we calculate it.
@@ -273,7 +273,7 @@ trpValueMatrix.oneAttr <- function(dataset, userid = NULL, attr = NULL, rounds =
 #'
 #' @export
 
-trpValueFunction <- function(aMatrix, triRefps, beta_f = 5, beta_l = 1, beta_g = 1, beta_s = 3) {
+trpValueFunction <- function(aMatrix, triRefps, beta_f = 5, beta_l = 1.5, beta_g = 1, beta_s = 3) {
   mr <- triRefps[1]
   sq <- triRefps[2]
   g <- triRefps[3]
