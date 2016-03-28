@@ -1,0 +1,40 @@
+R Dependencies - f(x): avoid high level functions to stop working or have undesired outputs.
+
+[Old dependencies, which output new functions depend on]
+get_attrs_ID
+pvalue_fun --> used by pvMatrix
+overall_pv_extend --> used by overallPV and overallPV_interface
+# Only temporarily
+get_attr_weight --> getAttrWeights
+powerful_function --> getAttrWeights
+
+[Old dependencies, coming from tests]
+powerful_function --> test-equal-overallPV, test-equal-pvalue-matrix, test-equal-weights
+overall_pv --> test-equal-overallPV, test-equal-weights
+pvalue_matrix --> test-equal-pvalue-matrix
+get_attrs_ID --> test_deprecated_-equal-get_attr_weight
+get_attr_weight --> test_deprecated_-equal-get_attr_weight
+
+
+[Vectorized]
+
+getTableByID has no old depend.
+- getAllUserIds
+
+getRoundsById has no old depend.
+- getTableById
+
+getAllUserIds no depend.
+
+getDefaultRefps depens on:
+- get_attrs_ID
+- getTablesById
+
+normalize no depend.
+
+getAttrValues depends on:
+-get_attrs_ID
+
+
+[No Vectorized needed]
+get_attrs_ID no dependencies.

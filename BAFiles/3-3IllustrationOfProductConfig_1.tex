@@ -1,0 +1,208 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+    \usepackage{xltxtra,xunicode}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{{#1}}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{{#1}}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{{#1}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{{#1}}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\RegionMarkerTok}[1]{{#1}}
+\newcommand{\ErrorTok}[1]{\textbf{{#1}}}
+\newcommand{\NormalTok}[1]{{#1}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \usepackage[unicode=true]{hyperref}
+\fi
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={Diego Aviles},
+            pdftitle={3.3 Illustration of the productConfig package},
+            colorlinks=true,
+            citecolor=blue,
+            urlcolor=blue,
+            linkcolor=magenta,
+            pdfborder={0 0 0}}
+\urlstyle{same}  % don't use monospace font for urls
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\setcounter{secnumdepth}{0}
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{3.3 Illustration of the productConfig package}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \author{Diego Aviles}
+  \preauthor{\centering\large\emph}
+  \postauthor{\par}
+  \predate{\centering\large\emph}
+  \postdate{\par}
+  \date{2016-03-28}
+
+
+
+\begin{document}
+
+\maketitle
+
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+First, let us look at the data:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{tail.matrix}\NormalTok{(camera_data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       cid usid round atid   selected selectable
+## 1823 1835   62     1    4 0.01944444          1
+## 1824 1836   62     2    4 0.16805556          1
+## 1825 1837   63     0    1 1.00000000          2
+## 1826 1838   63     0    2 1.00000000          1
+## 1827 1839   63     0    3 1.00000000          1
+## 1828 1840   63     0    4 0.16805556          1
+\end{verbatim}
+
+As you can see our data displays 1828 rows with around 63 different
+users in a rather complex format which makes it practically difficult to
+work with. This is the reason we need the basic function cluster
+\texttt{ GetFunctions}. For example, it is quite necessary to know how
+many attributes there are in out data:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{get_attrs_ID}\NormalTok{(}\DataTypeTok{dataset=}\NormalTok{camera_data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1 2 3 4
+\end{verbatim}
+
+Given that our functions are mostly vectorized and assuming all users
+have the same attribtues, we can ask for the unique values of each
+\texttt{attr}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{getAttrValues}\NormalTok{(}\DataTypeTok{dataset=}\NormalTok{camera_data, }\DataTypeTok{attr =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{4}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{lapply}\NormalTok{(temp, unique)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $`1`
+## [1] 3 0 2 1
+## 
+## $`2`
+## [1] 0 3 2 1
+## 
+## $`3`
+## [1] 0 3 2 1
+## 
+## $`4`
+## [1]  0.16805556 -0.27777778 -0.12916667  0.01944444  0.46527778  0.31666667
+## [7]  0.61388889
+\end{verbatim}
+
+Now that we know how many attributes there are, we also know how many
+columns the decision matrices have. The number of rows depends on how
+much each user interacted with the product configurator and again, since
+we can calculate the number of rows for all users using
+\texttt{getRoundsById}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{all.rounds <-}\StringTok{ }\KeywordTok{getRoundsById}\NormalTok{(camera_data, }\DataTypeTok{userid =} \KeywordTok{getAllUserIds}\NormalTok{(camera_data))}
+\KeywordTok{head}\NormalTok{(all.rounds,}\DecValTok{3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $`6`
+##   [1]  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22
+##  [24] 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45
+##  [47] 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68
+##  [70] 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91
+##  [93] 92 93 94 95 96 97 98 99
+## 
+## $`9`
+## [1] 0 1 2 3
+## 
+## $`10`
+## [1] 0 1 2 3 4
+\end{verbatim}
+
+\end{document}

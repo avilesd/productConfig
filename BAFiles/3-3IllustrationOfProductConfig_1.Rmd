@@ -1,0 +1,41 @@
+---
+title: "3.3 Illustration of the productConfig package"
+author: "Diego Aviles"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    keep_tex: yes
+---
+
+```{r echo = FALSE, warning = FALSE, message= FALSE}
+# Load all necessary information without showing it
+library(productConfig)
+load("knit_data.RData")
+library(devtools)
+devtools::load_all(".")
+
+```
+-----------------------------------------------------------------------------------------------------------------------------------------
+First, let us look at the data:
+```{r}
+tail.matrix(camera_data)
+```
+As you can see our data displays 1828 rows with around 63 different users in a rather complex format which makes it practically difficult to work with. This is the reason we need the basic function cluster \texttt{ GetFunctions}. For example, it is quite necessary to know how many attributes there are in out data:
+```{r}
+get_attrs_ID(dataset=camera_data)
+```
+Given that our functions are mostly vectorized and assuming all users have the same attribtues, we can ask for the unique values of each \texttt{attr}.
+```{r echo = FALSE, cache = TRUE}
+temp <- lapply(getAttrValues(dataset=camera_data), round, 8)
+````
+```{r eval = F}
+getAttrValues(dataset=camera_data, attr = c(1,2,3,4))
+````
+```{r}
+lapply(temp, unique)
+````
+Now that we know how many attributes there are, we also know how many columns the decision matrices have. The number of rows depends on how much each user interacted with the product configurator and again, since functions are vectorised we can calculate the number of rows for all users using \texttt{getRoundsById}.
+```{r}
+all.rounds <- getRoundsById(camera_data, userid = getAllUserIds(camera_data))
+head(all.rounds, 3)
+````
