@@ -20,7 +20,7 @@ First, let us look at the data:
 ```{r}
 tail.matrix(camera_data)
 ```
-As you can see our data displays 1828 rows with around 63 different users in a rather complex format which makes it practically difficult to work with. This is the reason we need the basic function cluster \texttt{ GetFunctions}. For example, it is quite necessary to know how many attributes there are in out data:
+As you can see our data displays 1828 rows with around 63 different users in a rather complex format which makes it practically difficult to work with. This is the reason we need the basic function cluster \texttt{GetFunctions}. For example, it is quite necessary to know how many attributes there are in out data:
 ```{r}
 get_attrs_ID(dataset=camera_data)
 ```
@@ -34,8 +34,36 @@ getAttrValues(dataset=camera_data, attr = c(1,2,3,4))
 ```{r}
 lapply(temp, unique)
 ````
-Now that we know how many attributes there are, we also know how many columns the decision matrices have. The number of rows depends on how much each user interacted with the product configurator and again, since functions are vectorised we can calculate the number of rows for all users using \texttt{getRoundsById}.
+Now that we know how many attributes there are, we also know how many columns the decision matrices are going to have. The number of rows depends on how much each user interacted with the product configurator and again, since functions are vectorised we can calculate the number of rows for all users using \texttt{getRoundsById}.
 ```{r}
 all.rounds <- getRoundsById(camera_data, userid = getAllUserIds(camera_data))
-head(all.rounds, 3)
+head(all.rounds, 3) # To display only the results for the first three users
 ````
+We can now easily observe that user 10 interacted four times with the configurator four times before making a decision.
+
+The three functions presented above are necessary to create more complex structures, such as the decision matrix. To build it, we just need to use the right function with the right parameters. At mentioned earlier, the fourth parameter \texttt{attr=4} is price, which means it is a cost attribute (lower values are better). To handle this we input the correspondent attribute ID in \texttt{cost\_ids}. Choosing any random user from our table, we calculate its decision matrix.
+```{r}
+decisionMatrix(camera_data, 33, rounds="all", cost_ids=4)
+````
+Notice how we did not specify the \texttt{attr} argument. As suggested before, aside from \texttt{dataset} and \texttt{userid} almost all arguments have a default value and perform a default behavior. When no input is entered \texttt{attr} calculates using all recognized attributes and \texttt{rounds} with the first and the last, which is why we explicitly specified \texttt{"all"}. Our next step is to determine the reference points. For the \texttt{refps} of PT we will use the default settings of user \texttt{33} which are:
+```{r}
+decisionMatrix(camera_data, 33, rounds="first", cost_ids=4)
+````
+This result should correspond to and validate our PT-reference-point function `referencePoints`.
+```{r}
+referencePoints(camera_data, 33, cost_ids=4)
+````
+Now that we have determined the decision matrix and the reference points for user 33, we can proceed to compute the following steps.
+
+[Insert quick figure]
+
+However, since we have demonstrated how the functions build on each other and to avoid repetitiveness, we will calculate these matrices using only one function. 
+
+```{r}
+pvMatrix(camera_data, 33, attr=1:4, rounds="all", cost_ids = 4,
+         alpha = 0.88, beta=0.88, lambda=2.25)
+````
+
+Later for the sake of consistency, to compare to DRP and TRP do input a \texttt{refps} for PT.
+
+-----------------------

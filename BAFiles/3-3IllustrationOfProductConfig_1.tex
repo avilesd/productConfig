@@ -133,7 +133,7 @@ First, let us look at the data:
 As you can see our data displays 1828 rows with around 63 different
 users in a rather complex format which makes it practically difficult to
 work with. This is the reason we need the basic function cluster
-\texttt{ GetFunctions}. For example, it is quite necessary to know how
+\texttt{GetFunctions}. For example, it is quite necessary to know how
 many attributes there are in out data:
 
 \begin{Shaded}
@@ -178,15 +178,15 @@ have the same attribtues, we can ask for the unique values of each
 \end{verbatim}
 
 Now that we know how many attributes there are, we also know how many
-columns the decision matrices have. The number of rows depends on how
-much each user interacted with the product configurator and again, since
-we can calculate the number of rows for all users using
-\texttt{getRoundsById}.
+columns the decision matrices are going to have. The number of rows
+depends on how much each user interacted with the product configurator
+and again, since functions are vectorised we can calculate the number of
+rows for all users using \texttt{getRoundsById}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{all.rounds <-}\StringTok{ }\KeywordTok{getRoundsById}\NormalTok{(camera_data, }\DataTypeTok{userid =} \KeywordTok{getAllUserIds}\NormalTok{(camera_data))}
-\KeywordTok{head}\NormalTok{(all.rounds,}\DecValTok{3}\NormalTok{)}
+\KeywordTok{head}\NormalTok{(all.rounds, }\DecValTok{3}\NormalTok{) }\CommentTok{# To display only the results for the first three users}
 \end{Highlighting}
 \end{Shaded}
 
@@ -204,5 +204,99 @@ we can calculate the number of rows for all users using
 ## $`10`
 ## [1] 0 1 2 3 4
 \end{verbatim}
+
+We can now easily observe that user 10 interacted four times with the
+configurator four times before making a decision.
+
+The three functions presented above are necessary to create more complex
+structures, such as the decision matrix. To build it, we just need to
+use the right function with the right parameters. At mentioned earlier,
+the fourth parameter \texttt{attr=4} is price, which means it is a cost
+attribute (lower values are better). To handle this we input the
+correspondent attribute ID in \texttt{cost\_ids}. Choosing any random
+user from our table, we calculate its decision matrix.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{decisionMatrix}\NormalTok{(camera_data, }\DecValTok{33}\NormalTok{, }\DataTypeTok{rounds=}\StringTok{"all"}\NormalTok{, }\DataTypeTok{cost_ids=}\DecValTok{4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $`33`
+##        attr1 attr2 attr3       attr4
+## 0round     1     1     1 -0.16805556
+## 1round     1     1     2 -0.01944444
+## 2round     1     0     2 -0.16805556
+## 3round     2     0     2 -0.01944444
+## 4round     1     0     2 -0.16805556
+## 5round     1     0     3 -0.01944444
+\end{verbatim}
+
+Notice how we did not specify the \texttt{attr} argument. As suggested
+before, aside from \texttt{dataset} and \texttt{userid} almost all
+arguments have a default value and perform a default behavior. When no
+input is entered \texttt{attr} calculates using all recognized
+attributes and \texttt{rounds} with the first and the last, which is why
+we explicitly specified \texttt{"all"}. Our next step is to determine
+the reference points. For the \texttt{refps} of PT we will use the
+default settings of user \texttt{33} which are:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{decisionMatrix}\NormalTok{(camera_data, }\DecValTok{33}\NormalTok{, }\DataTypeTok{rounds=}\StringTok{"first"}\NormalTok{, }\DataTypeTok{cost_ids=}\DecValTok{4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $`33`
+##        attr1 attr2 attr3      attr4
+## 0round     1     1     1 -0.1680556
+\end{verbatim}
+
+This result should correspond to and validate our PT-reference-point
+function \texttt{referencePoints}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{referencePoints}\NormalTok{(camera_data, }\DecValTok{33}\NormalTok{, }\DataTypeTok{cost_ids=}\DecValTok{4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $`33`
+##       rp 1       rp 2       rp 3       rp 4 
+##  1.0000000  1.0000000  1.0000000 -0.1680556
+\end{verbatim}
+
+Now that we have determined the decision matrix and the reference points
+for user 33, we can proceed to compute the following steps.
+
+{[}Insert quick figure{]}
+
+However, since we have demonstrated how the functions build on each
+other and to avoid repetitiveness, we will calculate these matrices
+using only one function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{pvMatrix}\NormalTok{(camera_data, }\DecValTok{33}\NormalTok{, }\DataTypeTok{attr=}\DecValTok{1}\NormalTok{:}\DecValTok{4}\NormalTok{, }\DataTypeTok{rounds=}\StringTok{"all"}\NormalTok{, }\DataTypeTok{cost_ids =} \DecValTok{4}\NormalTok{,}
+         \DataTypeTok{alpha =} \FloatTok{0.88}\NormalTok{, }\DataTypeTok{beta=}\FloatTok{0.88}\NormalTok{, }\DataTypeTok{lambda=}\FloatTok{2.25}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $`33`
+##      [,1]  [,2]      [,3]         [,4]
+## [1,]    0  0.00 0.0000000 0.000000e+00
+## [2,]    0  0.00 0.5433674 1.000000e+00
+## [3,]    0 -2.25 0.5433674 2.129512e-12
+## [4,]    1 -2.25 0.5433674 1.000000e+00
+## [5,]    0 -2.25 0.5433674 2.129512e-12
+## [6,]    0 -2.25 1.0000000 1.000000e+00
+\end{verbatim}
+
+Later for the sake of consistency, to compare to DRP and TRP do input a
+\texttt{refps} for PT.
 
 \end{document}
