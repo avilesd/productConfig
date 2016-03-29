@@ -101,7 +101,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2016-03-28}
+  \date{2016-03-30}
 
 
 
@@ -294,6 +294,53 @@ using only one function.
 ## [4,]    1 -2.25 0.5433674 1.000000e+00
 ## [5,]    0 -2.25 0.5433674 2.129512e-12
 ## [6,]    0 -2.25 1.0000000 1.000000e+00
+\end{verbatim}
+
+Finally, for the final step of calculating the overall prospect values,
+we need to determine the attribute weights using the
+\texttt{WeightFunctions} cluster. Within it we have three weighting
+functions to our disposal, each mirroring a method described in section
+\ref{ch:Content1:sec:Section3}:
+\texttt{differenceToIdeal, entropy, highAndStandard}. Using the entropy
+method we first need to normalize the \emph{decision matrix} and pass it
+on to the respective function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{norm.DM33 <-}\StringTok{ }\KeywordTok{normalize.sum}\NormalTok{(decisionMatrix33[[}\DecValTok{1}\NormalTok{]])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{entropy}\NormalTok{(norm.DM33)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     attr1     attr2     attr3     attr4 
+## 0.1962875 0.3616283 0.1962424 0.2458418
+\end{verbatim}
+
+Since most functions are vectorialized, they return a list. For this
+reason, we use \texttt{[[1]]} to subset the matrix from the list, which
+can be then passed on to \texttt{normalize.sum}. Keeping such details in
+mind in addition to having to know which normalizing function to use
+with each weight method can be quite unefficient. Alternatively, we can
+computate the above results with an `interface' function called
+\texttt{weight.entropy}, which also functions for the above functions,
+with their corresponding names.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{weight.entropy}\NormalTok{(camera_data, }\DecValTok{33}\NormalTok{, }\DataTypeTok{attr=}\DecValTok{1}\NormalTok{:}\DecValTok{4}\NormalTok{, }\DataTypeTok{rounds=}\StringTok{"all"}\NormalTok{, }\DataTypeTok{cost_ids =} \DecValTok{4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $`33`
+##     attr1     attr2     attr3     attr4 
+## 0.1962875 0.3616283 0.1962424 0.2458418
 \end{verbatim}
 
 Later for the sake of consistency, to compare to DRP and TRP do input a

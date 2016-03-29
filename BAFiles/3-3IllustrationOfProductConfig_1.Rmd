@@ -1,7 +1,7 @@
 ---
 title: "3.3 Illustration of the productConfig package"
 author: "Diego Aviles"
-date: "`r Sys.Date()`"
+date: '`r Sys.Date()`'
 output:
   pdf_document:
     keep_tex: yes
@@ -63,7 +63,22 @@ However, since we have demonstrated how the functions build on each other and to
 pvMatrix(camera_data, 33, attr=1:4, rounds="all", cost_ids = 4,
          alpha = 0.88, beta=0.88, lambda=2.25)
 ````
+Finally, for the final step of calculating the overall prospect values, we need to determine the attribute weights using the \texttt{WeightFunctions} cluster. Within it we have three weighting functions to our disposal, each mirroring a method described in section \ref{ch:Content1:sec:Section3}: \texttt{differenceToIdeal, entropy, highAndStandard}. Using the entropy method we first need to normalize the \emph{decision matrix} and pass it on to the respective function.
+```{r echo=FALSE, cache=TRUE}
+decisionMatrix33 <- decisionMatrix(camera_data, 33, attr=1:4, rounds="all", cost_ids = 4)
+````
+```{r eval=FALSE}
+norm.DM33 <- normalize.sum(decisionMatrix33[[1]])
+````
+```{r echo=FALSE, cache=TRUE}
+norm.DM33 <- normalize.sum(decisionMatrix33[[1]])
+````
+```{r}
+entropy(norm.DM33)
+````
+Since most functions are vectorialized, they return a list. For this reason, we use \texttt{[[1]]} to subset the matrix from the list, which can be then passed on to \texttt{normalize.sum}. Keeping such details in mind in addition to having to know which normalizing function to use with each weight method can be quite unefficient. Alternatively, we can computate the above results with an `interface' function called \texttt{weight.entropy}, which also functions for the above functions, with their corresponding names.
+```{r}
+weight.entropy(camera_data, 33, attr=1:4, rounds="all", cost_ids = 4)
+````
 
 Later for the sake of consistency, to compare to DRP and TRP do input a \texttt{refps} for PT.
-
------------------------
