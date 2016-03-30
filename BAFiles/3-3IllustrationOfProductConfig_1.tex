@@ -101,7 +101,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2016-03-30}
+  \date{2016-03-31}
 
 
 
@@ -153,6 +153,12 @@ have the same attribtues, we can ask for the unique values of each
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{getAttrValues}\NormalTok{(}\DataTypeTok{dataset=}\NormalTok{camera_data, }\DataTypeTok{attr =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{4}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{lapply}\NormalTok{(temp, unique)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -347,14 +353,14 @@ To achieve this we can find at least two equivalent ways.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{overallPV}\NormalTok{(camera_data, }\DecValTok{33}\NormalTok{, }\DataTypeTok{rounds=}\StringTok{"all"}\NormalTok{, }\DataTypeTok{cost_ids=}\DecValTok{4}\NormalTok{, }\DataTypeTok{weightFUN =}\StringTok{"entropy"}\NormalTok{)}
+\KeywordTok{overallPV}\NormalTok{(camera_data, }\DecValTok{33}\NormalTok{, }\DataTypeTok{rounds=}\StringTok{"all"}\NormalTok{, }\DataTypeTok{cost_ids =} \DecValTok{4}\NormalTok{, }\DataTypeTok{weightFUN =}\StringTok{"entropy"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{overallPV}\NormalTok{(camera_data, }\DataTypeTok{userid=}\DecValTok{33}\NormalTok{, }\DataTypeTok{attr=}\DecValTok{1}\NormalTok{:}\DecValTok{4}\NormalTok{, }\DataTypeTok{rounds=}\StringTok{"all"}\NormalTok{, }\DataTypeTok{cost_ids =} \DecValTok{4}\NormalTok{,}
-          \DataTypeTok{weightFUN=}\StringTok{"entropy"}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.88}\NormalTok{, }\DataTypeTok{beta=}\FloatTok{0.88}\NormalTok{, }\DataTypeTok{lambda=}\FloatTok{2.25}\NormalTok{)}
+\KeywordTok{overallPV}\NormalTok{(camera_data, }\DecValTok{33}\NormalTok{, }\DataTypeTok{rounds=}\StringTok{"all"}\NormalTok{, }\DataTypeTok{cost_ids =} \DecValTok{4}\NormalTok{, }\DataTypeTok{weightFUN =}\StringTok{"entropy"}\NormalTok{,}
+          \DataTypeTok{alpha=}\FloatTok{0.88}\NormalTok{, }\DataTypeTok{beta=}\FloatTok{0.88}\NormalTok{, }\DataTypeTok{lambda=}\FloatTok{2.25}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -374,24 +380,64 @@ how some functions are vectorized in the \texttt{userid} parameter (d)
 and how they handle cost type attributes by using the \texttt{cost\_ids}
 argument.
 
-Returning to the overall prospect values of user 33 we can sort
-alternatives in a descending order resulting in:
+Lastly, ranking alternatives by the highest value reveals that the
+second alternative showed the highest \emph{prospect value} for user 33.
+This is quite interesting, since the chosen product configuration,
+i.e.~the last round has a value of -0.3715795, which is not even the
+second highest option. Nevertheless, we made three important assumptions
+which influence our results: (1) the default values as reference points,
+(2) prospect theory's assumptions and value function and (3) the entropy
+weighting function.
+
+The overall prospect values for the DRP approach and the TRP theory can
+be achieved in a similar manner with \texttt{overallDRP} and
+\texttt{overallTRP}. As mentioned before for multiple reference point
+approaches there is no theoretical framework on how to read all the
+reference points from the data. Thus, for DRP and TRP we need to specify
+\texttt{SQ, G} and \texttt{MR, SQ, G} for each of the four attributes.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{weight.entropy}\NormalTok{(camera_data, }\DecValTok{33}\NormalTok{, }\DataTypeTok{attr=}\DecValTok{1}\NormalTok{:}\DecValTok{4}\NormalTok{, }\DataTypeTok{rounds=}\StringTok{"all"}\NormalTok{, }\DataTypeTok{cost_ids =} \DecValTok{4}\NormalTok{)}
+\NormalTok{dualPoints <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DataTypeTok{sq=}\FloatTok{1.5}\NormalTok{,}\DataTypeTok{g=}\FloatTok{2.5}\NormalTok{,  }\FloatTok{1.5}\NormalTok{,}\FloatTok{2.5}\NormalTok{,  }\FloatTok{1.5}\NormalTok{,}\FloatTok{2.5}\NormalTok{,  }\FloatTok{0.17}\NormalTok{,-}\FloatTok{0.10}\NormalTok{),}
+                     \DataTypeTok{nrow=}\DecValTok{4}\NormalTok{, }\DataTypeTok{ncol=}\DecValTok{2}\NormalTok{, }\DataTypeTok{byrow=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{triPoints <-}\StringTok{  }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DataTypeTok{mr=}\FloatTok{0.5}\NormalTok{,}\DataTypeTok{sq=}\FloatTok{1.5}\NormalTok{,}\DataTypeTok{g=}\FloatTok{2.5}\NormalTok{,  }\FloatTok{0.5}\NormalTok{,}\FloatTok{1.5}\NormalTok{,}\FloatTok{2.5}\NormalTok{,  }\FloatTok{0.5}\NormalTok{,}\FloatTok{1.5}\NormalTok{,}\FloatTok{2.5}\NormalTok{,  }\FloatTok{0.40}\NormalTok{,}\FloatTok{0.17}\NormalTok{,-}\FloatTok{0.10}\NormalTok{),}
+                     \DataTypeTok{nrow=}\DecValTok{4}\NormalTok{, }\DataTypeTok{ncol=}\DecValTok{3}\NormalTok{, }\DataTypeTok{byrow=}\OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+For the fourth attribute we chose a smaller G than the the SQ and the MR
+(MR only for TRP), since it will be converted to a benefit type
+attribute. Furthermore, since attributes 1 to 3 have the same possible
+values, they should have the same reference points. Now we can calculate
+the overall prospect values for user 33. For simplicity, we will use the
+default values for DRP and TRP (see pages 14, 15).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{overallDRP}\NormalTok{(camera_data, }\DecValTok{33}\NormalTok{, }\DataTypeTok{rounds=}\StringTok{"all"}\NormalTok{, }\DataTypeTok{cost_ids =} \DecValTok{4}\NormalTok{, }\DataTypeTok{weightFUN=}\StringTok{"entropy"}\NormalTok{,}
+           \DataTypeTok{dual.refps =} \NormalTok{dualPoints, }\DataTypeTok{lambda =} \FloatTok{2.25}\NormalTok{, }\DataTypeTok{delta =} \FloatTok{0.8}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 ## $`33`
-##     attr1     attr2     attr3     attr4 
-## 0.1962875 0.3616283 0.1962424 0.2458418
+##      0round      1round      2round      3round      4round      5round 
+## -0.38878327  0.13182216 -0.67024550  0.08383736 -0.67024550 -0.31466703
 \end{verbatim}
 
-Overall prospect values, and then shortly compare how to calculate the
-same results with the same user for DRP and TRP. Evaluation of results
-in section 4. Later for the sake of consistency, to compare to DRP and
-TRP do input a \texttt{refps} for PT.
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{overallTRP}\NormalTok{(camera_data, }\DecValTok{33}\NormalTok{, }\DataTypeTok{rounds=}\StringTok{"all"}\NormalTok{, }\DataTypeTok{cost_ids =} \DecValTok{4}\NormalTok{, }\DataTypeTok{weightFUN=}\StringTok{"entropy"}\NormalTok{,}
+           \DataTypeTok{tri.refps =} \NormalTok{triPoints, }\DataTypeTok{beta_f =} \DecValTok{5}\NormalTok{,}\DataTypeTok{beta_l =} \DecValTok{1}\NormalTok{,}\DataTypeTok{beta_g =} \DecValTok{1}\NormalTok{,}\DataTypeTok{beta_s =} \DecValTok{3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $`33`
+##       0round       1round       2round       3round       4round 
+## -0.379069320 -0.005574333 -1.333125943 -0.697884278 -1.333125943 
+##       5round 
+## -0.763388519
+\end{verbatim}
 
 \end{document}

@@ -80,5 +80,34 @@ Since most functions are vectorialized, they return a list. For this reason, we 
 ```{r}
 weight.entropy(camera_data, 33, attr=1:4, rounds="all", cost_ids = 4)
 ````
+The weight vector reflects the relative importance each attribute has for the user, thus its addition results in 1. Furthermore, each row of the value matrix represents how much value one specific product setting (or product alternative) represents to the user, relative to its reference points. Multiplying each row of the value matrix with the weight vector, returns the overall prospect value of each alternative. To achieve this we can find at least two equivalent ways.
+```{r eval=FALSE}
+overallPV(camera_data, 33, rounds="all", cost_ids = 4, weightFUN ="entropy")
+````
+```{r}
+overallPV(camera_data, 33, rounds="all", cost_ids = 4, weightFUN ="entropy",
+          alpha=0.88, beta=0.88, lambda=2.25)
+````
+The last command illustrates many of the implementation principles described in section \ref{ch:Content2:sec:Section2}. The function \texttt{overallPV} functions without the user having to calculate something first (a). It is build upon many of the functions we used before as you can notice by the many shared parameters it contains (b). It calculates our final results with just one command (c) and it does so by returning a list (e). Throughout this demonstration we also showed how some functions are vectorized in the \texttt{userid} parameter (d) and how they handle cost type attributes by using the \texttt{cost\_ids} argument. 
 
-Later for the sake of consistency, to compare to DRP and TRP do input a \texttt{refps} for PT.
+Lastly, ranking alternatives by the highest value reveals that the second alternative showed the highest \emph{prospect value} for user 33. This is quite interesting, since the chosen product configuration, i.e. the last round has a value of -0.3715795, which is not even the second highest option. Nevertheless, we made three important assumptions which influence our results: (1) the default values as reference points, (2) prospect theory's assumptions and value function and (3) the entropy weighting function. 
+
+The overall prospect values for the DRP approach and the TRP theory can be achieved in a similar manner with \texttt{overallDRP} and \texttt{overallTRP}. As mentioned before for multiple reference point approaches there is no theoretical framework on how to read all the reference points from the data. Thus, for DRP and TRP we need to specify \texttt{SQ, G} and \texttt{MR, SQ, G} for each of the four attributes. 
+```{r cache=TRUE}
+dualPoints <- matrix(c(sq=1.5,g=2.5,  1.5,2.5,  1.5,2.5,  0.17,-0.10),
+                     nrow=4, ncol=2, byrow=TRUE)
+triPoints <-  matrix(c(mr=0.5,sq=1.5,g=2.5,  0.5,1.5,2.5,  0.5,1.5,2.5,  0.40,0.17,-0.10),
+                     nrow=4, ncol=3, byrow=TRUE)
+````
+```{r cache=TRUE, echo=FALSE}
+colnames(dualPoints) <- c("sq", "g")
+colnames(triPoints) <- c("mr","sq", "g")
+````
+For the fourth attribute we chose a smaller G than the the SQ and the MR (MR only for TRP), since it will be converted to a benefit type attribute. Furthermore, since attributes 1 to 3 have the same possible values, they should have the same reference points. Now we can calculate the overall prospect values for user 33. For simplicity, we will use the default values for DRP and TRP (see pages 14, 15).
+```{r}
+overallDRP(camera_data, 33, rounds="all", cost_ids = 4, weightFUN="entropy",
+           dual.refps = dualPoints, lambda = 2.25, delta = 0.8)
+overallTRP(camera_data, 33, rounds="all", cost_ids = 4, weightFUN="entropy",
+           tri.refps = triPoints, beta_f = 5,beta_l = 1,beta_g = 1,beta_s = 3)
+````
+The goal of this chapter was solely to introduce and familiarize the reader with the mechanics and parameters of `productConfig'. Now that we know... we would like to shortly illustrate how we can use productConfig together with visualizing packages to gain interesting insights into product configurators. Consider...
