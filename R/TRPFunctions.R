@@ -132,6 +132,55 @@ trpValueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
   trp.list
 }
 
+trp.valueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, cost_ids = NULL,
+                            tri.refps = NULL, beta_f = 5, beta_l = 1, beta_g = 1, beta_s = 3) {
+
+  if(is.null(attr)) attr <- get_attrs_ID(dataset)
+  if(length(attr) != 1 & !is.matrix(tri.refps)) stop("For more than one attribute you must enter a matrix in 'tri.refps'")
+
+  if(is.vector(tri.refps) & !is.list(tri.refps) & length(attr) == 1) {
+    if(length(tri.refps)==3) {
+      mr <- tri.refps[1]
+      sq <- tri.refps[1]
+      g <- tri.refps[1]
+      trp.list <- trpValueMatrix.oneAttr(dataset, userid, attr, rounds, cost_ids, mr, sq, g, beta_f, beta_l, beta_g, beta_s)
+    }
+    else {
+      stop("You must enter three reference points for this attribute in 'tri.refps'")
+    }
+  }
+  else {
+    rows.attrLength <- length(attr)
+    cols.refps <- 3
+
+    if(all(!(dim(tri.refps) != c(rows.attrLength,cols.refps)))) {
+      counter <- 0
+      attrCounter <- 1
+
+      for(i in attr) {
+        mr <- tri.refps[attrCounter, 1]
+        sq <- tri.refps[attrCounter, 2]
+        g <- tri.refps[attrCounter, 3]
+        if (counter == 0) {
+          if(i %in% cost_ids) cost_ids_help <- i else cost_ids_help <- NULL
+          trp.list <- trpValueMatrix.oneAttr(dataset, userid, attr=i, rounds, cost_ids_help,
+                                             mr, sq, g, beta_f, beta_l, beta_g, beta_s)
+          counter <- 1
+          attrCounter <- attrCounter + 1
+        }
+        else {
+          if(i %in% cost_ids) cost_ids_help <- i else cost_ids_help <- NULL
+          tempVariable <- trpValueMatrix.oneAttr(dataset, userid, attr=i, rounds, cost_ids_help,
+                                                 mr, sq, g, beta_f, beta_l, beta_g, beta_s)
+          trp.list <- mapply(cbind, trp.list, tempVariable, SIMPLIFY = F)
+
+          attrCounter <- attrCounter + 1
+        }
+      }
+    }
+  }
+  trp.list
+}
 #' Returns a Value Matrix using three reference points (one attribute only)
 #'
 #' This function is a more basic function than \code{trpValueMatrix}, for a
