@@ -13,7 +13,10 @@
 
 #Main Interface function as in P.10 from Notes
 
-#' Returns a Value Matrix using three reference points
+#' (Deprecated)Returns a Value Matrix using three reference points
+#'
+#' *Unless you have a special reason to do so, you should use
+#' \code{\link{trp.valueMatrix}}
 #'
 #' This function is based on the value function of the tri-reference point (trp)
 #' theory. It first builds a desicion matrix for each user and then applys the
@@ -40,8 +43,8 @@
 #'   values are taken from our reference paper \code{(5,1,1,3)}.
 #'
 #'
-#' @details This function only makes sense to use with multiple attributes if those
-#'   attributes have exactly the same three reference points (mr, sq, g).
+#' @details This function only makes sense to use with multiple attributes if
+#'   those attributes have exactly the same three reference points (mr, sq, g).
 #'   Therefore you will have to manually calculate all the value matrices for
 #'   the different attributes (with different values) and cbind them together
 #'   using mapply. The full matrix can then be given as an input to the
@@ -52,7 +55,7 @@
 #'   all(default) and nrow = number of rounds you selected or the first and
 #'   last(default) for all selected users.
 #'
-#'   \code{data} We assume the input data.frame has following columns usid =
+#'   \code{dataset} We assume the input data.frame has following columns usid =
 #'   User IDs, round = integers indicating which round the user is in (0-index
 #'   works best for 'round'), atid = integer column for referring the attribute
 #'   ID (1 indexed), selected = numeric value of the attribute for a specific,
@@ -132,6 +135,104 @@ trpValueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
   trp.list
 }
 
+#' Returns a Value Matrix using three reference points
+#'
+#' This function is based on the value function of the tri-reference point (trp)
+#' theory. It first builds a desicion matrix for each user and then applys the
+#' trp-value function over each value using the three given reference points
+#' (MR, SQ, G) and other four free parameters from the value function. See
+#' references.
+#'
+#' @param dataset data.frame with the user generated data from a product
+#'   configurator. See \code{decisionMatrix} for specifications of the dataset.
+#' @param userid a vector of integers that gives the information of which users
+#'   the matrix should be calculated. Vectorised.
+#' @param attr attributes IDs, vector of integer numbers corresponding to the
+#'   attributes you desire to use; attr are assumed to be 1-indexed.
+#' @param rounds integer vector or text option. Which steps of the configuration
+#'   process should be shown? Defaults are first and last step. Text options are
+#'   \code{all, first, last}.
+#' @param cost_ids argument used to convert selected cost attributes into
+#'   benefit attributes. Integer vector.
+#' @param tri.refps numeric matrix or vector - three numbers per attribute,
+#'   indicating the minimum requirements, status-quo and the goals for a user
+#'   (MR, SQ, G).
+#'
+#'   This function is an improvement over \code{\link{trpValueMatrix and
+#'   trpValueMatrix.oneAttr}} since it allows a matrix to be given through
+#'   \code{tri.refps}. The matrix should have three columns, first column is the
+#'   MR then the Status-Quo and the third should be the Goal. It should have as
+#'   many rows as attributes, i.e. one set of reference points for each
+#'   attribute.
+#'
+#' @param beta(s) numeric arguments representing the psychological impact of an
+#'   outcome equaling failer (_f), loss (_l), gain (_g) or success (_s). Default
+#'   values are taken from our reference paper \code{(5,1,1,3)}.
+#'
+#'
+#' @details This function is an improvement over \code{\link{trpValueMatrix and
+#'   trpValueMatrix.oneAttr}} since it allows a matrix to be given through
+#'   \code{tri.refps}. The matrix should have two columns, first column is the
+#'   Status-Quo and the second should be the Goal. It should have as many rows
+#'   as attributes, i.e. one set of reference points for each attribute.
+#'
+#'   General: The value matrix has ncol = number of attributes you selected or
+#'   all(default) and nrow = number of rounds you selected or the first and
+#'   last(default) for all selected users.
+#'
+#'   \code{dataset} We assume the input data.frame has following columns usid =
+#'   User IDs, round = integers indicating which round the user is in (0-index
+#'   works best for 'round'), atid = integer column for referring the attribute
+#'   ID (1 indexed), selected = numeric value of the attribute for a specific,
+#'   given round, selectable = amount of options the user can chose at a given
+#'   round, with the current configuration.
+#'
+#'   \code{userid} is a necessary parameter, without it you'll get a warning.
+#'   Default is NULL.
+#'
+#'   \code{attr} Default calculates with all attributes. Attributes are
+#'   automatically read from provided dataset, it is important you always
+#'   provide the complete data so that the package functions properly. Moreover,
+#'   \code{userid} and \code{attr} will not be sorted and will appear in the
+#'   order you input them.
+#'
+#'   \code{rounds} Default calculates with first and last rounds (initial and
+#'   final product configuration). You can give a vector of arbitrarily chosen
+#'   rounds as well.
+#'
+#'   \code{cost_ids} Default assumes all your attributes are of benefit type,
+#'   that is a higher value in the attribute means the user is better off than
+#'   with a lower value. If one or more of the attributes in your data is of
+#'   cost type, e.g. price, so that lower is better then you should identify
+#'   this attributes as such, providing their id, they'll be converted to
+#'   benefit type (higher amount is better).
+#'
+#'   About reference points with cost_ids: For a cost attribute it should be
+#'   true, that a lower value is better for the user, this should also hold for
+#'   the three reference points. So contrary to normal/benefit attributes \code{
+#'   for cost attributes} reference points should follow that: \code{mr > sq >
+#'   g}.
+#'
+#'   Note: When converting a cost attribute to a benefit attribute its three
+#'   reference points change as well, enter the unconverted refps, the function
+#'   transforms them automatically when it detects a \code{cost_ids != NULL}.
+#'   But since for cost attributes, lower is better, unconverted they should
+#'   follow (G < SQ < MR).
+#'
+#' @return a list of value matrices for each user.
+#'
+#' @references [1]Wang, X. T.; Johnson, Joseph G. (2012) \emph{A tri-reference
+#'   point theory of decision making under risk. }Journal of Experimental
+#'   Psychology
+#'
+#' @examples #Not runnable yet
+#' trpValueMatrix(pc_config_data, 9:11, mr = 0.5, sq = 2, g = 4.7)
+#' trpValueMatrix(my_data, userid = 11, attr =  1, cost_ids = 1, mr = 10, sq = 5, g =3) # Note that for cost attributes: MR > SQ > G
+#' trpValueMatrix(keyboard_data, 60, rounds = "first", attr=1, mr = 0.5, sq = 1.8, g = 2.5, beta_f = 6)
+#' trpValueMatrix(data1, 2) # Returns an error since no reference points entered (mr, sq, g)
+#'
+#' @export
+
 trp.valueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, cost_ids = NULL,
                             tri.refps = NULL, beta_f = 5, beta_l = 1, beta_g = 1, beta_s = 3) {
 
@@ -179,8 +280,8 @@ trp.valueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, 
       }
     }
     else {
-      eMessage <- paste("The number of columns in the input: dual.refps doesn't match the number of attributes you entered ",
-                        nrow(dual.refps)," != ", rows.attrLength, "->length(attr) [No recycling allowed]")
+      eMessage <- paste("The number of columns in the input: tri.refps doesn't match the number of attributes you entered ",
+                        nrow(tri.refps)," != ", rows.attrLength, "->length(attr) [No recycling allowed]")
       stop(eMessage)
     }
   }
