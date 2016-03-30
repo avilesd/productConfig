@@ -135,6 +135,55 @@ dualValueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, 
   dual.list
 }
 
+#########
+dual.valueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, cost_ids = NULL,
+                            dual.refps = c(sq=NA, g=NA), lambda = 2.25, delta = 0.8, consumption_fun = NULL) {
+
+  if(is.null(attr)) attr <- get_attrs_ID(dataset)
+  if(length(attr) != 1 & !is.matrix(dual.refps)) stop("For more than one attribute you must enter a matrix in 'dual.refps'")
+
+  if(is.vector(dual.refps) & !is.list(dual.refps) & length(attr) == 1) {
+    if(length(dual.refps)==2) {
+      sq <- dual.refps[1]
+      g <- dual.refps[2]
+      dual.list <- dualValueMatrix.oneAttr(dataset, userid, attr, rounds, cost_ids_help,
+                                           dual.refps, lambda, delta, consumption_fun)
+    }
+    else {
+      stop("You must enter three reference points for this attribute in 'dual.refps'")
+    }
+  }
+  else {
+    rows.attrLength <- length(attr)
+    cols.refps <- 2
+
+    if(all(!(dim(dual.refps) != c(rows.attrLength,cols.refps)))) {
+      counter <- 0
+      attrCounter <- 1
+
+      for(i in attr) {
+        dual.refps.vector <- c(dual.refps[attrCounter, 1], dual.refps[attrCounter, 1])
+        if (counter == 0) {
+          if(i %in% cost_ids) cost_ids_help <- i else cost_ids_help <- NULL
+          dual.list <- dualValueMatrix.oneAttr(dataset, userid, attr=i, rounds, cost_ids_help,
+                                               dual.refps.vector, lambda, delta, consumption_fun)
+          counter <- 1
+          attrCounter <- attrCounter + 1
+        }
+        else {
+          if(i %in% cost_ids) cost_ids_help <- i else cost_ids_help <- NULL
+          tempVariable <- dualValueMatrix.oneAttr(dataset, userid, attr=i, rounds, cost_ids_help,
+                                                  dual.refps.vector, lambda, delta, consumption_fun)
+          dual.list <- mapply(cbind, dual.list, tempVariable, SIMPLIFY = F)
+
+          attrCounter <- attrCounter + 1
+        }
+      }
+    }
+  }
+  dual.list
+}
+
 #'Returns a Value Matrix using two reference points (one attribute only)
 #'
 #'This function is a more basic function than \code{\link{trpValueMatrix}}. This

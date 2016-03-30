@@ -141,8 +141,8 @@ trp.valueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, 
   if(is.vector(tri.refps) & !is.list(tri.refps) & length(attr) == 1) {
     if(length(tri.refps)==3) {
       mr <- tri.refps[1]
-      sq <- tri.refps[1]
-      g <- tri.refps[1]
+      sq <- tri.refps[2]
+      g <- tri.refps[3]
       trp.list <- trpValueMatrix.oneAttr(dataset, userid, attr, rounds, cost_ids, mr, sq, g, beta_f, beta_l, beta_g, beta_s)
     }
     else {
