@@ -156,12 +156,6 @@ have the same attribtues, we can ask for the unique values of each
 \end{Highlighting}
 \end{Shaded}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{lapply}\NormalTok{(temp, unique)}
-\end{Highlighting}
-\end{Shaded}
-
 \begin{verbatim}
 ## $`1`
 ## [1] 3 0 2 1
@@ -343,7 +337,61 @@ with their corresponding names.
 ## 0.1962875 0.3616283 0.1962424 0.2458418
 \end{verbatim}
 
-Later for the sake of consistency, to compare to DRP and TRP do input a
-\texttt{refps} for PT.
+The weight vector reflects the relative importance each attribute has
+for the user, thus its addition results in 1. Furthermore, each row of
+the value matrix represents how much value one specific product setting
+(or product alternative) represents to the user, relative to its
+reference points. Multiplying each row of the value matrix with the
+weight vector, returns the overall prospect value of each alternative.
+To achieve this we can find at least two equivalent ways.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{overallPV}\NormalTok{(camera_data, }\DecValTok{33}\NormalTok{, }\DataTypeTok{rounds=}\StringTok{"all"}\NormalTok{, }\DataTypeTok{cost_ids=}\DecValTok{4}\NormalTok{, }\DataTypeTok{weightFUN =}\StringTok{"entropy"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{overallPV}\NormalTok{(camera_data, }\DataTypeTok{userid=}\DecValTok{33}\NormalTok{, }\DataTypeTok{attr=}\DecValTok{1}\NormalTok{:}\DecValTok{4}\NormalTok{, }\DataTypeTok{rounds=}\StringTok{"all"}\NormalTok{, }\DataTypeTok{cost_ids =} \DecValTok{4}\NormalTok{,}
+          \DataTypeTok{weightFUN=}\StringTok{"entropy"}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.88}\NormalTok{, }\DataTypeTok{beta=}\FloatTok{0.88}\NormalTok{, }\DataTypeTok{lambda=}\FloatTok{2.25}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $`33`
+## [1]  0.0000000  0.3524735 -0.7070319 -0.2649027 -0.7070319 -0.3715795
+\end{verbatim}
+
+The last command illustrates many of the implementation principles
+described in section \ref{ch:Content2:sec:Section2}. The function
+\texttt{overallPV} functions without the user having to calculate
+something first (a). It is build upon many of the functions we used
+before as you can notice by the many shared parameters it contains (b).
+It calculates our final results with just one command (c) and it does so
+by returning a list (e). Throughout this demonstration we also showed
+how some functions are vectorized in the \texttt{userid} parameter (d)
+and how they handle cost type attributes by using the \texttt{cost\_ids}
+argument.
+
+Returning to the overall prospect values of user 33 we can sort
+alternatives in a descending order resulting in:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{weight.entropy}\NormalTok{(camera_data, }\DecValTok{33}\NormalTok{, }\DataTypeTok{attr=}\DecValTok{1}\NormalTok{:}\DecValTok{4}\NormalTok{, }\DataTypeTok{rounds=}\StringTok{"all"}\NormalTok{, }\DataTypeTok{cost_ids =} \DecValTok{4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $`33`
+##     attr1     attr2     attr3     attr4 
+## 0.1962875 0.3616283 0.1962424 0.2458418
+\end{verbatim}
+
+Overall prospect values, and then shortly compare how to calculate the
+same results with the same user for DRP and TRP. Evaluation of results
+in section 4. Later for the sake of consistency, to compare to DRP and
+TRP do input a \texttt{refps} for PT.
 
 \end{document}
