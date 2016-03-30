@@ -31,7 +31,7 @@ temp <- lapply(getAttrValues(dataset=camera_data), round, 8)
 ```{r eval = F}
 getAttrValues(dataset=camera_data, attr = c(1,2,3,4))
 ````
-```{r echo=FALSE}
+```{r}
 lapply(temp, unique)
 ````
 Now that we know how many attributes there are, we also know how many columns the decision matrices are going to have. The number of rows depends on how much each user interacted with the product configurator and again, since functions are vectorised we can calculate the number of rows for all users using \texttt{getRoundsById}.
@@ -80,19 +80,5 @@ Since most functions are vectorialized, they return a list. For this reason, we 
 ```{r}
 weight.entropy(camera_data, 33, attr=1:4, rounds="all", cost_ids = 4)
 ````
-The weight vector reflects the relative importance each attribute has for the user, thus its addition results in 1. Furthermore, each row of the value matrix represents how much value one specific product setting (or product alternative) represents to the user, relative to its reference points. Multiplying each row of the value matrix with the weight vector, returns the overall prospect value of each alternative. To achieve this we can find at least two equivalent ways.
-```{r eval=FALSE}
-overallPV(camera_data, 33, rounds="all", cost_ids=4, weightFUN ="entropy")
-````
-```{r}
-overallPV(camera_data, userid=33, attr=1:4, rounds="all", cost_ids = 4,
-          weightFUN="entropy", alpha = 0.88, beta=0.88, lambda=2.25)
-````
-The last command illustrates many of the implementation principles described in section \ref{ch:Content2:sec:Section2}. The function \texttt{overallPV} functions without the user having to calculate something first (a). It is build upon many of the functions we used before as you can notice by the many shared parameters it contains (b). It calculates our final results with just one command (c) and it does so by returning a list (e). Throughout this demonstration we also showed how some functions are vectorized in the \texttt{userid} parameter (d) and how they handle cost type attributes by using the \texttt{cost\_ids} argument.
 
-Returning to the overall prospect values of user 33 we can sort alternatives in a descending order resulting in: 
-```{r}
-weight.entropy(camera_data, 33, attr=1:4, rounds="all", cost_ids = 4)
-````
-Overall prospect values, and then shortly compare how to calculate the same results with the same user for DRP and TRP. Evaluation of results in section 4.
 Later for the sake of consistency, to compare to DRP and TRP do input a \texttt{refps} for PT.

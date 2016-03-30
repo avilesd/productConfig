@@ -137,7 +137,7 @@ dualValueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, 
 
 #########
 dual.valueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, cost_ids = NULL,
-                            dual.refps = c(sq=NA, g=NA), lambda = 2.25, delta = 0.8, consumption_fun = NULL) {
+                            dual.refps = NULL, lambda = 2.25, delta = 0.8, consumption_fun = NULL) {
 
   if(is.null(attr)) attr <- get_attrs_ID(dataset)
   if(length(attr) != 1 & !is.matrix(dual.refps)) stop("For more than one attribute you must enter a matrix in 'dual.refps'")
@@ -179,6 +179,11 @@ dual.valueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL,
           attrCounter <- attrCounter + 1
         }
       }
+    }
+    else {
+      eMessage <- paste("The number of columns in the input: dual.refps doesn't match the number of attributes you entered ",
+            nrow(dual.refps)," != ", rows.attrLength, "->length(attr) [No recycling allowed]")
+      stop(eMessage)
     }
   }
   dual.list

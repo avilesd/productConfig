@@ -178,6 +178,11 @@ trp.valueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, 
         }
       }
     }
+    else {
+      eMessage <- paste("The number of columns in the input: dual.refps doesn't match the number of attributes you entered ",
+                        nrow(dual.refps)," != ", rows.attrLength, "->length(attr) [No recycling allowed]")
+      stop(eMessage)
+    }
   }
   trp.list
 }
