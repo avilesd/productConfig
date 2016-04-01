@@ -11,7 +11,7 @@
 #' overall value returned  by this function, means that specific product
 #' configuration represented the highest value for the user. This depends mainly
 #' on three important factors: (1) What theoretical framework you choose to use
-#' (PT, DRP, TRP), (2) which decision weights you assing to each attribute, and
+#' (PT, DRP, TRP), (2) which decision weights you assign to each attribute, and
 #' (3) the reference point(s) you input.
 #'
 #' @inheritParams gainMatrix
@@ -105,25 +105,25 @@ overallPV <- function (dataset, userid = NULL, attr = NULL, rounds = NULL, refps
   overall_pv
 }
 
-#' Calcultes the overall prospect values using the DRP approach (dual reference
-#' point)
+#' Calcultes the overall prospect values using the TRP approach (tri reference
+#' point theory)
 #'
 #' The overall prospect values for each alternative (round) are calculated using
-#' two components in a method described in [3]: (1) the value matrix, which is
-#' calculated using \code{\link{dual.valueMatrix}} as given by [1] and (2) the
-#' decision weights, which can be calculated in this package using three
-#' functions. See Details of weight attribute. Its equivalent function for
-#' prospect theory and the tri-reference point theory are
-#' \code{\link{overallPV}} and \code{\link{overallTRP}}.
+#' two components in a method described in [2]: (1) the value matrix, which is
+#' calculated using \code{\link{trp.valueMatrix}} with the trp-value function as
+#' given by [1]. And the (2) decision weights, which can be calculated in this
+#' package using three functions. See Details of weight attribute. Its
+#' equivalent function for prospect theory and the dual reference point approach
+#' are \code{\link{overallPV}} and \code{\link{overallDRP}}.
 #'
 #' In the context of data stemming from product configurators, the highest
 #' overall value returned  by this function, means that specific product
 #' configuration represented the highest value for the user. This depends mainly
 #' on three important factors: (1) What theoretical framework you choose to use
-#' (PT, DRP, TRP), (2) which decision weights you assing to each attribute, and
+#' (PT, DRP, TRP), (2) which decision weights you assign to each attribute, and
 #' (3) the reference point(s) you input.
 #'
-#' @inheritParams dualValueMatrix
+#' @inheritParams trpValueMatrix
 #' @inheritParams getAttrWeights
 #'
 #' @seealso \code{\link{decisionMatrix, overallTRP, overallDRP,
@@ -161,30 +161,26 @@ overallPV <- function (dataset, userid = NULL, attr = NULL, rounds = NULL, refps
 #'   with prospect theory's parameter for concavity, such as seen in
 #'   \code{\link{overallPV}}
 #'
-#'   Note: When converting a cost attribute to a benefit attribute its two
-#'   reference points change as well, enter the unconverted dual.refps, the
+#'   Note: When converting a cost attribute to a benefit attribute its three
+#'   reference points change as well, enter the unconverted tri.refps, the
 #'   function transforms them automatically when it detects a \code{cost_ids !=
 #'   NULL}. Also, since for cost attributes, lower is better, unconverted they
-#'   should follow (G < SQ).
+#'   should follow (G < SQ < MR).
 #'
-#' @return overall prospect values for each attribute
+#' @return overall prospect values for each alternative/row
 #'
 #' @examples #Not runnable yet
-#' overallDRP(pc_config_data, 9, dual.refps = c(1, 3.5))
-#' overallDRP(pc_config_data, 9, dual.refps = c(1, 3.5), lambda=2, delta=0.5)
-#' overallDRP(aDataFrame, userid = 100, rounds = "all", dual.refps = c(1, 2))
-#' overallDRP(myData, userid = 11, attr =  1, cost_ids = 1, dual.refps = c(8, 2))
-#' overallDRP(full_data, 6:7 ,attr = c(1,2,3), rounds="all", dual.refps=matrix(1:6, 3, 2, byrow=T))
+#' overallTRP(pc_config_data, 9, attr=3,  tri.refps = c(1, 3.5))
+#' overallTRP(pc_config_data, 9, attr=1 tri.refps = c(1, 3.5), lambda=2, delta=0.5)
+#' overallTRP(myData, userid = 58, rounds = "all", attr=3:4, tri.refps=matrix(1:6, 2, 3, byrow=T))
+#' overallTRP(myData, userid = 11, attr =  1, cost_ids = 1, tri.refps = c(8, 2))
+#' overallTRP(full_data, 30:35 ,attr = c(1,2,3), rounds="all", tri.refps=matrix(1:9, 3, 3, byrow=T))
 #'
-#' @references [1] Golman, R., & Loewenstein, G. (2011). Explaining Nonconvex
-#'   Preferences with Aspirational and Status Quo Reference Dependence. Mimeo,
-#'   Carnegie Mellon University.
+#' @references [1] [1]Wang, X. T.; Johnson, Joseph G. (2012) \emph{A tri-reference
+#'   point theory of decision making under risk. }Journal of Experimental
+#'   Psychology
 #'
-#'   [2] Tversky, A., & Kahneman, D. (1992). Advances in prospect theory:
-#'   Cumulative representation of uncertainty. Journal of Risk and uncertainty,
-#'   5(4), 297-323.
-#'
-#'   [3] Fan, Z. P., Zhang, X., Chen, F. D., & Liu, Y. (2013). Multiple
+#'   [2] Fan, Z. P., Zhang, X., Chen, F. D., & Liu, Y. (2013). Multiple
 #'   attribute decision making considering aspiration-levels: A method based on
 #'   prospect theory. Computers & Industrial Engineering, 65(2), 341-350.
 #'
@@ -230,7 +226,7 @@ overallTRP <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps
 #' overall value returned  by this function, means that specific product
 #' configuration represented the highest value for the user. This depends mainly
 #' on three important factors: (1) What theoretical framework you choose to use
-#' (PT, DRP, TRP), (2) which decision weights you assing to each attribute, and
+#' (PT, DRP, TRP), (2) which decision weights you assign to each attribute, and
 #' (3) the reference point(s) you input.
 #'
 #' @inheritParams dualValueMatrix
@@ -277,14 +273,14 @@ overallTRP <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps
 #'   NULL}. Also, since for cost attributes, lower is better, unconverted they
 #'   should follow (G < SQ).
 #'
-#' @return overall prospect values for each attribute
+#' @return overall prospect values for each alternative/row
 #'
 #' @examples #Not runnable yet
 #' overallDRP(pc_config_data, 9, dual.refps = c(1, 3.5))
 #' overallDRP(pc_config_data, 9, dual.refps = c(1, 3.5), lambda=2, delta=0.5)
 #' overallDRP(aDataFrame, userid = 100, rounds = "all", dual.refps = c(1, 2))
 #' overallDRP(myData, userid = 11, attr =  1, cost_ids = 1, dual.refps = c(8, 2))
-#' overallDRP(full_data, 6:7 ,attr = c(1,2,3), rounds="all", dual.refps=matrix(1:6, 3, 2, byrow=T))
+#' overallDRP(full_data, 15:16 ,attr = c(1,2,3), rounds="all", dual.refps=matrix(1:6, 3, 2, byrow=T))
 #'
 #' @references [1] Golman, R., & Loewenstein, G. (2011). Explaining Nonconvex
 #'   Preferences with Aspirational and Status Quo Reference Dependence. Mimeo,

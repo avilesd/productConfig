@@ -157,24 +157,16 @@ trpValueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
 #' @param tri.refps numeric matrix or vector - three numbers per attribute,
 #'   indicating the minimum requirements, status-quo and the goals for a user
 #'   (MR, SQ, G).
-#'
-#'   This function is an improvement over \code{\link{trpValueMatrix and
-#'   trpValueMatrix.oneAttr}} since it allows a matrix to be given through
-#'   \code{tri.refps}. The matrix should have three columns, first column is the
-#'   MR then the Status-Quo and the third should be the Goal. It should have as
-#'   many rows as attributes, i.e. one set of reference points for each
-#'   attribute.
-#'
 #' @param beta(s) numeric arguments representing the psychological impact of an
 #'   outcome equaling failer (_f), loss (_l), gain (_g) or success (_s). Default
 #'   values are taken from our reference paper \code{(5,1,1,3)}.
 #'
-#'
 #' @details This function is an improvement over \code{\link{trpValueMatrix and
 #'   trpValueMatrix.oneAttr}} since it allows a matrix to be given through
-#'   \code{tri.refps}. The matrix should have two columns, first column is the
-#'   Status-Quo and the second should be the Goal. It should have as many rows
-#'   as attributes, i.e. one set of reference points for each attribute.
+#'   \code{tri.refps}. The matrix should have three columns, first column is for
+#'   the minimum requirements, second for the status-quo, and third should be
+#'   for the Goal (MR, SQ, G). It should have as many rows as attributes, i.e.
+#'   one set of reference points for each attribute.
 #'
 #'   General: The value matrix has ncol = number of attributes you selected or
 #'   all(default) and nrow = number of rounds you selected or the first and

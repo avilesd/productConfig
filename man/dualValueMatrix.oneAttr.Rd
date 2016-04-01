@@ -27,7 +27,7 @@ attributes. Cost attribute means that weith a lower value, the user is
 better off than with a higher value (e.g. price). Default assumes all
 attributes are of benefit type (higher amount is better).}
 
-\item{dual.refps}{numeric - two numbers indicating the status-quo and the
+\item{dual.refps}{numeric vector - two numbers indicating the status-quo and the
 aspiration level(goal) for the given attributes. Status-quo should always be
 the first input. Contrary to \code{\link{dualValueMatrix}}, this function
 also allows for aspiration levels to be smaller than the status-quo (g < sq)

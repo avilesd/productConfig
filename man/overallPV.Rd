@@ -64,7 +64,7 @@ In the context of data stemming from product configurators, the highest
 overall value returned  by this function, means that specific product
 configuration represented the highest value for the user. This depends mainly
 on three important factors: (1) What theoretical framework you choose to use
-(PT, DRP, TRP), (2) which decision weights you assing to each attribute, and
+(PT, DRP, TRP), (2) which decision weights you assign to each attribute, and
 (3) the reference point(s) you input.
 
 This function is vectorized in the \code{userid} parameter.
