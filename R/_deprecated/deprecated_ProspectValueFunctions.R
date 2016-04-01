@@ -85,7 +85,7 @@
 #' @family prospect value functions
 #'
 #' @export
-#'
+
 overall_pv <- function (dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL,  weight = NULL,
                         alpha = 0.88, beta = 0.88, lambda = 2.25) {
   if(is.null(weight) & is.null(dataset)) {

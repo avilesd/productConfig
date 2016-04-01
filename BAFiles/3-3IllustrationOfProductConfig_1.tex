@@ -101,7 +101,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2016-03-31}
+  \date{2016-04-01}
 
 
 
@@ -400,8 +400,8 @@ reference points from the data. Thus, for DRP and TRP we need to specify
 \begin{Highlighting}[]
 \NormalTok{dualPoints <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DataTypeTok{sq=}\FloatTok{1.5}\NormalTok{,}\DataTypeTok{g=}\FloatTok{2.5}\NormalTok{,  }\FloatTok{1.5}\NormalTok{,}\FloatTok{2.5}\NormalTok{,  }\FloatTok{1.5}\NormalTok{,}\FloatTok{2.5}\NormalTok{,  }\FloatTok{0.17}\NormalTok{,-}\FloatTok{0.10}\NormalTok{),}
                      \DataTypeTok{nrow=}\DecValTok{4}\NormalTok{, }\DataTypeTok{ncol=}\DecValTok{2}\NormalTok{, }\DataTypeTok{byrow=}\OtherTok{TRUE}\NormalTok{)}
-\NormalTok{triPoints <-}\StringTok{  }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DataTypeTok{mr=}\FloatTok{0.5}\NormalTok{,}\DataTypeTok{sq=}\FloatTok{1.5}\NormalTok{,}\DataTypeTok{g=}\FloatTok{2.5}\NormalTok{,  }\FloatTok{0.5}\NormalTok{,}\FloatTok{1.5}\NormalTok{,}\FloatTok{2.5}\NormalTok{,  }\FloatTok{0.5}\NormalTok{,}\FloatTok{1.5}\NormalTok{,}\FloatTok{2.5}\NormalTok{,  }\FloatTok{0.40}\NormalTok{,}\FloatTok{0.17}\NormalTok{,-}\FloatTok{0.10}\NormalTok{),}
-                     \DataTypeTok{nrow=}\DecValTok{4}\NormalTok{, }\DataTypeTok{ncol=}\DecValTok{3}\NormalTok{, }\DataTypeTok{byrow=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{triPoints <-}\StringTok{  }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DataTypeTok{mr=}\FloatTok{0.5}\NormalTok{,}\DataTypeTok{sq=}\FloatTok{1.5}\NormalTok{,}\DataTypeTok{g=}\FloatTok{2.5}\NormalTok{,  }\FloatTok{0.5}\NormalTok{,}\FloatTok{1.5}\NormalTok{,}\FloatTok{2.5}\NormalTok{,  }\FloatTok{0.5}\NormalTok{,}\FloatTok{1.5}\NormalTok{,}\FloatTok{2.5}\NormalTok{,  }
+                       \FloatTok{0.40}\NormalTok{,}\FloatTok{0.17}\NormalTok{,-}\FloatTok{0.10}\NormalTok{), }\DataTypeTok{nrow=}\DecValTok{4}\NormalTok{, }\DataTypeTok{ncol=}\DecValTok{3}\NormalTok{, }\DataTypeTok{byrow=}\OtherTok{TRUE}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -439,5 +439,39 @@ default values for DRP and TRP (see pages 14, 15).
 ##       5round 
 ## -0.763388519
 \end{verbatim}
+
+The weighting functions are easier to use, since they basically require
+the same information. Analogous to\texttt{entropy}, we use the same
+arguments to call our two other weight functions.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{weight.differenceToIdeal}\NormalTok{(camera_data, }\DecValTok{33}\NormalTok{, }\DataTypeTok{attr=}\DecValTok{1}\NormalTok{:}\DecValTok{4}\NormalTok{, }\DataTypeTok{rounds=}\StringTok{"all"}\NormalTok{, }\DataTypeTok{cost_ids =} \DecValTok{4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $`33`
+##     attr1     attr2     attr3     attr4 
+## 0.1558442 0.1948052 0.3896104 0.2597403
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{weight.highAndStandard}\NormalTok{(camera_data, }\DecValTok{33}\NormalTok{, }\DataTypeTok{attr=}\DecValTok{1}\NormalTok{:}\DecValTok{4}\NormalTok{, }\DataTypeTok{rounds=}\StringTok{"all"}\NormalTok{, }\DataTypeTok{cost_ids =} \DecValTok{4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $`33`
+##         1         2         3         4 
+## 0.2252364 0.1761044 0.2788773 0.3197819
+\end{verbatim}
+
+The goal of this chapter was solely to introduce and familiarize the
+reader with the mechanics and parameters of `productConfig'. Now that we
+know\ldots{} we would like to shortly illustrate how we can use
+productConfig together with visualizing packages to gain interesting
+insights into product configurators. Consider\ldots{}
 
 \end{document}

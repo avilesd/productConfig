@@ -375,8 +375,7 @@ gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps =
 #' the gain and loss, respectively. Definitely a point to be discussed and
 #' improved. Please refer to ...p2.
 #'
-#' This function is for one user only, for more or all users see
-#' \code{\link{powerful_function}}
+#' This function is vectorialized in the \code{userid} argument.
 #'
 #' @return  normalized gain and loss matrices for a specific user.
 #' @examples
@@ -387,7 +386,6 @@ gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps =
 #'
 #' @export
 
-## to be used
 norm.gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL, binded = T) {
   desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
   refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)

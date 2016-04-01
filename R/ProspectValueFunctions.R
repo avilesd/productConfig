@@ -1,4 +1,81 @@
-
+#' Calcultes the overall prospect values using PT (prospect theory)
+#'
+#' (1) It calculates the normalized gain and loss matrices, (2) with both
+#' matrices the value matrix is then calculated and finally (3) the prospect
+#' value for each alternative/round/row. From step (2) to (3) this function uses
+#' prospect theory's (PT) value function[1,2] and a method proposed by [3]. Its
+#' equivalent function for multi-reference point approaches are
+#' \code{\link{overallDRP}} and \code{\link{overallTRP}}.
+#'
+#' In the context of data stemming from product configurators, the highest
+#' overall value returned  by this function, means that specific product
+#' configuration represented the highest value for the user. This depends mainly
+#' on three important factors: (1) What theoretical framework you choose to use
+#' (PT, DRP, TRP), (2) which decision weights you assing to each attribute, and
+#' (3) the reference point(s) you input.
+#'
+#' @inheritParams gainMatrix
+#' @inheritParams getAttrWeights
+#'
+#' @param alpha numeric between [0, 1]. Determines the concativity of the value
+#'   function and has a default value of 0.88 as given by Reference[1].
+#'
+#' @param beta numeric between [0, 1]. Determines the convexity of the value
+#'   function and has a default value of 0.88  as given by Reference[1].
+#'
+#' @param lambda lambda > 1. Parameter of loss aversion for the value function
+#'   as and has a default value of 2.25 given by Reference[1].
+#'
+#' @seealso \code{\link{decisionMatrix, overallTRP, overallDRP,
+#'   weight.differenceToIdeal, weight.entropy, weight.highAndStandard}}
+#'
+#' @details This function is vectorized in the \code{userid} parameter.
+#'
+#'   The 3 step calculation of the prospect values comes from one specific paper
+#'   \emph{Reference[1]}. (1) For the noramlized gain and loss matrices we use
+#'   the function \code{\link{norm.gainLoss}} from this package. (2) The value
+#'   matrix is calculated with a series of auxiliary functions. (3) The prospect
+#'   value works with a simple additive weighting method from
+#'   \code{overall_pv_extend}.
+#'
+#'   \code{dataset} We assume the input data.frame has following columns usid =
+#'   User IDs, round = integers indicating which round the user is in (0-index
+#'   works best for 'round'), atid = integer column for referring the attribute
+#'   ID (1 indexed), selected = numeric value of the attribute for a specific,
+#'   given round, selectable = amount of options the user can chose at a given
+#'   round, with the current configuration. This is a necessary parameter.
+#'
+#'   \code{userid} is a necessary parameter.
+#'
+#'   \code{weight} default orders each attribute a weight <= 1 according to the
+#'   the weight function \code{\link{differenceToIdeal}}. Ideally the sum of all
+#'   weights equals 1.
+#'
+#'   \code{alpha} Default value as given by Reference [1] is 0.88
+#'
+#'   \code{beta} Default value as given by Reference [1] is 0.88
+#'
+#'   \code{lambda} Default value as given by Reference [1] is 2.25
+#'
+#' @return overall prospect values for each attribute
+#' @examples #Not runnable yet
+#' overallPV(data_camera, 2)
+#' overallPV(data_pc, userid = 1, weight=c(0.1,0.4,0.3,0.2))
+#' overallPV(full_data, 6 ,attr = c(1,2,3), rounds="all", alpha = 0.95, beta = 0.78)
+#'
+#' @references [1]Kahneman, D., & Tversky, A. (1979). Prospect theory: An
+#'   analysis of decision under risk. Econometrica: Journal of the Econometric
+#'   Society, 263-291.
+#'
+#'   [2] Tversky, A., & Kahneman, D. (1992). Advances in prospect theory:
+#'   Cumulative representation of uncertainty. Journal of Risk and uncertainty,
+#'   5(4), 297-323.
+#'
+#'   [3] Fan, Z. P., Zhang, X., Chen, F. D., & Liu, Y. (2013). Multiple
+#'   attribute decision making considering aspiration-levels: A method based on
+#'   prospect theory. Computers & Industrial Engineering, 65(2), 341-350.
+#'
+#' @export
 
 #Added new function
 # DOCU: This nor any other vectorized function sort attributes!!!!!, that is the results are printed in the order they were given! Impacts
@@ -28,6 +105,91 @@ overallPV <- function (dataset, userid = NULL, attr = NULL, rounds = NULL, refps
   overall_pv
 }
 
+#' Calcultes the overall prospect values using the DRP approach (dual reference
+#' point)
+#'
+#' The overall prospect values for each alternative (round) are calculated using
+#' two components in a method described in [3]: (1) the value matrix, which is
+#' calculated using \code{\link{dual.valueMatrix}} as given by [1] and (2) the
+#' decision weights, which can be calculated in this package using three
+#' functions. See Details of weight attribute. Its equivalent function for
+#' prospect theory and the tri-reference point theory are
+#' \code{\link{overallPV}} and \code{\link{overallTRP}}.
+#'
+#' In the context of data stemming from product configurators, the highest
+#' overall value returned  by this function, means that specific product
+#' configuration represented the highest value for the user. This depends mainly
+#' on three important factors: (1) What theoretical framework you choose to use
+#' (PT, DRP, TRP), (2) which decision weights you assing to each attribute, and
+#' (3) the reference point(s) you input.
+#'
+#' @inheritParams dualValueMatrix
+#' @inheritParams getAttrWeights
+#'
+#' @seealso \code{\link{decisionMatrix, overallTRP, overallDRP,
+#'   weight.differenceToIdeal, weight.entropy, weight.highAndStandard}}
+#'
+#' @details This function is vectorized in the \code{userid} parameter.
+#'
+#'   \code{dataset} We assume the input data.frame has following columns usid =
+#'   User IDs, round = integers indicating which round the user is in (0-index
+#'   works best for 'round'), atid = integer column for referring the attribute
+#'   ID (1 indexed), selected = numeric value of the attribute for a specific,
+#'   given round, selectable = amount of options the user can chose at a given
+#'   round, with the current configuration. This is a necessary parameter.
+#'
+#'   \code{userid} is a necessary parameter.
+#'
+#'   \code{rounds} Default calculates with first and last rounds (initial and
+#'   final product configuration). You can give a vector of arbitrarily chosen
+#'   rounds as well.
+#'
+#'   \code{cost_ids} Default assumes all your attributes are of benefit type,
+#'   that is a higher value in the attribute means the user is better off than
+#'   with a lower value. If one or more of the attributes in your data is of
+#'   cost type, e.g. price, so that lower is better then you should identify
+#'   this attributes as such, providing their id, they'll be converted to
+#'   benefit type (higher amount is better).
+#'
+#'   \code{weight} default orders each attribute a weight <= 1 according to the
+#'   the weight function \code{\link{differenceToIdeal}}. Ideally the sum of all
+#'   weights equals 1. The three weighting functions are:
+#'   \code{\link{weight.differenceToIdeal, weight.entropy,
+#'   weight.highAndStandard}}}}
+#'
+#'   \code{delta} [1] Initially called alpha, we chose delta to avoid confusion
+#'   with prospect theory's parameter for concavity, such as seen in
+#'   \code{\link{overallPV}}
+#'
+#'   Note: When converting a cost attribute to a benefit attribute its two
+#'   reference points change as well, enter the unconverted dual.refps, the
+#'   function transforms them automatically when it detects a \code{cost_ids !=
+#'   NULL}. Also, since for cost attributes, lower is better, unconverted they
+#'   should follow (G < SQ).
+#'
+#' @return overall prospect values for each attribute
+#'
+#' @examples #Not runnable yet
+#' overallDRP(pc_config_data, 9, dual.refps = c(1, 3.5))
+#' overallDRP(pc_config_data, 9, dual.refps = c(1, 3.5), lambda=2, delta=0.5)
+#' overallDRP(aDataFrame, userid = 100, rounds = "all", dual.refps = c(1, 2))
+#' overallDRP(myData, userid = 11, attr =  1, cost_ids = 1, dual.refps = c(8, 2))
+#' overallDRP(full_data, 6:7 ,attr = c(1,2,3), rounds="all", dual.refps=matrix(1:6, 3, 2, byrow=T))
+#'
+#' @references [1] Golman, R., & Loewenstein, G. (2011). Explaining Nonconvex
+#'   Preferences with Aspirational and Status Quo Reference Dependence. Mimeo,
+#'   Carnegie Mellon University.
+#'
+#'   [2] Tversky, A., & Kahneman, D. (1992). Advances in prospect theory:
+#'   Cumulative representation of uncertainty. Journal of Risk and uncertainty,
+#'   5(4), 297-323.
+#'
+#'   [3] Fan, Z. P., Zhang, X., Chen, F. D., & Liu, Y. (2013). Multiple
+#'   attribute decision making considering aspiration-levels: A method based on
+#'   prospect theory. Computers & Industrial Engineering, 65(2), 341-350.
+#'
+#' @export
+
 overallTRP <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL,  weight = NULL, weightFUN = "differenceToIdeal",
                         tri.refps = NULL, beta_f = 5, beta_l = 1, beta_g = 1, beta_s = 3, gamma) {
 
@@ -53,7 +215,92 @@ overallTRP <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps
   overall_pv
 }
 
-overallDRP <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, cost_ids = NULL,weight = NULL, weightFUN = "differenceToIdeal",
+#' Calcultes the overall prospect values using the DRP approach (dual reference
+#' point)
+#'
+#' The overall prospect values for each alternative (round) are calculated using
+#' two components in a method described in [3]: (1) the value matrix, which is
+#' calculated using \code{\link{dual.valueMatrix}} as given by [1] and (2) the
+#' decision weights, which can be calculated in this package using three
+#' functions. See Details of weight attribute. Its equivalent function for
+#' prospect theory and the tri-reference point theory are
+#' \code{\link{overallPV}} and \code{\link{overallTRP}}.
+#'
+#' In the context of data stemming from product configurators, the highest
+#' overall value returned  by this function, means that specific product
+#' configuration represented the highest value for the user. This depends mainly
+#' on three important factors: (1) What theoretical framework you choose to use
+#' (PT, DRP, TRP), (2) which decision weights you assing to each attribute, and
+#' (3) the reference point(s) you input.
+#'
+#' @inheritParams dualValueMatrix
+#' @inheritParams getAttrWeights
+#'
+#' @seealso \code{\link{decisionMatrix, overallTRP, overallDRP,
+#'   weight.differenceToIdeal, weight.entropy, weight.highAndStandard}}
+#'
+#' @details This function is vectorized in the \code{userid} parameter.
+#'
+#'   \code{dataset} We assume the input data.frame has following columns usid =
+#'   User IDs, round = integers indicating which round the user is in (0-index
+#'   works best for 'round'), atid = integer column for referring the attribute
+#'   ID (1 indexed), selected = numeric value of the attribute for a specific,
+#'   given round, selectable = amount of options the user can chose at a given
+#'   round, with the current configuration. This is a necessary parameter.
+#'
+#'   \code{userid} is a necessary parameter.
+#'
+#'   \code{rounds} Default calculates with first and last rounds (initial and
+#'   final product configuration). You can give a vector of arbitrarily chosen
+#'   rounds as well.
+#'
+#'   \code{cost_ids} Default assumes all your attributes are of benefit type,
+#'   that is a higher value in the attribute means the user is better off than
+#'   with a lower value. If one or more of the attributes in your data is of
+#'   cost type, e.g. price, so that lower is better then you should identify
+#'   this attributes as such, providing their id, they'll be converted to
+#'   benefit type (higher amount is better).
+#'
+#'   \code{weight} default orders each attribute a weight <= 1 according to the
+#'   the weight function \code{\link{differenceToIdeal}}. Ideally the sum of all
+#'   weights equals 1. The three weighting functions are:
+#'   \code{\link{weight.differenceToIdeal, weight.entropy,
+#'   weight.highAndStandard}}}}
+#'
+#'   \code{delta} [1] Initially called alpha, we chose delta to avoid confusion
+#'   with prospect theory's parameter for concavity, such as seen in
+#'   \code{\link{overallPV}}
+#'
+#'   Note: When converting a cost attribute to a benefit attribute its two
+#'   reference points change as well, enter the unconverted dual.refps, the
+#'   function transforms them automatically when it detects a \code{cost_ids !=
+#'   NULL}. Also, since for cost attributes, lower is better, unconverted they
+#'   should follow (G < SQ).
+#'
+#' @return overall prospect values for each attribute
+#'
+#' @examples #Not runnable yet
+#' overallDRP(pc_config_data, 9, dual.refps = c(1, 3.5))
+#' overallDRP(pc_config_data, 9, dual.refps = c(1, 3.5), lambda=2, delta=0.5)
+#' overallDRP(aDataFrame, userid = 100, rounds = "all", dual.refps = c(1, 2))
+#' overallDRP(myData, userid = 11, attr =  1, cost_ids = 1, dual.refps = c(8, 2))
+#' overallDRP(full_data, 6:7 ,attr = c(1,2,3), rounds="all", dual.refps=matrix(1:6, 3, 2, byrow=T))
+#'
+#' @references [1] Golman, R., & Loewenstein, G. (2011). Explaining Nonconvex
+#'   Preferences with Aspirational and Status Quo Reference Dependence. Mimeo,
+#'   Carnegie Mellon University.
+#'
+#'   [2] Tversky, A., & Kahneman, D. (1992). Advances in prospect theory:
+#'   Cumulative representation of uncertainty. Journal of Risk and uncertainty,
+#'   5(4), 297-323.
+#'
+#'   [3] Fan, Z. P., Zhang, X., Chen, F. D., & Liu, Y. (2013). Multiple
+#'   attribute decision making considering aspiration-levels: A method based on
+#'   prospect theory. Computers & Industrial Engineering, 65(2), 341-350.
+#'
+#' @export
+
+overallDRP <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, cost_ids = NULL, weight = NULL, weightFUN = "differenceToIdeal",
                         dual.refps = c(sq=NA, g=NA), lambda = 2.25, delta = 0.8, consumption_fun = NULL, gamma) {
 
   if(is.null(weight) & is.null(dataset)) {

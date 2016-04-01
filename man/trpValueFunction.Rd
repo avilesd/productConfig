@@ -4,7 +4,7 @@
 \alias{trpValueFunction}
 \title{Transform a decision Matrix into a trp value matrix}
 \usage{
-trpValueFunction(aMatrix, triRefps, beta_f = 5, beta_l = 1, beta_g = 1,
+trpValueFunction(aMatrix, triRefps, beta_f = 5, beta_l = 1.5, beta_g = 1,
   beta_s = 3)
 }
 \arguments{

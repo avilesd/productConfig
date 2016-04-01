@@ -23,7 +23,7 @@ delta <1}.}
 a value matrix with equal dimensions as the input \code{aMatrix}
 }
 \description{
-This function is called within \code{\link{trpValueMatrix}}, but it is the
+This function is called within \code{\link{dualValueMatrix}}, but it is the
 function that actually does the work of producing the value matrix.It works
 in three steps. The first step checks if the matrix or the reference points
 have a value smaller or equal to 0. If this is the case it monotonically

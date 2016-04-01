@@ -29,7 +29,7 @@ attributes are of benefit type (higher amount is better).}
 
 \item{dual.refps}{numeric - two numbers indicating the status-quo and the
 aspiration level(goal) for the given attributes. Status-quo should always be
-the first input. Contrary to \code{\link{trpValueMatrix}}, this function
+the first input. Contrary to \code{\link{dualValueMatrix}}, this function
 also allows for aspiration levels to be smaller than the status-quo (g < sq)
 [1].}
 
@@ -45,7 +45,7 @@ level to other factors. Default is 0.8 and it should satisfy \code{0 < delta
 a list of value matrices with one attribute for each user.
 }
 \description{
-This function is a more basic function than \code{\link{trpValueMatrix}}. This
+This function is a more basic function than \code{\link{dualValueMatrix}}. This
 function is based on the value function of the dual-reference point model
 (dual-rp) [1]. It first builds a desicion matrix for each user and then applys
 the drp-utility function over each value using \code{\link{smallerThanZero}}.

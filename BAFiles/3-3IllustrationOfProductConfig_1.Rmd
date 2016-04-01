@@ -96,8 +96,8 @@ The overall prospect values for the DRP approach and the TRP theory can be achie
 ```{r cache=TRUE}
 dualPoints <- matrix(c(sq=1.5,g=2.5,  1.5,2.5,  1.5,2.5,  0.17,-0.10),
                      nrow=4, ncol=2, byrow=TRUE)
-triPoints <-  matrix(c(mr=0.5,sq=1.5,g=2.5,  0.5,1.5,2.5,  0.5,1.5,2.5,  0.40,0.17,-0.10),
-                     nrow=4, ncol=3, byrow=TRUE)
+triPoints <-  matrix(c(mr=0.5,sq=1.5,g=2.5,  0.5,1.5,2.5,  0.5,1.5,2.5,  
+                       0.40,0.17,-0.10), nrow=4, ncol=3, byrow=TRUE)
 ````
 ```{r cache=TRUE, echo=FALSE}
 colnames(dualPoints) <- c("sq", "g")
@@ -110,4 +110,10 @@ overallDRP(camera_data, 33, rounds="all", cost_ids = 4, weightFUN="entropy",
 overallTRP(camera_data, 33, rounds="all", cost_ids = 4, weightFUN="entropy",
            tri.refps = triPoints, beta_f = 5,beta_l = 1,beta_g = 1,beta_s = 3)
 ````
+The weighting functions are easier to use, since they basically require the same information. Analogous to\texttt{entropy}, we use the same arguments to call our two other weight functions.
+```{r}
+weight.differenceToIdeal(camera_data, 33, attr=1:4, rounds="all", cost_ids = 4)
+weight.highAndStandard(camera_data, 33, attr=1:4, rounds="all", cost_ids = 4)
+````
+
 The goal of this chapter was solely to introduce and familiarize the reader with the mechanics and parameters of `productConfig'. Now that we know... we would like to shortly illustrate how we can use productConfig together with visualizing packages to gain interesting insights into product configurators. Consider...
