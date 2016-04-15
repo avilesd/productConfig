@@ -1,0 +1,26 @@
+---
+title: "3.3 Illustration of the productConfig package"
+author: "Diego Aviles"
+date: '`r Sys.Date()`'
+output:
+  pdf_document:
+    keep_tex: yes
+---
+
+```{r echo = FALSE, warning = FALSE, message= FALSE}
+# Load all necessary information without showing it
+library(productConfig)
+load("U:/Development/productConfig/new_BA.RData")
+library(devtools)
+devtools::load_all(".")
+
+```
+
+```{r}
+decisionMatrix(camera_data, userid=10, attr=1:4, rounds="all", cost_ids=4)
+```
+```{r}
+pt10rounded
+trp10rounded
+```
+
