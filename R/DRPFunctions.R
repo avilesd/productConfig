@@ -271,7 +271,7 @@ dual.valueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL,
       attrCounter <- 1
 
       for(i in attr) {
-        dual.refps.vector <- c(dual.refps[attrCounter, 1], dual.refps[attrCounter, 1])
+        dual.refps.vector <- c(dual.refps[attrCounter, 1], dual.refps[attrCounter, 2])
         if (counter == 0) {
           if(i %in% cost_ids) cost_ids_help <- i else cost_ids_help <- NULL
           dual.list <- dualValueMatrix.oneAttr(dataset, userid, attr=i, rounds, cost_ids_help,

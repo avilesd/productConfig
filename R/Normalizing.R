@@ -166,3 +166,8 @@ normalize.highestValue <- function(aMatrix, attr, cost_ids = NULL) {
   if (!dontCut) aMatrix <- aMatrix[-c(1,2), ]
   aMatrix
 }
+
+getHighestRound <- function(aList) {
+  numberOfMax <- sapply(aList, which.is.max)
+  numberOfMax
+}
