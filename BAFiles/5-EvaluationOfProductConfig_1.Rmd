@@ -12,6 +12,7 @@ output:
 library(productConfig)
 load("U:/Development/productConfig/new_BA.RData")
 library(devtools)
+library(nnet)
 devtools::load_all(".")
 
 ```
@@ -20,7 +21,11 @@ devtools::load_all(".")
 decisionMatrix(camera_data, userid=10, attr=1:4, rounds="all", cost_ids=4)
 ```
 ```{r}
-pt10rounded
-trp10rounded
+trpresult <- sapply(overallTRP(myData, all.users, attr=1:4, rounds="all",
+                            cost_ids=4, tri.refps=equal.tri.refps), which.max)
+ptresult <- sapply(overallPV(myData, all.users, attr=1:4, rounds="all", 
+                           cost_ids=4, refps = c(1.5,1.5,1.5,0.17)), which.max)
+trpresult == ptresult
+
 ```
 

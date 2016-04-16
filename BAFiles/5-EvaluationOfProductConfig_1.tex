@@ -145,32 +145,33 @@
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{pt10rounded}
+\NormalTok{trpresult <-}\StringTok{ }\KeywordTok{sapply}\NormalTok{(}\KeywordTok{overallTRP}\NormalTok{(myData, all.users, }\DataTypeTok{attr=}\DecValTok{1}\NormalTok{:}\DecValTok{4}\NormalTok{, }\DataTypeTok{rounds=}\StringTok{"all"}\NormalTok{,}
+                            \DataTypeTok{cost_ids=}\DecValTok{4}\NormalTok{, }\DataTypeTok{tri.refps=}\NormalTok{equal.tri.refps), which.max)}
+\NormalTok{ptresult <-}\StringTok{ }\KeywordTok{sapply}\NormalTok{(}\KeywordTok{overallPV}\NormalTok{(myData, all.users, }\DataTypeTok{attr=}\DecValTok{1}\NormalTok{:}\DecValTok{4}\NormalTok{, }\DataTypeTok{rounds=}\StringTok{"all"}\NormalTok{, }
+                           \DataTypeTok{cost_ids=}\DecValTok{4}\NormalTok{, }\DataTypeTok{refps =} \KeywordTok{c}\NormalTok{(}\FloatTok{1.5}\NormalTok{,}\FloatTok{1.5}\NormalTok{,}\FloatTok{1.5}\NormalTok{,}\FloatTok{0.17}\NormalTok{)), which.max)}
+\NormalTok{trpresult ==}\StringTok{ }\NormalTok{ptresult}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-##        attr1 attr2 attr3 attr4
-## round0  1.00 -2.25 -2.25  0.02
-## round1  0.38 -2.25 -2.25 -2.20
-## round2  0.38  0.38 -2.25  1.00
-## round3  0.38 -0.86 -2.25  0.02
-## round4  0.38 -0.86 -0.86  1.00
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{trp10rounded}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##        attr1 attr2 attr3 attr4
-## 0round  2.00 -3.33 -3.33  0.01
-## 1round  0.33 -3.33 -3.33 -0.97
-## 2round  0.33  0.33 -3.33  1.00
-## 3round  0.33 -0.33 -3.33  0.01
-## 4round  0.33 -0.33 -0.33  1.00
+##   6.1round   9.1round  10.2round  11.6round  12.1round  13.1round 
+##      FALSE       TRUE       TRUE       TRUE       TRUE       TRUE 
+##  14.1round  15.3round  16.4round  17.2round  18.3round  19.2round 
+##       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE 
+##  20.7round  21.3round  22.2round  25.1round  26.1round  27.1round 
+##      FALSE       TRUE       TRUE      FALSE       TRUE      FALSE 
+##  28.1round  29.1round  30.9round  31.1round  32.1round  33.3round 
+##      FALSE       TRUE       TRUE       TRUE       TRUE       TRUE 
+##  34.1round  35.1round  36.3round  37.1round  38.1round  39.1round 
+##       TRUE      FALSE       TRUE      FALSE       TRUE      FALSE 
+##  40.9round  41.1round  42.8round  43.1round  44.3round  45.1round 
+##       TRUE       TRUE       TRUE       TRUE       TRUE      FALSE 
+##  46.1round  47.2round  48.5round  49.1round  50.0round  52.1round 
+##       TRUE       TRUE       TRUE       TRUE       TRUE      FALSE 
+##  53.1round  54.1round  57.2round  58.1round 59.14round  60.1round 
+##      FALSE       TRUE      FALSE      FALSE       TRUE      FALSE 
+##  61.1round  62.1round  63.0round 
+##       TRUE       TRUE       TRUE
 \end{verbatim}
 
 \end{document}
