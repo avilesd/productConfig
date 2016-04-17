@@ -109,7 +109,7 @@
 #' @export
 
 trpValueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, cost_ids = NULL,
-                            mr = 0.5, sq = 1.5, g = 2.5, beta_f = 5, beta_l = 1, beta_g = 1, beta_s = 3) {
+                            mr = NULL, sq = NULL, g = NULL, beta_f = 5, beta_l = 1, beta_g = 1, beta_s = 3) {
   counter <- 0
   if (length(attr) == 1) {
     trp.list <- trpValueMatrix.oneAttr(dataset, userid, attr, rounds, cost_ids,
@@ -335,7 +335,7 @@ trp.valueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, 
 #' @export
 
 trpValueMatrix.oneAttr <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, cost_ids = NULL,
-                                   mr = 0.5, sq = 1.5, g = 2.5, beta_f = 5, beta_l = 1, beta_g = 1, beta_s = 3) {
+                                   mr = NULL, sq = NULL, g = NULL, beta_f = 5, beta_l = 1, beta_g = 1, beta_s = 3) {
 
   if(length(attr)!= 1) stop("Please insert (only) one attribute ID.")
 
@@ -476,7 +476,7 @@ trpValueFunction <- function(aMatrix, triRefps, beta_f = 5, beta_l = 1.5, beta_g
 #'
 #' @export
 
-trpValueFunction_extend <- function(x, mr = 0.5, sq = 1.5, g = 2.5 , beta_f = 5, beta_l = 1, beta_g = 1, beta_s = 3) {
+trpValueFunction_extend <- function(x, mr = NULL, sq = NULL, g = NULL , beta_f = 5, beta_l = 1, beta_g = 1, beta_s = 3) {
   if(mr >= sq | mr >= g) stop("MR cannot be greater or equal to SQ or G")
   if(sq >= g) stop("SQ cannot be greater or equal to G")
 
