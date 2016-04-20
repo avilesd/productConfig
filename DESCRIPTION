@@ -1,7 +1,7 @@
 Package: productConfig
 Title: Tools to analyze behavioral patterns from Product Configurators
-Version: 1.1.9.9000
-Date: 2016-01-29
+Version: 1.2.0.1000
+Date: 2016-04-20
 Authors@R: person("Diego", "Aviles", email = "diego.aviles.escobar@gmail.com", role = c("aut", "cre"))
 Description: This package provides tools to analyze data created by the use
     of product configurators. Product configurators are about decision making. A
