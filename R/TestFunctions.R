@@ -539,3 +539,14 @@ ref_points <- function(dataset, userid, refps = NULL, attr = NULL, cost_ids = NU
   refps
 
 }
+
+transform4 <- function(dataset, userid=users.withRanks, attr=NULL, rounds="all", cost_ids=4) {
+  dM <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
+  roundedDM <- lapply(dM, round, digits=5)
+  roundedDM <- lapply(roundedDM, function(temp) apply(temp, 2, function(temp2) {replace(temp2, temp2==-0.46528, 0)}))
+  roundedDM <- lapply(roundedDM, function(temp) apply(temp, 2, function(temp2) {replace(temp2, temp2==-0.61389, 0)}))
+  roundedDM <- lapply(roundedDM, function(temp) apply(temp, 2, function(temp2) {replace(temp2, temp2==-0.31667, 1)}))
+  roundedDM <- lapply(roundedDM, function(temp) apply(temp, 2, function(temp2) {replace(temp2, temp2==-0.16806, 2)}))
+  roundedDM <- lapply(roundedDM, function(temp) apply(temp, 2, function(temp2) {replace(temp2, temp2==-0.01944, 3)}))
+  roundedDM
+}
