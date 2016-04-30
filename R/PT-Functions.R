@@ -390,17 +390,25 @@ norm.gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, re
   desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
   refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)
 
+  #Save names
+  namesOfCols <- colnames(desList[[1]])
+  namesOfRows <- lapply(desList, function(temp) row.names(temp))
+
   tMatrixList <- lapply(desList, t)
 
   gainVector <- mapply(gainFunction, tMatrixList, refPs, SIMPLIFY = F)
   lossVector <- mapply(lossFunction, tMatrixList, refPs, SIMPLIFY = F)
 
-  #Using matrix and lapply is harder, because different amount of rounds and therefore rows.
+  # Using matrix and lapply is harder, because different amount of rounds and therefore rows.
   gainList <- mapply(function(temp5, temp6) {dim(temp5) <- c(ncol(temp6), nrow(temp6)); temp5}, gainVector, desList, SIMPLIFY = F)
   lossList <- mapply(function(temp5, temp6) {dim(temp5) <- c(ncol(temp6), nrow(temp6)); temp5}, lossVector, desList, SIMPLIFY = F)
 
   gainList <- lapply(gainList, t) # correct form
   lossList <- lapply(lossList, t)
+
+
+  gainList <- lapply(gainList, function(temp1, temp2) {colnames(temp1) <- temp2; temp1}, namesOfCols)
+  gainList <- mapply(auxiliaryNameRows, gainList, namesOfRows, SIMPLIFY = F)
 
   bindedUnnorm <- mapply(rbind, gainList, lossList, SIMPLIFY = F)
 
@@ -474,4 +482,12 @@ gainFunction <- function(v1, v2) {
 lossFunction <- function(v1, v2) {
   lossVector <- mapply(loss_fun_a, v1, v2)
   lossVector
+}
+
+auxiliaryNameRows <- function(matrix1, rowNames) {
+  if(!is.null(dim(matrix1))) {
+    row.names(matrix1) <- rowNames
+    }
+  else {}
+  as.matrix(matrix1)
 }
