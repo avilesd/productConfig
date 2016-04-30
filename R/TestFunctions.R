@@ -564,6 +564,7 @@ containsVectors <- function(allMatrices, datenbankMatrix) {
     if(vec==8) nameIndex <- "59"
 
     temp <- datenbankMatrix[vec, ]
+    allMatrices <- lapply(allMatrices, unname)
 
     if (j==0) {
       newMatrices <- lapply(allMatrices, function(tempData) someFunction(tempData, temp, nameIndex))
@@ -584,7 +585,7 @@ someFunction <- function(allMatrix, vecToTest, nameIndex) {
     someBoolean
     if(!is.na(someBoolean) & someBoolean==TRUE) {
       allMatrix <- as.data.frame(allMatrix)
-      rownames(allMatrix)[someIndex] <- paste("test", nameIndex, "--", someIndex)
+      rownames(allMatrix)[someIndex] <- paste(someIndex, "--prid", nameIndex, sep = "")
       allMatrix <- as.matrix(allMatrix)
     }
 
