@@ -259,7 +259,7 @@ dual.valueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL,
                                            dual.refps, lambda, delta, consumption_fun)
     }
     else {
-      stop("You must enter three reference points for this attribute in 'dual.refps'")
+      stop("You must enter two reference points for this attribute in 'dual.refps'")
     }
   }
   else {
