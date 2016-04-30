@@ -550,3 +550,44 @@ transform4 <- function(dataset, userid=users.withRanks, attr=NULL, rounds="all",
   roundedDM <- lapply(roundedDM, function(temp) apply(temp, 2, function(temp2) {replace(temp2, temp2==-0.01944, 3)}))
   roundedDM
 }
+
+containsVectors <- function(allMatrices, datenbankMatrix) {
+  j <- 0
+  for (vec in 1:nrow(datenbankMatrix)) {
+    if(vec==1) nameIndex <- "3"
+    if(vec==2) nameIndex <- "9"
+    if(vec==3) nameIndex <- "16"
+    if(vec==4) nameIndex <- "19"
+    if(vec==5) nameIndex <- "25"
+    if(vec==6) nameIndex <- "35"
+    if(vec==7) nameIndex <- "36"
+    if(vec==8) nameIndex <- "59"
+
+    temp <- datenbankMatrix[vec, ]
+
+    if (j==0) {
+      newMatrices <- lapply(allMatrices, function(tempData) someFunction(tempData, temp, nameIndex))
+      j <- 1
+    }
+    else {
+      newMatrices <- lapply(newMatrices, function(tempData) someFunction(tempData, temp, nameIndex))
+    }
+
+  }
+  newMatrices
+}
+
+someFunction <- function(allMatrix, vecToTest, nameIndex) {
+  for (someIndex in 1:nrow(allMatrix)) {
+    tempAllVec <- allMatrix[someIndex, ]
+    someBoolean <- all.equal(tempAllVec, vecToTest, check.names=FALSE)
+    someBoolean
+    if(!is.na(someBoolean) & someBoolean==TRUE) {
+      allMatrix <- as.data.frame(allMatrix)
+      rownames(allMatrix)[someIndex] <- paste("test", nameIndex, "--", someIndex)
+      allMatrix <- as.matrix(allMatrix)
+    }
+
+  }
+  allMatrix
+}
