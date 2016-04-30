@@ -109,7 +109,7 @@
 #' @export
 
 trpValueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, cost_ids = NULL,
-                            mr = NULL, sq = NULL, g = NULL, beta_f = 5, beta_l = 1, beta_g = 1, beta_s = 3) {
+                            mr = NULL, sq = NULL, g = NULL, beta_f = 5, beta_l = 1.5, beta_g = 1, beta_s = 3) {
   counter <- 0
   if (length(attr) == 1) {
     trp.list <- trpValueMatrix.oneAttr(dataset, userid, attr, rounds, cost_ids,
@@ -226,7 +226,7 @@ trpValueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
 #' @export
 
 trp.valueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, cost_ids = NULL,
-                            tri.refps = NULL, beta_f = 5, beta_l = 1, beta_g = 1, beta_s = 3) {
+                            tri.refps = NULL, beta_f = 5, beta_l = 1.5, beta_g = 1, beta_s = 3) {
 
   if(is.null(attr)) attr <- get_attrs_ID(dataset)
   if(length(attr) != 1 & !is.matrix(tri.refps)) stop("For more than one attribute you must enter a matrix in 'tri.refps'")
@@ -335,7 +335,7 @@ trp.valueMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, 
 #' @export
 
 trpValueMatrix.oneAttr <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, cost_ids = NULL,
-                                   mr = NULL, sq = NULL, g = NULL, beta_f = 5, beta_l = 1, beta_g = 1, beta_s = 3) {
+                                   mr = NULL, sq = NULL, g = NULL, beta_f = 5, beta_l = 1.5, beta_g = 1, beta_s = 3) {
 
   if(length(attr)!= 1) stop("Please insert (only) one attribute ID.")
 
@@ -372,7 +372,7 @@ trpValueMatrix.oneAttr <- function(dataset, userid = NULL, attr = NULL, rounds =
   # Second-Transformartion of reference points, DOCU?? Doesn't affect the user, just how we calculate it.
   tri.refps <- lapply(hmaxVector, function(temp, temp2) temp2/temp, tri.refps)
 
-  valueMatrix <- mapply(trpValueFunction, list.decMatrices, tri.refps, SIMPLIFY = F)
+  valueMatrix <- mapply(trpValueFunction, list.decMatrices, tri.refps, beta_f, beta_l, beta_g, beta_s, SIMPLIFY = F)
   valueMatrix
 
 }
@@ -425,7 +425,7 @@ trpValueFunction <- function(aMatrix, triRefps, beta_f = 5, beta_l = 1.5, beta_g
   sq <- triRefps[2]
   g <- triRefps[3]
 
-  result <- apply(aMatrix, 1:2, trpValueFunction_extend, mr, sq, g)
+  result <- apply(aMatrix, 1:2, trpValueFunction_extend, mr, sq, g, beta_f, beta_l, beta_g, beta_s)
   result
 }
 
@@ -476,7 +476,7 @@ trpValueFunction <- function(aMatrix, triRefps, beta_f = 5, beta_l = 1.5, beta_g
 #'
 #' @export
 
-trpValueFunction_extend <- function(x, mr = NULL, sq = NULL, g = NULL , beta_f = 5, beta_l = 1, beta_g = 1, beta_s = 3) {
+trpValueFunction_extend <- function(x, mr = NULL, sq = NULL, g = NULL , beta_f = 5, beta_l = 1.5, beta_g = 1, beta_s = 3) {
   if(mr >= sq | mr >= g) stop("MR cannot be greater or equal to SQ or G")
   if(sq >= g) stop("SQ cannot be greater or equal to G")
 
