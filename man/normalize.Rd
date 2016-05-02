@@ -10,8 +10,8 @@ normalize(num_vector)
 \item{num_vector}{numeric vector you want to normalize.}
 }
 \value{
-A normalized vector, i.e. anothernumeric vector with the sum of its
-  absolute values equaling 1.
+A normalized vector, i.e. another numeric vector with the sum of its
+  values equaling 1.
 }
 \description{
 Divide all given vectors with the absolute sum of all the elements in the
@@ -19,8 +19,9 @@ vector, such that the sum of the result equals 1, that is if you take the
 absolute value of the results. In other words, you can give negative values.
 }
 \examples{
-get_normalized_vec(c(1,2,1,2)) #Returns: [1] 0.1666667 0.3333333 0.1666667 0.3333333
-get_normalized_vec(c(1,2,1,-2)) #Returns: [1] 0.1666667 0.3333333 0.1666667 -0.3333333
+normalize(c(1,2,1,2)) #Returns: [1] 0.1666667 0.3333333 0.1666667 0.3333333
+normalize(c(1,2,-1,-2)) #Returns: [1] 0.1666667 0.3333333 0.1666667 -0.3333333
+normalize(c(10,20,30,40,50))
 
 }
 \references{
@@ -28,7 +29,7 @@ ProductConfig Github page:
   https://github.com/avilesd/productConfig
 }
 \seealso{
-Other get functions: \code{\link{benefitToCostAttr}},
+Other GetFunctions: \code{\link{benefitToCostAttr}},
   \code{\link{getAllUserIds}}, \code{\link{getAttrValues}},
   \code{\link{getDefaultRefps}},
   \code{\link{getRoundsById}}, \code{\link{getTableById}},

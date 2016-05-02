@@ -22,14 +22,14 @@ of attributes.
 }
 \examples{
 get_attrs_ID(my_data) #Example return: [1] 1 2 3 4 , meaning there are 4 attributes on my_data with ascending indexes.
-get_attrs_ID(bad_data) #Warning: Attributes IDs should only be integers.
+get_attrs_ID(bad_data)
 }
 \references{
 ProductConfig Github page:
   https://github.com/avilesd/productConfig
 }
 \seealso{
-Other get functions: \code{\link{benefitToCostAttr}},
+Other GetFunctions: \code{\link{benefitToCostAttr}},
   \code{\link{getAllUserIds}}, \code{\link{getAttrValues}},
   \code{\link{getDefaultRefps}},
   \code{\link{getRoundsById}}, \code{\link{getTableById}},

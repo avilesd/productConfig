@@ -2,27 +2,29 @@
 % Please edit documentation in R/GetFunctions.R
 \name{benefitToCostAttr}
 \alias{benefitToCostAttr}
-\title{HEader}
+\title{Converts benefit type attributes to cost type, within a list}
 \usage{
 benefitToCostAttr(dataset, aList, cost_ids = NULL)
 }
 \arguments{
-\item{da}{d}
-
-\item{at}{a}
+\item{aList}{a List with decision matrices as elements. Within each decision matrix, the
+columns are attributes from a product configurator. Using \code{cost_ids} the cost type
+attribtues are identified and transformed from benefit to cost attributes. Cost attributes are
+product characteristics for which a lower value means a higher 'utility', e.g. price.}
 }
 \value{
-Uni
+the same list as \code{aList} with converted cost attribtues
 }
 \description{
-HEader
+Converts benefit type attributes to cost type, within a list
 }
 \examples{
-tbd
-
+#Not runnable yet
+benefitToCostAttr(myData, listWithDecMatrices, cost_ids= c(5,8))
+benefitToCostAttr(myData2, someList, cost_ids= 1:3)
 }
 \seealso{
-Other get functions: \code{\link{getAllUserIds}},
+Other GetFunctions: \code{\link{getAllUserIds}},
   \code{\link{getAttrValues}},
   \code{\link{getDefaultRefps}},
   \code{\link{getRoundsById}}, \code{\link{getTableById}},

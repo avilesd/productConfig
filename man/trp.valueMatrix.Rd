@@ -5,7 +5,7 @@
 \title{Returns a Value Matrix using three reference points}
 \usage{
 trp.valueMatrix(dataset, userid = NULL, attr = NULL, rounds = NULL,
-  cost_ids = NULL, tri.refps = NULL, beta_f = 5, beta_l = 1,
+  cost_ids = NULL, tri.refps = NULL, beta_f = 5, beta_l = 1.5,
   beta_g = 1, beta_s = 3)
 }
 \arguments{

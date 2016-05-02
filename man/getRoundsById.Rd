@@ -2,38 +2,38 @@
 % Please edit documentation in R/GetFunctions.R
 \name{getRoundsById}
 \alias{getRoundsById}
-\title{Get the amount of rounds (clicks) for one user}
+\title{Get the amount of rounds (clicks) for each user}
 \usage{
 getRoundsById(dataset, userid = NULL)
 }
 \arguments{
-\item{userid}{an integer, that identifies which rows (from which user) of the
-whole given dataset should be extracted.}
+\item{dataset}{the complete data.frame. You can also input the data.frame
+specific for one user, such as the one generated with
+\code{\link{getTableById}}.}
 
-\item{x}{the complete data.frame. You can also input the data.frame specific
-for one user, such as the one generated with \code{\link{get_table_by_ID}}.
-For more users at once see \code{\link{powerful_function}} or manually.#'}
+\item{userid}{an integer vector, that identifies which rows (from which user) of
+the whole given dataset should be extracted. This parameter is vectorised,
+you may enter more \code{userid} at once.}
 }
 \value{
-An integer vector representing the index of each round/click and
- therefore the total amount of rounds for the selected user.
+A list of integer vectors representing the index of each round/click
+ and therefore the total amount of rounds for the selected user.
 }
 \description{
 Allows to calculate the amount of times a user interacted with the product
-configurator, i.e. amount of clicks for the given user ID. The given
-data.frame should signalize with a column named 'round', which should only
-contain numbers.
+configurator, i.e. amount of clicks for any given \code{userid}. The entered
+data.frame should signalize this information with a column named \code{round},
+which should only contain numeric values. Function is vectorised in
+\code{userid}.
 }
 \examples{
-get_rounds_by_ID(example_data, userid = 6) # Example return: [1] 0 1 2 3 4 5 6 7 8
-get_rounds_by_ID(as.data.frame(matrix_full), 1200) # If userid given not found in the given data(x) function returns: integer(0).
+#Not Runnable yet
+getRoundsById(example_data, userid = 6) # Example return: [1] 0 1 2 3 4 5 6 7 8
+getRoundsById(as.data.frame(matrix_full), 12:10)
 
 }
 \seealso{
-\code{\link{powerful_function}} allows you to run this and any other
- function in this package for more than one user.
-
-Other get functions: \code{\link{benefitToCostAttr}},
+Other GetFunctions: \code{\link{benefitToCostAttr}},
   \code{\link{getAllUserIds}}, \code{\link{getAttrValues}},
   \code{\link{getDefaultRefps}},
   \code{\link{getTableById}}, \code{\link{get_attrs_ID}},

@@ -2,7 +2,7 @@
 % Please edit documentation in R/GetFunctions.R
 \name{getAttrValues}
 \alias{getAttrValues}
-\title{All unique values for a given attribute}
+\title{All unique values for any given attribute}
 \usage{
 getAttrValues(dataset, attrid = NULL)
 }
@@ -10,22 +10,22 @@ getAttrValues(dataset, attrid = NULL)
 \item{dataset}{complete data.frame with a \code{atid} column referring to the
 attribute ID.}
 
-\item{attrid}{the ID of the attribute you want to know all unique values of.}
+\item{attrid}{the ID(s) of the attribute(s) you want to know all unique values of.}
 }
 \value{
-Unique values for the given attribute, applies for all users.
+Unique values for the given attributes, applies for all users.
 }
 \description{
-Returns all unique values that can be found in the given attribute, i.e. all
+Returns all unique values that can be found in the inputed attributes, i.e. all
 values that exist for \code{attrid} for all users.
 }
 \examples{
-get_attr_values(example_data, attrid=1) # Example return: [1] 0 3 2 1 meaning that category only has 4 possible values in the product configutrator, or at least those were the ones the users clicked on
-get_attr_values(other_data, 100) #Possible catched error: The attrID you specified is not contain in your data.
+getAttrValues(example_data, attrid=1) # Example return: [1] 0 3 2 1 meaning that category only has 4 possible values in the product configutrator, or at least those were the ones the users clicked on
+getAttrValues(other_data, 100) #Possible catched error: The attrID you specified is not contain in your data.
 
 }
 \seealso{
-Other get functions: \code{\link{benefitToCostAttr}},
+Other GetFunctions: \code{\link{benefitToCostAttr}},
   \code{\link{getAllUserIds}},
   \code{\link{getDefaultRefps}},
   \code{\link{getRoundsById}}, \code{\link{getTableById}},

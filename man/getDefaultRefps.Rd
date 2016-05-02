@@ -7,14 +7,15 @@
 getDefaultRefps(dataset, userid = NULL)
 }
 \arguments{
-\item{dataset}{the data.frame you want to analyze. For the default values for
-more or all users, see \code{\link{powerful_function}}}
+\item{dataset}{the data.frame you want to input. For more details about which information
+the dataset should have, refer to \code{\link{decisionMatrix}}.}
 
-\item{user_id}{an integer, that identifies which rows (from which user) of the
-whole given dataset should be extracted.}
+\item{userid}{an integer vector, that identifies which rows (from which user) of
+the whole given dataset should be extracted. This parameter is vectorised,
+you may enter more \code{userid} at once.}
 }
 \value{
-A numeric vector with column names representing the attribute ID each
+A list of numeric vectors with column names representing the attribute ID each
  reference point belongs to.
 }
 \description{
@@ -27,14 +28,12 @@ interpreted as possible Reference Points for the decision maker. See Source
 for more about this assumption.
 }
 \examples{
-get_all_default_rps(camera2_config_data, 100)
-get_all_default_rps(as.data.frame(matrix_full), 55)
+#Not Runnable yet
+getDefaultRefps(camera2_config_data, c(6,9,10))
+getDefaultRefps(as.data.frame(matrix_full), 55:58)
 }
 \seealso{
-\code{\link{powerful_function}} allows you to run this and any other
- function in this package for more than one user.
-
-Other get functions: \code{\link{benefitToCostAttr}},
+Other GetFunctions: \code{\link{benefitToCostAttr}},
   \code{\link{getAllUserIds}}, \code{\link{getAttrValues}},
   \code{\link{getRoundsById}}, \code{\link{getTableById}},
   \code{\link{get_attrs_ID}}, \code{\link{normalize}}

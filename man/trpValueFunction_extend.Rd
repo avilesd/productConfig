@@ -4,8 +4,8 @@
 \alias{trpValueFunction_extend}
 \title{TTri Reference Point Value Function for one element}
 \usage{
-trpValueFunction_extend(x, mr = 0.5, sq = 1.5, g = 2.5, beta_f = 5,
-  beta_l = 1, beta_g = 1, beta_s = 3)
+trpValueFunction_extend(x, mr = NULL, sq = NULL, g = NULL, beta_f = 5,
+  beta_l = 1.5, beta_g = 1, beta_s = 3)
 }
 \arguments{
 \item{x}{one numeric value}

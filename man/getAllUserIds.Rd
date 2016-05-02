@@ -15,13 +15,13 @@ a vector of integers with all user IDs. IDs are returned in the order
 }
 \description{
 Allows you to get all the user IDs in your data. It assumes you have a column
-\code{$usid} that identifies each user's information of each round with its
+\code{usid} that identifies each user's information for each round with its
 corresponding user ID. Returns IDS unordered, i.e. in the order they appear
 on the table.
 }
 \examples{
-get_all_userids(example_data) #Example return: [1] 1 2 3 4 5  # ordered userids.
-get_all_userids(data) #Example return: [1] 6 9 10 8 6 2 4  # returns IDs just as they are on the given table.
+getAllUserIds(example_data) #Example return: [1] 1 2 3 4 5
+getAllUserIds(data) #Example return: [1] 6 9 10 8 6 2 4
 
 }
 \references{
@@ -29,7 +29,7 @@ ProductConfig Github page:
   https://github.com/avilesd/productConfig
 }
 \seealso{
-Other get functions: \code{\link{benefitToCostAttr}},
+Other GetFunctions: \code{\link{benefitToCostAttr}},
   \code{\link{getAttrValues}},
   \code{\link{getDefaultRefps}},
   \code{\link{getRoundsById}}, \code{\link{getTableById}},

@@ -5,8 +5,8 @@
 \title{(Deprecated)Returns a Value Matrix using three reference points}
 \usage{
 trpValueMatrix(dataset, userid = NULL, attr = NULL, rounds = NULL,
-  cost_ids = NULL, mr = 0.5, sq = 1.5, g = 2.5, beta_f = 5,
-  beta_l = 1, beta_g = 1, beta_s = 3)
+  cost_ids = NULL, mr = NULL, sq = NULL, g = NULL, beta_f = 5,
+  beta_l = 1.5, beta_g = 1, beta_s = 3)
 }
 \arguments{
 \item{dataset}{data.frame with the user generated data from a product
