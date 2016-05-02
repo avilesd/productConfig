@@ -30,7 +30,7 @@
 #'   higher value. E.g. price is often considered a cost type attribute. Should be equal to
 #'   \code{attr} input or a subset of it.
 #'
-#' @details \code{data} We assume the input data.frame has following columns
+#' @details \code{dataset} We assume the input data.frame has following columns
 #'   usid = User IDs, round = integers indicating which round the user is in
 #'   (0-index works best for 'round'), atid = integer column for referring the
 #'   attribute ID (1 indexed), selected = numeric value of the attribute for a
@@ -55,7 +55,7 @@
 #'   compute the entire decision matrix using the \code{cost_ids} and only in the end will
 #'   it 'subset' the result to the desired \code{attr}.
 #'
-#'   efault assumes all your attributes are of benefit type,
+#'   Default assumes all your attributes are of benefit type,
 #'   that is a higher value in the attribute means the user is better of than
 #'   with a lower value. If one or more of the attributes in your data is of
 #'   cost type, e.g. price, so that lower is better then you should identify

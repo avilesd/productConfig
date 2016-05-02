@@ -8,83 +8,103 @@ referencePoints(dataset, userid, refps = NULL, attr = NULL,
   cost_ids = NULL, forceRefps = TRUE)
 }
 \arguments{
-\item{dataset}{cdata.frame with the user generated data from a product
-configurator. Please see \code{decision_matrix} for specifications of the
-data.frame.}
+\item{dataset}{a \code{data.frame} with the user generated data from a
+product configurator. See Details of \code{\link{decisionMatrix}} for more
+information about which data should included in this argument.}
 
-\item{userid}{an integer that gives the information of which user the
-reference points should be determined.}
+\item{userid}{an integer vector indicating for which user the output of this
+function should be calculated. This functions is vectorised in this
+argument, i.e. you may enter more userIDs simultaneously.}
 
-\item{refps}{numeric vector. Reference Points: each point corresponds to one
-attribute, i.e. each attribute has only one aspiration level. Default
-setting assumes the aspiration levels as the default values of the initial
-product configuration for each user.}
+\item{refps}{a list of numeric vectors, one for each user. Reference Points:
+each point corresponds to one attribute, therefore the amount of attributes
+and of refps entered, should be equal. Default assumes the refps as the
+default values of the initial product configuration for each user. You may
+fully or partially enter your own reference points, check below for more
+info.}
 
-\item{attr}{attributes IDs, vector of integer numbers corresponding to the
-attributes you desire to use; attr are assumed to be 1-indexed.}
+\item{attr}{attribute IDs, vector of integer numbers corresponding to the
+attributes (columns) you desire to use.}
 
 \item{cost_ids}{argument used to convert selected cost attributes into
-benefit attributes. Integer vector.}
+benefit attributes. Integer vector. Cost type attributes have the
+characteristic, that a lower value means the user is better off than with a
+higher value. E.g. price is often considered a cost type attribute. Should be equal to
+\code{attr} input or a subset of it.}
+
+\item{forceRefps}{logical, default value is \code{TRUE}. If values are given
+  to \code{refps}, it forces the user to enter a value for all attributes,
+  regardless if you entered just one attribute ID in \code{attr.} If you wish
+  to manually enter only one refps value for one \code{attr} and let the
+  function calculate the other ones, you have to give \code{NA} as input for
+  each attribute you want calculated. See the second example.
+
+  Alternatively, you can set forceRefps and avoid given a value (NA or
+  numeric) for each attribute. However, do this at your own risk, since the
+  argument is intended for development only.}
 }
 \value{
-reference points. A numeric vector with default values if nothing is
-  given or the ones inputed by the user. For one specific user only.
+a list of numeric vectors representing a reference point for each
+  attribute. Length of the vectors will be the amount of attributes IDs in
+  \code{attr}.
 }
 \description{
-This function delivers reference points for other functions to use. With the
-reference points you can calculate gains and losses relative to a reference
+This function delivers reference points for other functions to use,
+specifically for functions based on prospect theory. With the reference
+points you can calculate gains and losses relative to a single reference
 point. We base our knowledge and assumptions to calculate gains and losses
-from a paper, please see source and references. Reference Points can be many
-things, such as defaults, aspiration levels, status quo, etc. Here we provide
-the tools to read the reference points from the given data, i.e. reference
-points as default values. We also provide the tools for the user of this
-package to provide the refps to the funciton and use those to calculate
-further matrices and value functions.
+from a paper, please see source and references [1].
 }
 \details{
-\code{dataset} We assume the input data.frame has following columns
-usid = User IDs, round = integers indicating which round the user is in
-(0-index works best for round), atid = integer column for referring the
-attribute ID (1 indexed), selected = numeric value of the attribute for a
-specific, given round, selectable = amount of options the user can chose at a
-given round, with the current configuration. This is a necessary parameter.
+Reference Points can be many things, such as defaults, aspiration levels,
+status quo, etc. Here we provide the tools to read the reference points from
+the given data, i.e. reference points are assumed to be default (first)
+values in the decision matrix.
 
-\code{userid} is a necessary parameter, without it you'll get a warning.
-Default is NULL.
+\code{refps} If values are given to \code{refps}, the function
+  forces the user to enter a value for all attributes, regardless if you
+  entered just one attribute ID in \code{attr.} If you wish to manually enter
+  only one refps value for one \code{attr} and let the function calculate the
+  other ones, you have to give \code{NA} as input for each attribute you want
+  calculated. See the second example.
 
-\code{refps} The most important parameter for this function. If you only want
-to see the results for one attribute you may enter only a couple of reference
-points but you have to tell the function which attributes you want to use
-those referene points for. So the amount of attr and of refps should be the
-same. Moreover the functions always orders de attr, so be sure to input the
-reference point also in an ascending order corresponding to their attributes.
-(refps will not be ordered)
+  \code{dataset} We assume the input data.frame has following columns usid =
+  User IDs, round = integers indicating which round the user is in (0-index
+  works best for round), atid = integer column for referring the attribute ID
+  (1 indexed), selected = numeric value of the attribute for a specific,
+  given round, selectable = amount of options the user can chose at a given
+  round, with the current configuration. This is a necessary parameter.
 
-\code{attr} Default calculates with all attributes. Attributes are
-automatically read from provided table, it is important you always provide
-the complete dataset so that the package functions properly. Moreover the
-attribute will be sorted in ascending order, i.e. if you input attr=
-c(1,3,2), the decision matrix resulting will display the columns in order:
-attr1 attr2 attr3. You may input fewer attributes than there are on your
-data.
+  \code{userid} is a necessary parameter, without it you'll get a warning.
+  Default is NULL.
 
-\code{cost_ids} To identify cost type attributes, i.e. a lower value is
-better for the user of the product configurator.
+  \code{rounds} If you need to compute different rounds for each user you
+  enter, this argument accepts a list of integer vectors indicating which
+  rounds should be used for each user. The function does not read names, it
+  works in the order the list was given.
 
-Keep in mind you will probably not use this function on itself, it will
-receive its parameters from a parent funciton, that is why is it not fully
-documented.
+  \code{cost_ids} If \code{attr} and \code{cost_ids} differ, the functions
+  will first compute the entire decision matrix using the \code{cost_ids} and
+  only in the end will it 'subset' the result to the desired \code{attr}.
 }
 \examples{
-ref_points(play_data, 9)
-ref_points(play_data, 9, attr=c(1,3)) # returns numeric vector with length 2.
-ref_points(play_data, 9, attr=c(1,3,4,2)) # returns numeric vector with length 4.
-ref_points(data, 6, refps=c(0,-10,9,2)) # since there are exactly 4 attributes in 'data' this input is accepted.
-ref_points(data, 20, refps=c(1,1), attr=c(1,2)) # Also works, since equal amount of refps and attr elements.
+#Not Runnable yet
+referencePoints(myData, 9:11, attr=1:3)
+referencePoints(myData, 9:11, attr=1:3, refps=(NA, 10, NA))
+# Example above calculates refps for attr 1,3 and 4. For attr 2 it returns 20.
+referencePoints(myData, 9:11, attr=1:3, cost_ids = 4) #Attr 4 will not be outputted
+referencePoints(data, 6, refps=c(0,-10,9,2))
+referencePoints(myData, 9:10, attr = c(1,4), cost_ids=4)
 
 #Some examples that throw an error
-ref_points(data, 4, refps=c(1,2)) # Does not work since number of attributes in this case (4) does not equal number of refps.
-ref_points(data, refps=c(0,0,0), attr=c(1,4)) # Same error as previous example
+referencePoints(myData, 9:11, attr=1:3, cost_ids = 4, refps=100) #Error:Not enough refps entered
+#' referencePoints(data, refps=c(0,0,0), attr=c(1,4)) # Same error as previous example
 
+}
+\references{
+[1] Fan, Z. P., Zhang, X., Chen, F. D., & Liu, Y. (2013).
+  Multiple attribute decision making considering aspiration-levels: A method
+  based on prospect theory. Computers & Industrial Engineering, 65(2),
+  341-350.
 }
 

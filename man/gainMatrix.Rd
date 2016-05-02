@@ -79,9 +79,6 @@ lower value. If one or more of the attributes in your data is of cost type,
 e.g. price, so that lower is better then you should identify this attributes
 as such, providing their id, they'll be converted to benefit type (higher
 amount is better).
-
-This function is for one user only, for more or all users see
-\code{\link{powerful_function}}
 }
 \examples{
 gain_matrix(pc_config_data, 11)

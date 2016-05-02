@@ -102,9 +102,6 @@ pvalue_fun <- function(ngain_ij, nloss_ij, alpha = 0.88, beta = 0.88, lambda = 2
 #' as such, providing their id, they'll be converted to benefit type (higher
 #' amount is better).
 #'
-#' This function is for one user only, for more or all users see
-#' \code{\link{powerful_function}}
-#'
 #' @return a gain matrix for a specific user.
 #' @examples
 #' gain_matrix(pc_config_data, 11)
@@ -195,9 +192,6 @@ gainMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps
 #' e.g. price, so that lower is better then you should identify this attributes
 #' as such, providing their id, they'll be converted to benefit type (higher
 #' amount is better).
-#'
-#' This function is for one user only, for more or all users see
-#' \code{\link{powerful_function}}
 #'
 #' @return a loss matrix for a specific user.
 #' @examples
