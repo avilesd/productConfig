@@ -13,6 +13,13 @@
 #'
 #' @inheritParams decisionMatrix
 #'
+#' @param refps a list of numeric vectors, one for each user. Reference Points:
+#'   each point corresponds to one attribute, therefore the amount of attributes
+#'   and of refps entered, should be equal. Default assumes the refps as the
+#'   default values of the initial product configuration for each user. You may
+#'   fully or partially enter your own reference points, check below for more
+#'   info.
+#'
 #' @param forceRefps logical, default value is \code{TRUE}. If values are given
 #'   to \code{refps}, it forces the user to enter a value for all attributes,
 #'   regardless if you entered just one attribute ID in \code{attr.} If you wish
@@ -23,13 +30,6 @@
 #'   Alternatively, you can set forceRefps and avoid given a value (NA or
 #'   numeric) for each attribute. However, do this at your own risk, since the
 #'   argument is intended for development only.
-#'
-#' @param refps a list of numeric vectors, one for each user. Reference Points:
-#'   each point corresponds to one attribute, therefore the amount of attributes
-#'   and of refps entered, should be equal. Default assumes the refps as the
-#'   default values of the initial product configuration for each user. You may
-#'   fully or partially enter your own reference points, check below for more
-#'   info.
 #'
 #' @details \code{refps} If values are given to \code{refps}, the function
 #'   forces the user to enter a value for all attributes, regardless if you

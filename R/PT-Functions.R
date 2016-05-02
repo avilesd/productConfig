@@ -33,82 +33,71 @@ pvalue_fun <- function(ngain_ij, nloss_ij, alpha = 0.88, beta = 0.88, lambda = 2
 
 }
 
-#' Gain matrix
+#'Gain matrix
 #'
-#' Creates the Gains matrix parting from a decision matrix and a vector
-#' containing the reference points (aspiration-levels). We based our
-#' calculations for gains and losses from a scientific paper, please see source
-#' and references.
+#'Creates the Gains matrix parting from a decision matrix and a vector
+#'containing the reference points (typically the status-quo). A gain represents
+#'a positive difference between a given value in the decision matrix and its
+#'corresponding reference point. We based our calculations for gains and losses
+#'from a scientific paper, please see source and references [1,2]. This
+#'functions is intended to use only for single referene point theories, not for
+#'multiple reference point approaches. For the latter, refer to
+#'\code{\link{overallDRP}}, and \code{\link{overallTRP}}.
 #'
-#' @param data data.frame with the user generated data from a product
-#'   configurator. Please see \code{decision_matrix} for specifications of the
-#'   data.frame.
+#'@inheritParams referencePoints
 #'
-#' @param userid an integer that gives the information of which user the matrix
-#'   should be calculated.
+#'@details General: The returned gainMatrix has: ncol = number of attributes you
+#'  selected or all(default) and nrow= number of rounds you selected or the
+#'  first and last(default) for a selected user. Results are unnamed.
 #'
-#' @param attr attributes IDs, vector of integer numbers corresponding to the
-#'   attributes you desire to use; attr are assumed to be 1-indexed.
+#'  \code{dataset} We assume the input data.frame has following columns usid =
+#'  User IDs, round = integers indicating which round the user is in (0-index
+#'  works best for 'round'), atid = integer column for referring the attribute
+#'  ID (1 indexed), selected = numeric value of the attribute for a specific,
+#'  given round, selectable = amount of options the user can chose at a given
+#'  round, with the current configuration. This is a necessary parameter.
 #'
-#' @param rounds integer vector. Which steps of the configuration process should
-#'   be shown? See Details.
+#'  \code{userid} is a necessary parameter, without it you'll get a warning.
+#'  Default is NULL.
 #'
-#' @param refps numeric vector. Reference Points: each point corresponds to one
-#'   attribute, i.e. each attribute has only one aspiration level. Default
-#'   setting assumes the aspiration levels as the default values of the initial
-#'   product configuration for each user.
+#'  \code{attr} Default calculates with all attributes. Attributes are
+#'  automatically read from provided table, it is important you always provide
+#'  the complete dataset so that the package functions properly. Moreover the
+#'  attributes will not be sorted. Output columns are returned in the ordered
+#'  they were inputed.
 #'
-#' @param cost_ids argument used to convert selected cost attributes into
-#'   benefit attributes. Integer vector.
+#'  \code{rounds} If you need to compute different rounds for each user you
+#'  enter, this argument accepts a list of integer vectors indicating which
+#'  rounds should be used for each user. The function does not read names, it
+#'  works in the order the list was given.
 #'
-#' @details General: The gain_matrix with ncol = number of attributes you
-#' selected or all(default) and nrow= number of rounds you selected or the first
-#' and last(default) for a selected user.
+#'  \code{refps} If you only want to see the results for one attribute you may
+#'  enter only a couple of reference points but you have to tell the function
+#'  which attributes you want to use those referene points for. So the amount of
+#'  attr and of refps should be the same. Moreover the functions always orders
+#'  de attr, so be sure to input the reference point also in an ascending order
+#'  corresponding to their attributes. (refps will not be ordered)
 #'
-#' \code{data} We assume the input data.frame has following columns usid = User
-#' IDs, round = integers indicating which round the user is in (0-index works
-#' best for 'round'), atid = integer column for referring the attribute ID (1
-#' indexed), selected = numeric value of the attribute for a specific, given
-#' round, selectable = amount of options the user can chose at a given round,
-#' with the current configuration. This is a necessary parameter.
+#'  \code{cost_ids} If \code{attr} and \code{cost_ids} differ, the functions
+#'  will first compute the entire decision matrix using the \code{cost_ids} and
+#'  only in the end will it 'subset' the result to the desired \code{attr}.
 #'
-#' \code{userid} is a necessary parameter, without it you'll get a warning.
-#' Default is NULL.
+#'@return a list of gain matrices, one for each user.
 #'
-#' \code{attr} Default calculates with all attributes. Attributes are
-#' automatically read from provided table, it is important you always provide
-#' the complete dataset so that the package functions properly. Moreover the
-#' attribute will be sorted in ascending order, i.e. if you input attr=
-#' c(1,3,2), the decision matrix resulting will display the columns in order:
-#' attr1 attr2 attr3.
+#'@references [1] Fan, Z. P., Zhang, X., Chen, F. D., & Liu, Y. (2013). Multiple
+#'  attribute decision making considering aspiration-levels: A method based on
+#'  prospect theory. Computers & Industrial Engineering, 65(2), 341-350.
 #'
-#' \code{rounds} Default calculates first round(initia product config) and last
-#' round of the session. Default calculates with first and last attributes
-#' (initial and final product configuration). To choose all give "all" as
-#' argument for rounds, see example. "first" and "last" are also possible
-#' argument values. You can give a vector of arbitrarily chosen rounds as well.
+#'  [2]Kahneman, D., & Tversky, A. (1979). Prospect theory: An analysis of
+#'  decision under risk. Econometrica: Journal of the Econometric Society,
+#'  263-291.
 #'
-#' \code{refps} If you only want to see the results for one attribute you may
-#' enter only a couple of reference points but you have to tell the function
-#' which attributes you want to use those referene points for. So the amount of
-#' attr and of refps should be the same. Moreover the functions always orders de
-#' attr, so be sure to input the reference point also in an ascending order
-#' corresponding to their attributes. (refps will not be ordered)
-#'
-#' \code{cost_ids} Default assumes all your attributes are of benefit type, that
-#' is a higher value in the attribute means the user is better of than with a
-#' lower value. If one or more of the attributes in your data is of cost type,
-#' e.g. price, so that lower is better then you should identify this attributes
-#' as such, providing their id, they'll be converted to benefit type (higher
-#' amount is better).
-#'
-#' @return a gain matrix for a specific user.
-#' @examples
-#' gain_matrix(pc_config_data, 11)
-#' gain_matrix(my_data, userid = 11, attr = c(1,3,5))
-#' gain_matrix(keyboard_data, 60, rounds = "all", refps = c(1,3,4,0), cost_ids = 4)
-#' gain_matrix(data1, 2, rounds = "last", attr = 1)
-#' @export
+#' @examples #Not Runnable yet
+#' gainMatrix(pc_config_data, 9:11)
+#' gainMatrix(my_data, userid = 11, rounds="all")
+#' gainMatrix(keyboard_data, 60, refps = c(1,3,4,0), cost_ids = 4)
+#' gainMatrix(data1, 2, rounds = "last", attr = 1, cost_ids=1)
+#'@export
 
 gainMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
   desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
@@ -124,82 +113,69 @@ gainMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps
   finalRes
 }
 
-#' Loss matrix
+#'Loss matrix
 #'
-#' Creates the Loss matrix parting from a decision matrix and a vector
-#' containing the reference points (aspiration-levels). We based our
-#' calculations for gains and losses from a scientific paper, please see source
-#' and references.
+#'Creates the Loss matrix parting from a decision matrix and a vector containing
+#'the reference points (typically the status-quo). A loss represents a positive
+#'difference between a given value in the decision matrix and its corresponding
+#'reference point [1,2]. This functions is intended to use only for single
+#'referene point theories, not for multiple reference point approaches. For the
+#'latter, refer to \code{\link{overallDRP}}, and \code{\link{overallTRP}}.
 #'
-#' @param data data.frame with the user generated data from a product
-#'   configurator. Please see \code{decision_matrix} for specifications of the
-#'   data.frame.
+#'@inheritParams referencePoints
 #'
-#' @param userid an integer that gives the information of which user the matrix
-#'   should be calculated.
+#'@details The returned lossMatrix has: ncol = number of attributes you selected
+#'  or all(default) and nrow= number of rounds you selected or the first and
+#'  last(default) for a selected user. Results are unnamed.
 #'
-#' @param attr attributes IDs, vector of integer numbers corresponding to the
-#'   attributes you desire to use; attr are assumed to be 1-indexed.
+#'  \code{dataset} We assume the input data.frame has following columns usid =
+#'  User IDs, round = integers indicating which round the user is in (0-index
+#'  works best for 'round'), atid = integer column for referring the attribute
+#'  ID (1 indexed), selected = numeric value of the attribute for a specific,
+#'  given round, selectable = amount of options the user can chose at a given
+#'  round, with the current configuration. This is a necessary parameter.
 #'
-#' @param rounds integer vector. Which steps of the configuration process should
-#'   be shown? See Details.
+#'  \code{userid} is a necessary parameter, without it you'll get a warning.
+#'  Default is NULL.
 #'
-#' @param refps numeric vector. Reference Points: each point corresponds to one
-#'   attribute, i.e. each attribute has only one aspiration level. Default
-#'   setting assumes the aspiration levels as the default values of the initial
-#'   product configuration for each user.
+#'  \code{attr} Default calculates with all attributes. Attributes are
+#'  automatically read from provided table, it is important you always provide
+#'  the complete dataset so that the package functions properly. Moreover the
+#'  attributes will not be sorted. Output columns are returned in the ordered
+#'  they were inputed.
 #'
-#' @param cost_ids argument used to convert selected cost attributes into
-#'   benefit attributes. Integer vector.
+#'  \code{rounds} If you need to compute different rounds for each user you
+#'  enter, this argument accepts a list of integer vectors indicating which
+#'  rounds should be used for each user. The function does not read names, it
+#'  works in the order the list was given.
 #'
-#' @details General: The loss_matrix with ncol = number of attributes you
-#' selected or all(default) and nrow= number of rounds you selected or the first
-#' and last(default) for a selected user.
+#'  \code{refps} If you only want to see the results for one attribute you may
+#'  enter only a couple of reference points but you have to tell the function
+#'  which attributes you want to use those referene points for. So the amount of
+#'  attr and of refps should be the same. Moreover the functions always orders
+#'  de attr, so be sure to input the reference point also in an ascending order
+#'  corresponding to their attributes. (refps will not be ordered)
 #'
-#' \code{data} We assume the input data.frame has following columns usid = User
-#' IDs, round = integers indicating which round the user is in (0-index works
-#' best for 'round'), atid = integer column for referring the attribute ID (1
-#' indexed), selected = numeric value of the attribute for a specific, given
-#' round, selectable = amount of options the user can chose at a given round,
-#' with the current configuration. This is a necessary parameter.
+#'  \code{cost_ids} If \code{attr} and \code{cost_ids} differ, the functions
+#'  will first compute the entire decision matrix using the \code{cost_ids} and
+#'  only in the end will it 'subset' the result to the desired \code{attr}.
 #'
-#' \code{userid} is a necessary parameter, without it you'll get a warning.
-#' Default is NULL.
+#' @return a list of loss matrices, one for each user.
 #'
-#' \code{attr} Default calculates with all attributes. Attributes are
-#' automatically read from provided table, it is important you always provide
-#' the complete dataset so that the package functions properly. Moreover the
-#' attribute will be sorted in ascending order, i.e. if you input attr=
-#' c(1,3,2), the decision matrix resulting will display the columns in order:
-#' attr1 attr2 attr3.
+#' @references [1] Fan, Z. P., Zhang, X., Chen, F. D., & Liu, Y. (2013). Multiple
+#'  attribute decision making considering aspiration-levels: A method based on
+#'  prospect theory. Computers & Industrial Engineering, 65(2), 341-350.
 #'
-#' \code{rounds} Default calculates first round(initia product config) and last
-#' round of the session. Default calculates with first and last attributes
-#' (initial and final product configuration). To choose all give "all" as
-#' argument for rounds, see example. "first" and "last" are also possible
-#' argument values. You can give a vector of arbitrarily chosen rounds as well.
+#'  [2]Kahneman, D., & Tversky, A. (1979). Prospect theory: An analysis of
+#'  decision under risk. Econometrica: Journal of the Econometric Society,
+#'  263-291.
 #'
-#' \code{refps} If you only want to see the results for one attribute you may
-#' enter only a couple of reference points but you have to tell the function
-#' which attributes you want to use those referene points for. So the amount of
-#' attr and of refps should be the same. Moreover the functions always orders de
-#' attr, so be sure to input the reference point also in an ascending order
-#' corresponding to their attributes. (refps will not be ordered)
-#'
-#' \code{cost_ids} Default assumes all your attributes are of benefit type, that
-#' is a higher value in the attribute means the user is better of than with a
-#' lower value. If one or more of the attributes in your data is of cost type,
-#' e.g. price, so that lower is better then you should identify this attributes
-#' as such, providing their id, they'll be converted to benefit type (higher
-#' amount is better).
-#'
-#' @return a loss matrix for a specific user.
-#' @examples
-#' loss_matrix(pc_config_data, 11)
-#' loss_matrix(my_data, userid = 11, attr = c(1,3,5))
-#' loss_matrix(keyboard_data, 60, rounds = "all", refps = c(1,3,4,0), cost_ids = 4)
-#' loss_matrix(data1, 2, rounds = "last", attr = 1)
-#' @export
+#' @examples #Not Runnable yet
+#' lossMatrix(pc_config_data, 9:11)
+#' lossMatrix(my_data, userid = 11, rounds="all")
+#' lossMatrix(keyboard_data, 60, refps = c(1,3,4,0), cost_ids = 4)
+#' lossMatrix(data1, 2, rounds = "last", attr = 1, cost_ids=1)
+#'@export
 
 lossMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
   desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
@@ -217,98 +193,65 @@ lossMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps
 
 #' Merges gain and loss matrices
 #'
-#' Returns a list with two elements one is the $gain matrix and the second one
-#' is the $loss matrix. The user can change the \code{result_type} to "cbind" or
-#' "rbind", both cases resulting in a merged matrix, which is easier to work
-#' with than a list. For a specificied \code{userid}.
+#' The matrices are composed by row-binded gain matrices (on top) and loss
+#' matrices (below). This is more of an auxiliary functions, since it is easiert
+#' to work with united matrices. Rows and columns are unnamed. The output of this
+#' function is further used by \code{\link{norm.gainLoss}}.
 #'
-#' @param data data.frame with the user generated data from a product
-#'   configurator. Please see \code{decision_matrix} for specifications of the
-#'   data.frame.
+#' @inheritParams referencePoints
 #'
-#' @param userid an integer that gives the information of which user the matrix
-#'   should be calculated.
+#' @details \code{dataset} We assume the input data.frame has following columns
+#'   usid = User IDs, round = integers indicating which round the user is in
+#'   (0-index works best for 'round'), atid = integer column for referring the
+#'   attribute ID (1 indexed), selected = numeric value of the attribute for a
+#'   specific, given round, selectable = amount of options the user can chose at
+#'   a given round, with the current configuration. This is a necessary
+#'   parameter.
 #'
-#' @param attr attributes IDs, vector of integer numbers corresponding to the
-#'   attributes you desire to use; attr are assumed to be 1-indexed.
+#'   \code{dataset} We assume the input data.frame has following columns usid =
+#'   User IDs, round = integers indicating which round the user is in (0-index
+#'   works best for 'round'), atid = integer column for referring the attribute
+#'   ID (1 indexed), selected = numeric value of the attribute for a specific,
+#'   given round, selectable = amount of options the user can chose at a given
+#'   round, with the current configuration. This is a necessary parameter.
 #'
-#' @param rounds integer vector. Which steps of the configuration process should
-#'   be shown? See Details.
+#'   \code{userid} is a necessary parameter, without it you'll get a warning.
+#'   Default is NULL.
 #'
-#' @param refps numeric vector. Reference Points: each point corresponds to one
-#'   attribute, i.e. each attribute has only one aspiration level. Default
-#'   setting assumes the aspiration levels as the default values of the initial
-#'   product configuration for each user.
+#'   \code{attr} Default calculates with all attributes. Attributes are
+#'   automatically read from provided table, it is important you always provide
+#'   the complete dataset so that the package functions properly. Moreover the
+#'   attributes will not be sorted. Output columns are returned in the ordered
+#'   they were inputed.
 #'
-#' @param result_type allows to change the result type. Default returns a list
-#'   with two elements. Other possibilites are "cbind" and "rbind" as character
-#'   input which do exactly what their name suggests; return a column- or row-
-#'   binded matrix.
+#'   \code{rounds} If you need to compute different rounds for each user you
+#'   enter, this argument accepts a list of integer vectors indicating which
+#'   rounds should be used for each user. The function does not read names, it
+#'   works in the order the list was given.
 #'
-#' @param cost_ids argument used to convert selected cost attributes into
-#'   benefit attributes. Integer vector.
+#'   \code{refps} If you only want to see the results for one attribute you may
+#'   enter only a couple of reference points but you have to tell the function
+#'   which attributes you want to use those referene points for. So the amount
+#'   of attr and of refps should be the same. Moreover the functions always
+#'   orders de attr, so be sure to input the reference point also in an
+#'   ascending order corresponding to their attributes.
 #'
-#' @details \code{data} We assume the input data.frame has following columns
-#' usid = User IDs, round = integers indicating which round the user is in
-#' (0-index works best for 'round'), atid = integer column for referring the
-#' attribute ID (1 indexed), selected = numeric value of the attribute for a
-#' specific, given round, selectable = amount of options the user can chose at a
-#' given round, with the current configuration. This is a necessary parameter.
+#' @return a list of combined matrices.
 #'
-#' \code{userid} is a necessary parameter, without it you'll get a warning.
-#'
-#' \code{attr} Default calculates with all attributes. Attributes are
-#' automatically read from provided table, it is important you always provide
-#' the complete dataset so that the package functions properly. Moreover the
-#' attribute will be sorted in ascending order, i.e. if you input attr=
-#' c(1,3,2), the decision matrix resulting will display the columns in order:
-#' attr1 attr2 attr3.
-#'
-#' \code{rounds} Default calculates first round(initia product config) and last
-#' round of the session. Default calculates with first and last attributes
-#' (initial and final product configuration). To choose all give "all" as
-#' argument for rounds, see example. "first" and "last" are also possible
-#' argument values. You can give a vector of arbitrarily chosen rounds as well.
-#'
-#' \code{refps} If you only want to see the results for one attribute you may
-#' enter only a couple of reference points but you have to tell the function
-#' which attributes you want to use those referene points for. So the amount of
-#' attr and of refps should be the same. Moreover the functions always orders de
-#' attr, so be sure to input the reference point also in an ascending order
-#' corresponding to their attributes. (refps will not be ordered)
-#'
-#' \code{result_type} Default assumes all your attributes are of benefit type,
-#' that is a higher value in the attribute means the user is better of than with
-#' a lower value. If one or more of the attributes in your data is of cost type,
-#' e.g. price, so that lower is better then you should identify this attributes
-#' as such, providing their id, they'll be converted to benefit type (higher
-#' amount is better).
-#'
-#' \code{cost_ids} Default assumes all your attributes are of benefit type, that
-#' is a higher value in the attribute means the user is better of than with a
-#' lower value. If one or more of the attributes in your data is of cost type,
-#' e.g. price, so that lower is better then you should identify this attributes
-#' as such, providing their id, they'll be converted to benefit type (higher
-#' amount is better).
-#'
-#' This function is for one user only, for more or all users see
-#' \code{\link{powerful_function}}
-#'
-#' @return gain and loss matrix for a specific user.
-#' @examples
-#' gain_loss_matrices(pc_config_data, 11)
-#' gain_loss_matrices(my_data, userid = 11, result_type = "cbind")
-#' gain_loss_matrices(monitor_data, 50, rounds = "last", refps = c(0.1,0.3,0.4,0.5), cost_ids = 3)
-#' gain_loss_matrices(data1, 40, attr = 1)
-#' gain_loss_matrices(data, 3, result_type = "cbind", attr = c(1,2,3,4) )
+#' @examples #Not runnable yet
+#' gainLoss(pc_config_data, 11:12)
+#' gainLoss(my_data, userid = 10:100)
+#' gainLoss(monitor_data, c(50,51), rounds = "last", refps = c(0.1,0.3,0.4,0.5), cost_ids = 3)
+#' gainLoss(data1, 40, attr = 1)
+#' gainLoss(data, 3, attr = c(1,2,3,4))
 #' @export
 
-gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL, unlist = T) {
+gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
   gainList <- gainMatrix(dataset, userid, attr, rounds, refps, cost_ids) # here is probably the bottlenech
   lossList <- lossMatrix(dataset, userid, attr, rounds, refps, cost_ids) # and here
 
   desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
-  refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)
+  #refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)
 
   tMatrixList <- lapply(desList, t)
 
@@ -328,55 +271,48 @@ gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps =
 
 #' Normalizes gain and loss matrices
 #'
-#' Returns a list with two elements one is the normalized $ngain matrix and the
-#' second one is a normalized $nloss matrix. There is an internal discussion
-#' about whether a matrix with one row or round should be normalized, which is
-#' not in the paper we based our calculations from. Up until this version, the
-#' function normalizes every gain and loss matrices that it gets. For what this
-#' means please see details.
+#' Returns a list with two elements one is the normalized \code{$gain} matrix
+#' and the second one is a normalized \code{$loss} matrix [1]. It calculates
+#' both matrices separately, binds them together with \code{rbind} and
+#' normalizes both according to the largest value in each column, including
+#' values of both matrices. The output style can be changed throught the
+#' \code{binded} argument. Rows and columns are named.
 #'
-#' @param data data.frame with the user generated data from a product
-#'   configurator. Please see \code{decision_matrix} for specifications of the
-#'   data.frame.
+#' @inheritParams referencePoints
 #'
-#' @param userid an integer that gives the information of which user the
-#'   matrices should be calculated.
-#'
-#' @param attr attributes IDs, vector of integer numbers corresponding to the
-#'   attributes you desire to use; attr are assumed to be 1-indexed.
-#'
-#' @param rounds integer vector. Which steps of the configuration process should
-#'   be shown? See Details.
-#'
-#' @param refps numeric vector. Reference Points: each point corresponds to one
-#'   attribute, i.e. each attribute has only one aspiration level. Default
-#'   setting assumes the aspiration levels as the default values of the initial
-#'   product configuration for each user.
-#'
-#' @param cost_ids argument used to convert selected cost attributes into
-#'   benefit attributes. Integer vector.
+#' @param binded logical - Should the gain and loss matrices be outputed in a
+#'   binded format or separately? Default is true, which returns a single matrix
+#'   for each user.
 #'
 #' @details If you want to know more details about each parameter, look at
-#' \code{gain_matrix loss_matrix decision_matrix}.
+#'   \code{\link{gainMatrix}}, \code{\link{lossMatrix}} or
+#'   \code{\link{decisionMatrix}}.
 #'
-#' The function normalizes both gain and loss matrices independently on the
-#' amount of rows, for nrow > 1 this works as expected. The problem arises when
-#' the matrices have only one row, i.e. one round. This results in normalized
-#' matrices which can only contain 0 or 1 as a result, since a positive gain in
-#' one specific attribute means a 0 in losses for the same attribute in the loss
-#' matrix. Therefore if a gain is bigger than one, when normalizing it ends up
-#' being 1 (gain) or -1 (loss) which loses information about the magnitude of
-#' the gain and loss, respectively. Definitely a point to be discussed and
-#' improved. Please refer to ...p2.
+#'   The function normalizes both gain and loss matrices independently on the
+#'   amount of rows, for nrow > 1 this works as expected. The problem arises
+#'   when the matrices have only one row, i.e. one round. This results in
+#'   normalized matrices which can only contain 0 or 1 as a result, since a
+#'   positive gain in one specific attribute means a 0 in losses for the same
+#'   attribute in the loss matrix. Therefore if a gain is bigger than one, when
+#'   normalizing it ends up being 1 (gain) or -1 (loss) which loses information
+#'   about the magnitude of the gain and loss, respectively. Definitely a point
+#'   to be discussed and improved. Please refer to ...p2.
 #'
-#' This function is vectorialized in the \code{userid} argument.
+#'   This function is vectorialized in the \code{userid} argument.
 #'
-#' @return  normalized gain and loss matrices for a specific user.
+#' @return a list - of normalized gain and loss matrices for each user.
+#'
+#' @references [1] Fan, Z. P., Zhang, X., Chen, F. D., & Liu, Y. (2013).
+#'   Multiple attribute decision making considering aspiration-levels: A method
+#'   based on prospect theory. Computers & Industrial Engineering, 65(2),
+#'   341-350.
+#'
 #' @examples
-#' norm_g_l_matrices(pc_config_data, 11)
-#' norm_g_l_matrices(my_data, userid = 11, result_type = "cbind")
-#' norm_g_l_matrices(monitor_data, 50, rounds = "last", refps = c(0.1,0.3,0.4,0.5), cost_ids = 3)
-#' norm_g_l_matrices(data1, 8, attr = 1)
+#' norm.gainLoss(pc_config_data, 11)
+#' norm.gainLoss(pc_config_data, c(11,12,13,14,15,16,17,18))
+#' norm.gainLoss(myData, 9, rounds=c(1,2,3))
+#' norm.gainLoss(cam4, userid=20:30, refps=c(1.5,1.5,1.5,1.5), rounds="all", binded=F)
+#' norm.gainLoss(data1, 8:16, attr = 1)
 #'
 #' @export
 
@@ -403,6 +339,8 @@ norm.gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, re
 
   gainList <- lapply(gainList, function(temp1, temp2) {colnames(temp1) <- temp2; temp1}, namesOfCols)
   gainList <- mapply(auxiliaryNameRows, gainList, namesOfRows, SIMPLIFY = F)
+  lossList <- lapply(gainList, function(temp1, temp2) {colnames(temp1) <- temp2; temp1}, namesOfCols)
+  lossList <- mapply(auxiliaryNameRows, gainList, namesOfRows, SIMPLIFY = F)
 
   bindedUnnorm <- mapply(rbind, gainList, lossList, SIMPLIFY = F)
 
@@ -424,25 +362,35 @@ norm.gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, re
   bothMatrix
 }
 
-#' Calculates the gain for one attribute
+#' Calculates the gain for one single value
 #'
-#' A simple function that given the value of an attribute (s_ij) and the
-#' reference point of the same attribute, calculates the gain and returns it. It
-#' is not built as a stand alone function, rather as an object to be used by
-#' other major functions, such as \code{gain_matrix loss_matrix}.
+#' Given the value of an attribute (v1) and the reference point of the same
+#' attribute (v2), calculates the gain and returns it [1,2]. It is not built as
+#' a stand alone function, rather as an object to be used by other major
+#' functions, such as \code{gainMarix, lossMatrix}.
 #'
-#' @param s_ij value of attribute j in round i
+#' @param v1 value of attribute j in round i
 #'
-#' @param e_j reference point off attribute j
+#' @param v2 reference point of attribute j
 #'
 #' @details For understanding how this works, see the function itself or refer
-#' to the paper. It handles only discrete numbers, so no interval numbers. Also
-#' a point to improve further on.
+#'   to the paper. It handles only discrete numbers, so no interval numbers.
+#'   Also a point to improve further on.
 #'
 #' @return  gain, numeric value.
+#'
+#' @references [1] Fan, Z. P., Zhang, X., Chen, F. D., & Liu, Y. (2013).
+#'   Multiple attribute decision making considering aspiration-levels: A method
+#'   based on prospect theory. Computers & Industrial Engineering, 65(2),
+#'   341-350.
+#'
+#'   [2]Kahneman, D., & Tversky, A. (1979). Prospect theory: An analysis of
+#'   decision under risk. Econometrica: Journal of the Econometric Society,
+#'   263-291.
+#'
 #' @examples
-#' gain_fun_a(5, 1)  # returns: 4
-#' gain_fun_a(2, 3)  # returns: 0
+#' gainFunction(5, 1)  # returns: 4
+#' gainFunction(2, 3)  # returns: 0
 #'
 #' @export
 
@@ -451,31 +399,61 @@ gainFunction <- function(v1, v2) {
   gainVector
 }
 
-#' Calculates the loss for one attribute
+#' Calculates the loss for one single value
 #'
-#' A simple function that given the value of an attribute (s_ij) and the
-#' reference point of the same attribute, calculates the loss and returns it. It
+#' Given the value of an attribute (v1) and the
+#' reference point of the same attribute (v2), calculates the loss and returns it [1,2]. It
 #' is not built as a stand alone function, rather as an object to be used by
-#' other major functions, such as \code{gain_matrix loss_matrix}.
+#' other major functions, such as \code{gainMarix, lossMatrix}.
 #'
-#' @param s_ij value of attribute j in round i
+#' @param v1 value of attribute j in round i
 #'
-#' @param e_j reference point off attribute j
+#' @param v2 reference point of attribute j
 #'
 #' @details For understanding how this works, see the function itself or refer
 #' to the paper. It handles only discrete numbers, so no interval numbers. Also
 #' a point to improve further on.
 #'
-#' @return  loss, numeric value.
+#' @return loss, numeric value.
+#'
+#' @references [1] Fan, Z. P., Zhang, X., Chen, F. D., & Liu, Y. (2013). Multiple
+#'  attribute decision making considering aspiration-levels: A method based on
+#'  prospect theory. Computers & Industrial Engineering, 65(2), 341-350.
+#'
+#'  [2]Kahneman, D., & Tversky, A. (1979). Prospect theory: An analysis of
+#'  decision under risk. Econometrica: Journal of the Econometric Society,
+#'  263-291.
+#'
 #' @examples
-#' loss_fun_a(5, 1)  # returns: 0
-#' loss_fun_a(2, 3)  # returns: -1
+#' lossFunction(5, 1)  # returns: 0
+#' lossFunction(2, 3)  # returns: -1
 #'
 #' @export
 
 lossFunction <- function(v1, v2) {
   lossVector <- mapply(loss_fun_a, v1, v2)
   lossVector
+}
+
+#Auxiliary not need to document
+gain_fun_a <- function(s_ij, e_j) {
+  if(s_ij >= e_j) {
+    gain <- s_ij - e_j
+  }
+  else {
+    gain <- 0
+  }
+  gain
+}
+#Auxiliary not need to document
+loss_fun_a <- function(s_ij, e_j) {
+  if(s_ij >= e_j) {
+    loss <- 0
+  }
+  else {
+    loss <- s_ij - e_j
+  }
+  loss
 }
 
 auxiliaryNameRows <- function(matrix1, rowNames) {

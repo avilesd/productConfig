@@ -364,24 +364,6 @@ norm_g_l_matrices <- function(data, userid = NULL, attr = NULL, rounds = NULL, r
   result <- list(ngain = n_gain, nloss = n_loss)
   result
 }
-gain_fun_a <- function(s_ij, e_j) {
-  if(s_ij >= e_j) {
-    gain <- s_ij - e_j
-  }
-  else {
-    gain <- 0
-  }
-  gain
-}
-loss_fun_a <- function(s_ij, e_j) {
-  if(s_ij >= e_j) {
-    loss <- 0
-  }
-  else {
-    loss <- s_ij - e_j
-  }
-  loss
-}
 
 powerful_function <- function(dataset, userid = NULL, FUN = decision_matrix, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL,
                               weight = NULL, alpha = 0.88, beta = 0.88, lambda = 2.25, gainm = TRUE, result_type = NULL) {

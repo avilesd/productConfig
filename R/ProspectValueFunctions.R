@@ -320,7 +320,50 @@ overallDRP <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, cost_
   overall_pv
 }
 
-#Still used in vectorialised
+#' Calculate Prospect Values
+#'
+#' This function works with the simple additive weighting method. It takes a
+#' value matrix and the weight of each attribute and calculates the prospect
+#' value for each attribute (column-wise).
+#'
+#' @param value_matrix numeric matrix, results from using the value function on
+#'   previously calculated normalized gain and loss matrices.
+#'
+#' @param weight numeric, represents the importance or relative relevance of
+#'   each attribute.
+#'
+#' @details You need to pre-calculate the value matrix, for example with
+#' \code{\link{pvalue_matrix}} and give it as a parameter. This is one of the
+#' few functions of this package that do not allow you to give the raw data from
+#' your product Configurator, but rather calculate a previous result(value
+#' matrix) to input here.
+#'
+#' In normal cases we recommend the use of \code{\link{overall_pv}} and
+#' \code{\link{powerful_function}}for more users at once. This is mainly an
+#' auxiliary function.
+#'
+#' \code{value_matrix} ncol = number of attributes, nrow = number of rounds.
+#'
+#' \code{weight} default orders each attribute a weight <= 1 according to the
+#' relative frequency with which the user interacted with that specific
+#' attribute. Ideally the sum of all weights equals 1. ##Ignore-Bug: What
+#' happens if you give three attributes but enter 4 or more weights or vice
+#' versa?
+#'
+#' @return prospect values for each attribute
+#'
+#' @seealso \code{\link{overall_pv}}
+#'
+#' @examples
+#' overall_pv_extend(my_value_matrix, weight = c(0.1, 0.2, 0.4, 0.3))
+#' overall_pv_extend(my_matrix, weight=c(0.8,0.05,0.05,0.1))
+#' overall_pv_extend(vmatrix, dataset =  full_data_example)
+#'
+#' \dontrun{overall_pv_extend(value_mx)}  # Always provide weights or dataset.
+#'
+#' @family prospect value functions
+#'
+#' @export
 overall_pv_extend <- function(value_matrix, weight = NULL) {
   if (length(weight) != ncol(value_matrix)) {
     text <- paste0("weights: ", length(weight), " != ", ncol(value_matrix), " cols in valueMatrix.")
