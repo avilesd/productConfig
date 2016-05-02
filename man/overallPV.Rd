@@ -10,26 +10,20 @@ overallPV(dataset, userid = NULL, attr = NULL, rounds = NULL,
   lambda = 2.25, gamma)
 }
 \arguments{
-\item{userid}{an integer that gives the information of which user the matrix
-should be calculated.}
+\item{refps}{a list of numeric vectors, one for each user. Reference Points:
+each point corresponds to one attribute, therefore the amount of attributes
+and of refps entered, should be equal. Default assumes the refps as the
+default values of the initial product configuration for each user. You may
+fully or partially enter your own reference points, check below for more
+info.}
 
-\item{attr}{attributes IDs, vector of integer numbers corresponding to the
-attributes you desire to use; attr are assumed to be 1-indexed.}
-
-\item{rounds}{integer vector. Which steps of the configuration process should
-be shown? See Details.}
-
-\item{refps}{numeric vector. Reference Points: each point corresponds to one
-attribute, i.e. each attribute has only one aspiration level. Default
-setting assumes the aspiration levels as the default values of the initial
-product configuration for each user.}
-
-\item{cost_ids}{argument used to convert selected cost attributes into
-benefit attributes. Integer vector.}
+\item{cost_ids}{argument used to convert selected cost attributes into benefit
+attributes. Integer vector.}
 
 \item{weight}{numeric vector. Represents the importance or relevance that an
 attribute has and the weight it should have in the calculation of the
-prospect value.}
+prospect value. Alternatively, you can enter a list of numeric vectors, each
+element of the list corresponding to one user in \code{userid}.}
 
 \item{weightFUN}{indicated which weight function should be used to calculate
 the weight vector, the options are \code{"differenceToIdeal", "entropy",
@@ -67,7 +61,9 @@ on three important factors: (1) What theoretical framework you choose to use
 (PT, DRP, TRP), (2) which decision weights you assign to each attribute, and
 (3) the reference point(s) you input.
 
-This function is vectorized in the \code{userid} parameter.
+This function is vectorized in the \code{userid} parameter. The
+  function does not sort attributes or user IDs. Order of the output is
+  generated as given through the arguments.
 
   The 3 step calculation of the prospect values comes from one specific paper
   \emph{Reference[1]}. (1) For the noramlized gain and loss matrices we use

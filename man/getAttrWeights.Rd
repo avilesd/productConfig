@@ -17,7 +17,8 @@ the matrix should be calculated. Vectorised.}
 
 \item{weight}{numeric vector. Represents the importance or relevance that an
 attribute has and the weight it should have in the calculation of the
-prospect value.}
+prospect value. Alternatively, you can enter a list of numeric vectors, each
+element of the list corresponding to one user in \code{userid}.}
 
 \item{attr}{attributes IDs, vector of integer numbers corresponding to the
   attributes you desire to use; attr are assumed to be 1-indexed. This

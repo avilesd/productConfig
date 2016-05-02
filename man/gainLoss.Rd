@@ -5,96 +5,68 @@
 \title{Merges gain and loss matrices}
 \usage{
 gainLoss(dataset, userid = NULL, attr = NULL, rounds = NULL,
-  refps = NULL, cost_ids = NULL, unlist = T)
+  refps = NULL, cost_ids = NULL)
 }
 \arguments{
-\item{userid}{an integer that gives the information of which user the matrix
-should be calculated.}
-
-\item{attr}{attributes IDs, vector of integer numbers corresponding to the
-attributes you desire to use; attr are assumed to be 1-indexed.}
-
-\item{rounds}{integer vector. Which steps of the configuration process should
-be shown? See Details.}
-
-\item{refps}{numeric vector. Reference Points: each point corresponds to one
-attribute, i.e. each attribute has only one aspiration level. Default
-setting assumes the aspiration levels as the default values of the initial
-product configuration for each user.}
-
-\item{cost_ids}{argument used to convert selected cost attributes into
-benefit attributes. Integer vector.}
-
-\item{data}{data.frame with the user generated data from a product
-configurator. Please see \code{decision_matrix} for specifications of the
-data.frame.}
-
-\item{result_type}{allows to change the result type. Default returns a list
-with two elements. Other possibilites are "cbind" and "rbind" as character
-input which do exactly what their name suggests; return a column- or row-
-binded matrix.}
+\item{refps}{a list of numeric vectors, one for each user. Reference Points:
+each point corresponds to one attribute, therefore the amount of attributes
+and of refps entered, should be equal. Default assumes the refps as the
+default values of the initial product configuration for each user. You may
+fully or partially enter your own reference points, check below for more
+info.}
 }
 \value{
-gain and loss matrix for a specific user.
+a list of combined matrices.
 }
 \description{
-Returns a list with two elements one is the $gain matrix and the second one
-is the $loss matrix. The user can change the \code{result_type} to "cbind" or
-"rbind", both cases resulting in a merged matrix, which is easier to work
-with than a list. For a specificied \code{userid}.
+The matrices are composed by row-binded gain matrices (on top) and loss
+matrices (below). This is more of an auxiliary functions, since it is easiert
+to work with united matrices. Rows and columns are unnamed. The output of this
+function is further used by \code{\link{norm.gainLoss}}.
 }
 \details{
-\code{data} We assume the input data.frame has following columns
-usid = User IDs, round = integers indicating which round the user is in
-(0-index works best for 'round'), atid = integer column for referring the
-attribute ID (1 indexed), selected = numeric value of the attribute for a
-specific, given round, selectable = amount of options the user can chose at a
-given round, with the current configuration. This is a necessary parameter.
+\code{dataset} We assume the input data.frame has following columns
+  usid = User IDs, round = integers indicating which round the user is in
+  (0-index works best for 'round'), atid = integer column for referring the
+  attribute ID (1 indexed), selected = numeric value of the attribute for a
+  specific, given round, selectable = amount of options the user can chose at
+  a given round, with the current configuration. This is a necessary
+  parameter.
 
-\code{userid} is a necessary parameter, without it you'll get a warning.
+  \code{dataset} We assume the input data.frame has following columns usid =
+  User IDs, round = integers indicating which round the user is in (0-index
+  works best for 'round'), atid = integer column for referring the attribute
+  ID (1 indexed), selected = numeric value of the attribute for a specific,
+  given round, selectable = amount of options the user can chose at a given
+  round, with the current configuration. This is a necessary parameter.
 
-\code{attr} Default calculates with all attributes. Attributes are
-automatically read from provided table, it is important you always provide
-the complete dataset so that the package functions properly. Moreover the
-attribute will be sorted in ascending order, i.e. if you input attr=
-c(1,3,2), the decision matrix resulting will display the columns in order:
-attr1 attr2 attr3.
+  \code{userid} is a necessary parameter, without it you'll get a warning.
+  Default is NULL.
 
-\code{rounds} Default calculates first round(initia product config) and last
-round of the session. Default calculates with first and last attributes
-(initial and final product configuration). To choose all give "all" as
-argument for rounds, see example. "first" and "last" are also possible
-argument values. You can give a vector of arbitrarily chosen rounds as well.
+  \code{attr} Default calculates with all attributes. Attributes are
+  automatically read from provided table, it is important you always provide
+  the complete dataset so that the package functions properly. Moreover the
+  attributes will not be sorted. Output columns are returned in the ordered
+  they were inputed.
 
-\code{refps} If you only want to see the results for one attribute you may
-enter only a couple of reference points but you have to tell the function
-which attributes you want to use those referene points for. So the amount of
-attr and of refps should be the same. Moreover the functions always orders de
-attr, so be sure to input the reference point also in an ascending order
-corresponding to their attributes. (refps will not be ordered)
+  \code{rounds} If you need to compute different rounds for each user you
+  enter, this argument accepts a list of integer vectors indicating which
+  rounds should be used for each user. The function does not read names, it
+  works in the order the list was given.
 
-\code{result_type} Default assumes all your attributes are of benefit type,
-that is a higher value in the attribute means the user is better of than with
-a lower value. If one or more of the attributes in your data is of cost type,
-e.g. price, so that lower is better then you should identify this attributes
-as such, providing their id, they'll be converted to benefit type (higher
-amount is better).
-
-\code{cost_ids} Default assumes all your attributes are of benefit type, that
-is a higher value in the attribute means the user is better of than with a
-lower value. If one or more of the attributes in your data is of cost type,
-e.g. price, so that lower is better then you should identify this attributes
-as such, providing their id, they'll be converted to benefit type (higher
-amount is better).
-
-This function is for one user only, for more or all users see
-\code{\link{powerful_function}}
+  \code{refps} If you only want to see the results for one attribute you may
+  enter only a couple of reference points but you have to tell the function
+  which attributes you want to use those referene points for. So the amount
+  of attr and of refps should be the same. Moreover the functions always
+  orders de attr, so be sure to input the reference point also in an
+  ascending order corresponding to their attributes.
 }
 \examples{
-gain_loss_matrices(pc_config_data, 11)
-gain_loss_matrices(my_data, userid = 11, result_type = "cbind")
-gain_loss_matrices(monitor_data, 50, rounds = "last", refps = c(0.1,0.3,0.4,0.5), cost_ids = 3)
-gain_loss_matrices(data1, 40, attr = 1)
-gain_loss_matrices(data, 3, result_type = "cbind", attr = c(1,2,3,4) )
+#Not runnable yet
+gainLoss(pc_config_data, 11:12)
+gainLoss(my_data, userid = 10:100)
+gainLoss(monitor_data, c(50,51), rounds = "last", refps = c(0.1,0.3,0.4,0.5), cost_ids = 3)
+gainLoss(data1, 40, attr = 1)
+gainLoss(data, 3, attr = c(1,2,3,4))
 }
 

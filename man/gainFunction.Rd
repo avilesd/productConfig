@@ -2,32 +2,42 @@
 % Please edit documentation in R/PT-Functions.R
 \name{gainFunction}
 \alias{gainFunction}
-\title{Calculates the gain for one attribute}
+\title{Calculates the gain for one single value}
 \usage{
 gainFunction(v1, v2)
 }
 \arguments{
-\item{s_ij}{value of attribute j in round i}
+\item{v1}{value of attribute j in round i}
 
-\item{e_j}{reference point off attribute j}
+\item{v2}{reference point of attribute j}
 }
 \value{
 gain, numeric value.
 }
 \description{
-A simple function that given the value of an attribute (s_ij) and the
-reference point of the same attribute, calculates the gain and returns it. It
-is not built as a stand alone function, rather as an object to be used by
-other major functions, such as \code{gain_matrix loss_matrix}.
+Given the value of an attribute (v1) and the reference point of the same
+attribute (v2), calculates the gain and returns it [1,2]. It is not built as
+a stand alone function, rather as an object to be used by other major
+functions, such as \code{gainMarix, lossMatrix}.
 }
 \details{
 For understanding how this works, see the function itself or refer
-to the paper. It handles only discrete numbers, so no interval numbers. Also
-a point to improve further on.
+  to the paper. It handles only discrete numbers, so no interval numbers.
+  Also a point to improve further on.
 }
 \examples{
-gain_fun_a(5, 1)  # returns: 4
-gain_fun_a(2, 3)  # returns: 0
+gainFunction(5, 1)  # returns: 4
+gainFunction(2, 3)  # returns: 0
 
+}
+\references{
+[1] Fan, Z. P., Zhang, X., Chen, F. D., & Liu, Y. (2013).
+  Multiple attribute decision making considering aspiration-levels: A method
+  based on prospect theory. Computers & Industrial Engineering, 65(2),
+  341-350.
+
+  [2]Kahneman, D., & Tversky, A. (1979). Prospect theory: An analysis of
+  decision under risk. Econometrica: Journal of the Econometric Society,
+  263-291.
 }
 

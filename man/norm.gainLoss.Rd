@@ -8,59 +8,57 @@ norm.gainLoss(dataset, userid = NULL, attr = NULL, rounds = NULL,
   refps = NULL, cost_ids = NULL, binded = T)
 }
 \arguments{
-\item{userid}{an integer that gives the information of which user the
-matrices should be calculated.}
+\item{refps}{a list of numeric vectors, one for each user. Reference Points:
+each point corresponds to one attribute, therefore the amount of attributes
+and of refps entered, should be equal. Default assumes the refps as the
+default values of the initial product configuration for each user. You may
+fully or partially enter your own reference points, check below for more
+info.}
 
-\item{attr}{attributes IDs, vector of integer numbers corresponding to the
-attributes you desire to use; attr are assumed to be 1-indexed.}
-
-\item{rounds}{integer vector. Which steps of the configuration process should
-be shown? See Details.}
-
-\item{refps}{numeric vector. Reference Points: each point corresponds to one
-attribute, i.e. each attribute has only one aspiration level. Default
-setting assumes the aspiration levels as the default values of the initial
-product configuration for each user.}
-
-\item{cost_ids}{argument used to convert selected cost attributes into
-benefit attributes. Integer vector.}
-
-\item{data}{data.frame with the user generated data from a product
-configurator. Please see \code{decision_matrix} for specifications of the
-data.frame.}
+\item{binded}{logical - Should the gain and loss matrices be outputed in a
+binded format or separately? Default is true, which returns a single matrix
+for each user.}
 }
 \value{
-normalized gain and loss matrices for a specific user.
+a list - of normalized gain and loss matrices for each user.
 }
 \description{
-Returns a list with two elements one is the normalized $ngain matrix and the
-second one is a normalized $nloss matrix. There is an internal discussion
-about whether a matrix with one row or round should be normalized, which is
-not in the paper we based our calculations from. Up until this version, the
-function normalizes every gain and loss matrices that it gets. For what this
-means please see details.
+Returns a list with two elements one is the normalized \code{$gain} matrix
+and the second one is a normalized \code{$loss} matrix [1]. It calculates
+both matrices separately, binds them together with \code{rbind} and
+normalizes both according to the largest value in each column, including
+values of both matrices. The output style can be changed throught the
+\code{binded} argument. Rows and columns are named.
 }
 \details{
 If you want to know more details about each parameter, look at
-\code{gain_matrix loss_matrix decision_matrix}.
+  \code{\link{gainMatrix}}, \code{\link{lossMatrix}} or
+  \code{\link{decisionMatrix}}.
 
-The function normalizes both gain and loss matrices independently on the
-amount of rows, for nrow > 1 this works as expected. The problem arises when
-the matrices have only one row, i.e. one round. This results in normalized
-matrices which can only contain 0 or 1 as a result, since a positive gain in
-one specific attribute means a 0 in losses for the same attribute in the loss
-matrix. Therefore if a gain is bigger than one, when normalizing it ends up
-being 1 (gain) or -1 (loss) which loses information about the magnitude of
-the gain and loss, respectively. Definitely a point to be discussed and
-improved. Please refer to ...p2.
+  The function normalizes both gain and loss matrices independently on the
+  amount of rows, for nrow > 1 this works as expected. The problem arises
+  when the matrices have only one row, i.e. one round. This results in
+  normalized matrices which can only contain 0 or 1 as a result, since a
+  positive gain in one specific attribute means a 0 in losses for the same
+  attribute in the loss matrix. Therefore if a gain is bigger than one, when
+  normalizing it ends up being 1 (gain) or -1 (loss) which loses information
+  about the magnitude of the gain and loss, respectively. Definitely a point
+  to be discussed and improved. Please refer to ...p2.
 
-This function is vectorialized in the \code{userid} argument.
+  This function is vectorialized in the \code{userid} argument.
 }
 \examples{
-norm_g_l_matrices(pc_config_data, 11)
-norm_g_l_matrices(my_data, userid = 11, result_type = "cbind")
-norm_g_l_matrices(monitor_data, 50, rounds = "last", refps = c(0.1,0.3,0.4,0.5), cost_ids = 3)
-norm_g_l_matrices(data1, 8, attr = 1)
+norm.gainLoss(pc_config_data, 11)
+norm.gainLoss(pc_config_data, c(11,12,13,14,15,16,17,18))
+norm.gainLoss(myData, 9, rounds=c(1,2,3))
+norm.gainLoss(cam4, userid=20:30, refps=c(1.5,1.5,1.5,1.5), rounds="all", binded=F)
+norm.gainLoss(data1, 8:16, attr = 1)
 
+}
+\references{
+[1] Fan, Z. P., Zhang, X., Chen, F. D., & Liu, Y. (2013).
+  Multiple attribute decision making considering aspiration-levels: A method
+  based on prospect theory. Computers & Industrial Engineering, 65(2),
+  341-350.
 }
 

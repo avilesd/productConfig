@@ -8,82 +8,75 @@ lossMatrix(dataset, userid = NULL, attr = NULL, rounds = NULL,
   refps = NULL, cost_ids = NULL)
 }
 \arguments{
-\item{userid}{an integer that gives the information of which user the matrix
-should be calculated.}
-
-\item{attr}{attributes IDs, vector of integer numbers corresponding to the
-attributes you desire to use; attr are assumed to be 1-indexed.}
-
-\item{rounds}{integer vector. Which steps of the configuration process should
-be shown? See Details.}
-
-\item{refps}{numeric vector. Reference Points: each point corresponds to one
-attribute, i.e. each attribute has only one aspiration level. Default
-setting assumes the aspiration levels as the default values of the initial
-product configuration for each user.}
-
-\item{cost_ids}{argument used to convert selected cost attributes into
-benefit attributes. Integer vector.}
-
-\item{data}{data.frame with the user generated data from a product
-configurator. Please see \code{decision_matrix} for specifications of the
-data.frame.}
+\item{refps}{a list of numeric vectors, one for each user. Reference Points:
+each point corresponds to one attribute, therefore the amount of attributes
+and of refps entered, should be equal. Default assumes the refps as the
+default values of the initial product configuration for each user. You may
+fully or partially enter your own reference points, check below for more
+info.}
 }
 \value{
-a loss matrix for a specific user.
+a list of loss matrices, one for each user.
 }
 \description{
-Creates the Loss matrix parting from a decision matrix and a vector
-containing the reference points (aspiration-levels). We based our
-calculations for gains and losses from a scientific paper, please see source
-and references.
+Creates the Loss matrix parting from a decision matrix and a vector containing
+the reference points (typically the status-quo). A loss represents a positive
+difference between a given value in the decision matrix and its corresponding
+reference point [1,2]. This functions is intended to use only for single
+referene point theories, not for multiple reference point approaches. For the
+latter, refer to \code{\link{overallDRP}}, and \code{\link{overallTRP}}.
 }
 \details{
-General: The loss_matrix with ncol = number of attributes you
-selected or all(default) and nrow= number of rounds you selected or the first
-and last(default) for a selected user.
+The returned lossMatrix has: ncol = number of attributes you selected
+ or all(default) and nrow= number of rounds you selected or the first and
+ last(default) for a selected user. Results are unnamed.
 
-\code{data} We assume the input data.frame has following columns usid = User
-IDs, round = integers indicating which round the user is in (0-index works
-best for 'round'), atid = integer column for referring the attribute ID (1
-indexed), selected = numeric value of the attribute for a specific, given
-round, selectable = amount of options the user can chose at a given round,
-with the current configuration. This is a necessary parameter.
+ \code{dataset} We assume the input data.frame has following columns usid =
+ User IDs, round = integers indicating which round the user is in (0-index
+ works best for 'round'), atid = integer column for referring the attribute
+ ID (1 indexed), selected = numeric value of the attribute for a specific,
+ given round, selectable = amount of options the user can chose at a given
+ round, with the current configuration. This is a necessary parameter.
 
-\code{userid} is a necessary parameter, without it you'll get a warning.
-Default is NULL.
+ \code{userid} is a necessary parameter, without it you'll get a warning.
+ Default is NULL.
 
-\code{attr} Default calculates with all attributes. Attributes are
-automatically read from provided table, it is important you always provide
-the complete dataset so that the package functions properly. Moreover the
-attribute will be sorted in ascending order, i.e. if you input attr=
-c(1,3,2), the decision matrix resulting will display the columns in order:
-attr1 attr2 attr3.
+ \code{attr} Default calculates with all attributes. Attributes are
+ automatically read from provided table, it is important you always provide
+ the complete dataset so that the package functions properly. Moreover the
+ attributes will not be sorted. Output columns are returned in the ordered
+ they were inputed.
 
-\code{rounds} Default calculates first round(initia product config) and last
-round of the session. Default calculates with first and last attributes
-(initial and final product configuration). To choose all give "all" as
-argument for rounds, see example. "first" and "last" are also possible
-argument values. You can give a vector of arbitrarily chosen rounds as well.
+ \code{rounds} If you need to compute different rounds for each user you
+ enter, this argument accepts a list of integer vectors indicating which
+ rounds should be used for each user. The function does not read names, it
+ works in the order the list was given.
 
-\code{refps} If you only want to see the results for one attribute you may
-enter only a couple of reference points but you have to tell the function
-which attributes you want to use those referene points for. So the amount of
-attr and of refps should be the same. Moreover the functions always orders de
-attr, so be sure to input the reference point also in an ascending order
-corresponding to their attributes. (refps will not be ordered)
+ \code{refps} If you only want to see the results for one attribute you may
+ enter only a couple of reference points but you have to tell the function
+ which attributes you want to use those referene points for. So the amount of
+ attr and of refps should be the same. Moreover the functions always orders
+ de attr, so be sure to input the reference point also in an ascending order
+ corresponding to their attributes. (refps will not be ordered)
 
-\code{cost_ids} Default assumes all your attributes are of benefit type, that
-is a higher value in the attribute means the user is better of than with a
-lower value. If one or more of the attributes in your data is of cost type,
-e.g. price, so that lower is better then you should identify this attributes
-as such, providing their id, they'll be converted to benefit type (higher
-amount is better).
+ \code{cost_ids} If \code{attr} and \code{cost_ids} differ, the functions
+ will first compute the entire decision matrix using the \code{cost_ids} and
+ only in the end will it 'subset' the result to the desired \code{attr}.
 }
 \examples{
-loss_matrix(pc_config_data, 11)
-loss_matrix(my_data, userid = 11, attr = c(1,3,5))
-loss_matrix(keyboard_data, 60, rounds = "all", refps = c(1,3,4,0), cost_ids = 4)
-loss_matrix(data1, 2, rounds = "last", attr = 1)
+#Not Runnable yet
+lossMatrix(pc_config_data, 9:11)
+lossMatrix(my_data, userid = 11, rounds="all")
+lossMatrix(keyboard_data, 60, refps = c(1,3,4,0), cost_ids = 4)
+lossMatrix(data1, 2, rounds = "last", attr = 1, cost_ids=1)
+}
+\references{
+[1] Fan, Z. P., Zhang, X., Chen, F. D., & Liu, Y. (2013). Multiple
+ attribute decision making considering aspiration-levels: A method based on
+ prospect theory. Computers & Industrial Engineering, 65(2), 341-350.
+
+ [2]Kahneman, D., & Tversky, A. (1979). Prospect theory: An analysis of
+ decision under risk. Econometrica: Journal of the Econometric Society,
+ 263-291.
 }
 

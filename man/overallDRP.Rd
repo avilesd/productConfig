@@ -29,7 +29,8 @@ benefit attributes. Integer vector.}
 
 \item{weight}{numeric vector. Represents the importance or relevance that an
 attribute has and the weight it should have in the calculation of the
-prospect value.}
+prospect value. Alternatively, you can enter a list of numeric vectors, each
+element of the list corresponding to one user in \code{userid}.}
 
 \item{weightFUN}{indicated which weight function should be used to calculate
 the weight vector, the options are \code{"differenceToIdeal", "entropy",
@@ -65,6 +66,52 @@ decision weights, which can be calculated in this package using three
 functions. See Details of weight attribute. Its equivalent function for
 prospect theory and the tri-reference point theory are
 \code{\link{overallPV}} and \code{\link{overallTRP}}.
+}
+\details{
+In the context of data stemming from product configurators, the highest
+overall value returned  by this function, means that specific product
+configuration represented the highest value for the user. This depends mainly
+on three important factors: (1) What theoretical framework you choose to use
+(PT, DRP, TRP), (2) which decision weights you assign to each attribute, and
+(3) the reference point(s) you input.
+
+This function is vectorized in the \code{userid} parameter.
+
+  \code{dataset} We assume the input data.frame has following columns usid =
+  User IDs, round = integers indicating which round the user is in (0-index
+  works best for 'round'), atid = integer column for referring the attribute
+  ID (1 indexed), selected = numeric value of the attribute for a specific,
+  given round, selectable = amount of options the user can chose at a given
+  round, with the current configuration. This is a necessary parameter.
+
+  \code{userid} is a necessary parameter.
+
+  \code{rounds} Default calculates with first and last rounds (initial and
+  final product configuration). You can give a vector of arbitrarily chosen
+  rounds as well.
+
+  \code{cost_ids} Default assumes all your attributes are of benefit type,
+  that is a higher value in the attribute means the user is better off than
+  with a lower value. If one or more of the attributes in your data is of
+  cost type, e.g. price, so that lower is better then you should identify
+  this attributes as such, providing their id, they'll be converted to
+  benefit type (higher amount is better).
+
+  \code{weight} default orders each attribute a weight <= 1 according to the
+  the weight function \code{\link{differenceToIdeal}}. Ideally the sum of all
+  weights equals 1. The three weighting functions are:
+  \code{\link{weight.differenceToIdeal, weight.entropy,
+  weight.highAndStandard}}
+
+  \code{delta} [1] Initially called alpha, we chose delta to avoid confusion
+  with prospect theory's parameter for concavity, such as seen in
+  \code{\link{overallPV}}
+
+  Note: When converting a cost attribute to a benefit attribute its two
+  reference points change as well, enter the unconverted dual.refps, the
+  function transforms them automatically when it detects a \code{cost_ids !=
+  NULL}. Also, since for cost attributes, lower is better, unconverted they
+  should follow (G < SQ).
 }
 \examples{
 #Not runnable yet

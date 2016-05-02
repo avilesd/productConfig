@@ -153,7 +153,7 @@ overallPV <- function (dataset, userid = NULL, attr = NULL, rounds = NULL, refps
 #'   the weight function \code{\link{differenceToIdeal}}. Ideally the sum of all
 #'   weights equals 1. The three weighting functions are:
 #'   \code{\link{weight.differenceToIdeal, weight.entropy,
-#'   weight.highAndStandard}}}}
+#'   weight.highAndStandard}}
 #'
 #'   \code{delta} [1] Initially called alpha, we chose delta to avoid confusion
 #'   with prospect theory's parameter for concavity, such as seen in
@@ -259,7 +259,7 @@ overallTRP <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps
 #'   the weight function \code{\link{differenceToIdeal}}. Ideally the sum of all
 #'   weights equals 1. The three weighting functions are:
 #'   \code{\link{weight.differenceToIdeal, weight.entropy,
-#'   weight.highAndStandard}}}}
+#'   weight.highAndStandard}}
 #'
 #'   \code{delta} [1] Initially called alpha, we chose delta to avoid confusion
 #'   with prospect theory's parameter for concavity, such as seen in
