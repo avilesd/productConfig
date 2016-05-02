@@ -27,7 +27,8 @@
 #'
 #'@param weight numeric vector. Represents the importance or relevance that an
 #'  attribute has and the weight it should have in the calculation of the
-#'  prospect value.
+#'  prospect value. Alternatively, you can enter a list of numeric vectors, each
+#'  element of the list corresponding to one user in \code{userid}.
 #'
 #'@param weightFUN indicated which weight function should be used to calculate
 #'  the weight vector, the options are \code{"differenceToIdeal", "entropy",

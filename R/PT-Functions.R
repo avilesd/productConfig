@@ -1,5 +1,47 @@
-#########
-# Do not delete this function in vectorialize, could still be useful
+#' Calculate Value Matrix
+#'
+#' Given both normalized gain and loss matrices, this function calculates the
+#' value matrix with the value function from Prospect Theory (Reference[1]). It
+#' differs from other functions in this package in that it does not take all
+#' parameters into account. Yo need to pre-calculate the matrices. See Details.
+#'
+#' @param ngain normalized gain matrix
+#'
+#' @param nloss normalized loss matrix
+#'
+#' @param alpha numeric between [0, 1]. Determines the concativity of the value
+#'   function as given by the value function[1].
+#'
+#' @param beta numeric between [0, 1]. Determines the convexity of the value
+#'   function as given by the value function[1]
+#'
+#' @param lambda lambda > 1. Parameter of loss aversion for the value function
+#'   as given by the value function[1].
+#'
+#' @details You need to pre-calculate the normalized gain and loss matrices, for
+#'   example with \code{\link{norm_g_l_matrices}} and give them as a parameter.
+#'   This is one of the few functions of this package that do not allow you to
+#'   give the raw data from your product Configurator, but rather calculate a
+#'   previous result.
+#'
+#' @return the value matrix
+#'
+#' @seealso \code{\link{pvMatrix}}
+#'
+#' @references [1] Kahneman, D., & Tversky, A. (1979). Prospect theory: An
+#'   analysis of decision under risk. Econometrica: Journal of the Econometric
+#'   Society, 263-291.
+#'
+#'   [2] Fan, Z. P., Zhang, X., Chen, F. D., & Liu, Y. (2013). Multiple
+#'   attribute decision making considering aspiration-levels: A method based on
+#'   prospect theory. Computers & Industrial Engineering, 65(2), 341-350.
+#'
+#' @examples
+#' prospect_value_matrix_extend(my_ngain, my_nloss)
+#' prospect_value_matrix_extend(ngain = matrix1, nloss = matrix2, alpha = 0.95)
+#'
+#' @export
+
 prospect_value_matrix_extend <- function(ngain = NULL, nloss = NULL, alpha = 0.88, beta = 0.88, lambda = 2.25)  {
   if((is.null(ngain) || is.null(nloss)) ) {
     stop("You need to provide both normalized gain and loss matrices. Helpful functions: norm_g_l_matrices, gain_matrix,
@@ -66,9 +108,9 @@ pvMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps =
 #'
 #' @param ngain_ij gain value corresponding to a specific attribute (j) and round (i)
 #' @param nloss_ij loss value corresponding to the same specific attribute and round as \code{ngain_ij}
-#' @param alpha parameter for diminishing sensitivity in the gain domain. Default value = 0.88
-#' @param beta parameter for diminishing sensitivity in the loss domain. Default value = 0.88
-#' @param lambda parameter for loss aversion. Default value = 2.25
+#' @param alpha parameter for diminishing sensitivity in the gain domain. Default value = 0.88. Usual values are in the (0,1) interval.
+#' @param beta parameter for diminishing sensitivity in the loss domain. Default value = 0.88. Usual values are in the (0,1) interval.
+#' @param lambda parameter for loss aversion. Default value = 2.25. Values for \code{lambda} should be > 1.
 #'
 #' @return the output of the value function [1]
 #'
@@ -310,7 +352,7 @@ gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps =
   lossList <- lossMatrix(dataset, userid, attr, rounds, refps, cost_ids) # and here
 
   desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
-  refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)
+  #refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)
 
   tMatrixList <- lapply(desList, t)
 
@@ -398,8 +440,8 @@ norm.gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, re
 
   gainList <- lapply(gainList, function(temp1, temp2) {colnames(temp1) <- temp2; temp1}, namesOfCols)
   gainList <- mapply(auxiliaryNameRows, gainList, namesOfRows, SIMPLIFY = F)
-  lossList <- lapply(gainList, function(temp1, temp2) {colnames(temp1) <- temp2; temp1}, namesOfCols)
-  lossList <- mapply(auxiliaryNameRows, gainList, namesOfRows, SIMPLIFY = F)
+  lossList <- lapply(lossList, function(temp1, temp2) {colnames(temp1) <- temp2; temp1}, namesOfCols)
+  lossList <- mapply(auxiliaryNameRows, lossList, namesOfRows, SIMPLIFY = F)
 
   bindedUnnorm <- mapply(rbind, gainList, lossList, SIMPLIFY = F)
 
