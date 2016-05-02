@@ -2,88 +2,98 @@
 % Please edit documentation in R/DecisionMatrix.R
 \name{decisionMatrix}
 \alias{decisionMatrix}
-\title{Create the decision matrix}
+\title{Creates the decision matrix}
 \usage{
 decisionMatrix(dataset, userid = NULL, attr = NULL, rounds = NULL,
   cost_ids = NULL)
 }
 \arguments{
-\item{userid}{User ID: an integer that gives the information of which user
-the matrix should be calculated}
+\item{dataset}{a \code{data.frame} with the user generated data from a
+product configurator. See Details of \code{\link{decisionMatrix}} for more
+information about which data should included in this argument.}
+
+\item{userid}{an integer vector indicating for which user the output of this
+function should be calculated. This functions is vectorised in this
+argument, i.e. you may enter more userIDs simultaneously.}
 
 \item{attr}{attribute IDs, vector of integer numbers corresponding to the
-attributes you desire to use.}
+attributes (columns) you desire to use.}
 
-\item{rounds}{integer vector. Which steps of the configuration process should
-be shown? See Details.}
+\item{rounds}{integer vector, text option or a list of integer vectors. Which
+steps of the configuration process should be shown? Defaults are first and
+last step. Text options are \code{all, first, last}. Alternatively, a
+vector of arbitrarily chosen rounds can be entered as well.}
 
 \item{cost_ids}{argument used to convert selected cost attributes into
-benefit attributes. Integer vector.}
-
-\item{data}{data.frame with the user generated data from a product
-configurator. Please see Details for specifications of the data.frame.}
+benefit attributes. Integer vector. Cost type attributes have the
+characteristic, that a lower value means the user is better off than with a
+higher value. E.g. price is often considered a cost type attribute. Should be equal to
+\code{attr} input or a subset of it.}
 }
 \value{
-A decision matrix for selected user with rows.length =
+A decision matrix for selected users with rows.length =
   length(\code{rounds}) and column.length = length(\code{attr}). Colnames =
   attrIDs and rownames = chosen rounds.
 }
 \description{
-Creates a decision matrix, which is necessary to create the 'Gains' and
-'Losses' matrices thereafter. The decision matrix is basically a
-representation of the interaction of one user with the product configurator
-through each step.
+The decision matrix is the basic object for analyzing data from product
+configurators (pC). The decision matrix is basically a representation of the
+interaction of one user with a product configurator through each step. Each
+columns stands for one attribute of the pC, i.e. for one specific product
+setting. Each row represents different configurations of a product. The
+rounds vary between users, since they are generated each time the user
+interacts with the pC. See Details for more info.
 }
 \details{
 \code{data} We assume the input data.frame has following columns
-usid = User IDs, round = integers indicating which round the user is in
-(0-index works best for 'round'), atid = integer column for referring the
-attribute ID (1 indexed), selected = numeric value of the attribute for a
-specific, given round, selectable = amount of options the user can chose at a
-given round, with the current configuration. This is a necessary parameter.
+  usid = User IDs, round = integers indicating which round the user is in
+  (0-index works best for 'round'), atid = integer column for referring the
+  attribute ID (1 indexed), selected = numeric value of the attribute for a
+  specific, given round, selectable = amount of options the user can chose at
+  a given round, with the current configuration. This is a necessary
+  parameter.
 
-\code{userid} is a necessary parameter, without it you'll get a warning.
-Default is NULL.
+  \code{userid} is a necessary parameter, without it you'll get a warning.
+  Default is NULL.
 
-\code{attr} Default calculates with all attributes. Attributes are
-automatically read from provided table, it is important you always provide
-the complete dataset so that the package functions properly. Moreover the
-attribute will be sorted in ascending order, i.e. if you input attr=
-c(1,3,2), the decision matrix resulting will display the columns in order:
-attr1 attr2 attr3.
+  \code{attr} Default calculates with all attributes. Attributes are
+  automatically read from provided table, it is important you always provide
+  the complete dataset so that the package functions properly. Moreover the
+  attributes will not be sorted. Output columns are returned in the ordered
+  they were inputed.
 
-\code{rounds} Default calculates first round(initia product config) and last
-round of the session. Default calculates with first and last attributes
-(initial and final product configuration). To choose all give "all" as
-argument for rounds, see example. "first" and "last" are also possible
-argument values. You can give a vector of arbitrarily chosen rounds as well.
+  \code{rounds} If you need to compute different rounds for each user you enter, this
+  argument accepts a list of integer vectors indicating which rounds should be used for each user.
+  The function does not read names, it works in the order the list was given.
 
-\code{cost_ids} Default assumes all your attributes are of benefit type, that
-is a higher value in the attribute means the user is better of than with a
-lower value. If one or more of the attributes in your data is of cost type,
-e.g. price, so that lower is better then you should identify this attributes
-as such, providing their id, they'll be converted to benefit type (higher
-amount is better).
+  \code{cost_ids} If \code{attr} and \code{cost_ids} differ, the functions will first
+  compute the entire decision matrix using the \code{cost_ids} and only in the end will
+  it 'subset' the result to the desired \code{attr}.
 
-General: Through the matrix you can observe the value of each attribute at
-any given moment or round. The number of columns of the matrix will always be
-the same for all users. The number of rows depends on how much clicks or
-rounds the user made in the product configurator. At the very least, you will
-get always'round 0' meaning the initial, default configuration and 'round 1'
-the last or final configuration, this is assuming the user just clicked once
-or not at all.
+  efault assumes all your attributes are of benefit type,
+  that is a higher value in the attribute means the user is better of than
+  with a lower value. If one or more of the attributes in your data is of
+  cost type, e.g. price, so that lower is better then you should identify
+  this attributes as such, providing their ID, they'll be converted to
+  benefit type (higher amount is better).
 
-This function is for one user only, for more or all users see
-\code{\link{powerful_function}}
+  General: Through the matrix you can observe the value of each attribute at
+  any given moment or round. The number of columns of the matrix will always
+  be the same for all users. The number of rows depends on how much clicks or
+  rounds the user made in the product configurator. At the very least, you
+  will always get 'round 0' meaning the initial, default configuration and
+  'round 1' the last or final configuration, this is assuming the user just
+  clicked once or not at all.
 }
 \examples{
-decision_matrix(camera2_config_data, 11) # Necessary arguments dataset and userid
-decision_matrix(my_data, userid = 11, attr = c(1,3,5))
-decision_matrix(another_data, userid = 80, rounds = c(1,2,3,7,8,9))
+#Not Runnable yet
+decisionMatrix(camera2_config_data, 11) # Necessary arguments dataset and userid
+decisionMatrix(my_data, userid = 11:15, attr = c(1,3,5))
+decisionMatrix(another_data, userid = c(80,90,100,110), rounds = c(1,2,3,7,8,9))
 
-decision_matrix(data2, 2, rounds = "all")
-decision_matrix(data2, 120, rounds = "first", cost_ids = 1)
-decision_matrix(data1, userid = 5, attr = c(1,4), rounds = "all", cost_ids="c(1,2)") #All possible parameters are in use here.
+decisionMatrix(data2, 2:200, rounds = "all")
+decisionMatrix(data2, 120, rounds = "first", cost_ids = 1)
+decisionMatrix(data1, userid = 5, attr = c(1,4), rounds = "all", cost_ids="c(1,2)") #All possible parameters are in use here.
 
 }
 \references{
