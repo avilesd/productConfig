@@ -18,7 +18,37 @@ prospect_value_matrix_extend <- function(ngain = NULL, nloss = NULL, alpha = 0.8
   value_matrix
   }
 
-#Added function pvMatrix_extend to input ngain and nloss was deprecated, but still accessible.
+#' Calcultes the Value Matrix
+#'
+#' According to the parameters, it first calculates the normalized gain and loss
+#' matrices. Using \code{\link{prospect_value_matrix_extend}} it calculates the
+#' value matrix using the value function given by Tversky & Kahnemann(1992)[1].
+#'
+#' @inheritParams referencePoints
+#' @inheritParams pvalue_fun
+#'
+#' @details \code{dataset} We assume the input data.frame has following columns
+#'   usid = User IDs, round = integers indicating which round the user is in
+#'   (0-index works best for 'round'), atid = integer column for referring the
+#'   attribute ID (1 indexed), selected = numeric value of the attribute for a
+#'   specific, given round, selectable = amount of options the user can chose at
+#'   a given round, with the current configuration. This is a necessary
+#'   parameter.
+#'
+#'   \code{userid} is a necessary parameter.
+#'
+#'   For more details on the other parameters, please refer to
+#'   \code{\link{decisionMatrix}}.
+#'
+#' @return the value matrix
+#'
+#' @examples
+#' pvMatrix(myData, 9:10, rounds="all")
+#' pvMatrix(data_pc, 100, weight=c(0.1,0.4,0.3,0.2))
+#' pvMatrix(full_data, userid = 25 ,alpha = 0.95, beta = 0.78)
+#'
+#' @export
+
 pvMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL,
                      alpha = 0.88, beta = 0.88, lambda = 2.25) {
   normalizedgainLoss <- norm.gainLoss(dataset, userid, attr, rounds, refps, cost_ids, binded = F)
@@ -26,7 +56,36 @@ pvMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps =
   pvMatrixList
 }
 
-# Still used in vectorialised. Auxiliary function, not necessary to document right now.
+#' Implements prospect theory's value function
+#'
+#' Given gains and losses relative to a reference points, we use prospect
+#' theory's value function to calculate the value matrix[1]. We use default values for the
+#' parameters of diminishing sensitity and loss aversion, but this can be
+#' inputed differently. Calculates the value function for one value at a time. The function
+#' is used to calculate the value matrix [2] in \code{\link{pvMatrix}}.
+#'
+#' @param ngain_ij gain value corresponding to a specific attribute (j) and round (i)
+#' @param nloss_ij loss value corresponding to the same specific attribute and round as \code{ngain_ij}
+#' @param alpha parameter for diminishing sensitivity in the gain domain. Default value = 0.88
+#' @param beta parameter for diminishing sensitivity in the loss domain. Default value = 0.88
+#' @param lambda parameter for loss aversion. Default value = 2.25
+#'
+#' @return the output of the value function [1]
+#'
+#' @references [1] Kahneman, D., & Tversky, A. (1979). Prospect theory: An
+#'   analysis of decision under risk. Econometrica: Journal of the Econometric
+#'   Society, 263-291.
+#'
+#'   [2] Fan, Z. P., Zhang, X., Chen, F. D., & Liu, Y. (2013). Multiple
+#'   attribute decision making considering aspiration-levels: A method based on
+#'   prospect theory. Computers & Industrial Engineering, 65(2), 341-350.
+#'
+#' @examples
+#' pvalue_fun(3, 0)
+#' pvalue_fun(0, -1.5, alpha =0.75, lambda=3)
+#'
+#' @export
+
 pvalue_fun <- function(ngain_ij, nloss_ij, alpha = 0.88, beta = 0.88, lambda = 2.25) {
   result <- ((ngain_ij)^alpha) + (-lambda*((-nloss_ij)^beta))
   result
@@ -251,7 +310,7 @@ gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps =
   lossList <- lossMatrix(dataset, userid, attr, rounds, refps, cost_ids) # and here
 
   desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
-  #refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)
+  refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)
 
   tMatrixList <- lapply(desList, t)
 

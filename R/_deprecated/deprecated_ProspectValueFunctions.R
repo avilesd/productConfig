@@ -136,7 +136,7 @@ overall_pv <- function (dataset, userid = NULL, attr = NULL, rounds = NULL, refp
 #' @family prospect value functions
 #'
 #' @export
-#'
+
 pvalue_matrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL,
                           alpha = 0.88, beta = 0.88, lambda = 2.25) {
   ngain <- norm_g_l_matrices(dataset, userid, attr, rounds, refps, cost_ids)$ngain
