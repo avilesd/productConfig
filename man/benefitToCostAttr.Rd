@@ -7,10 +7,20 @@
 benefitToCostAttr(dataset, aList, cost_ids = NULL)
 }
 \arguments{
+\item{dataset}{a \code{data.frame} with the user generated data from a
+product configurator. See Details of \code{\link{decisionMatrix}} for more
+information about which data should included in this argument.}
+
 \item{aList}{a List with decision matrices as elements. Within each decision matrix, the
 columns are attributes from a product configurator. Using \code{cost_ids} the cost type
 attribtues are identified and transformed from benefit to cost attributes. Cost attributes are
 product characteristics for which a lower value means a higher 'utility', e.g. price.}
+
+\item{cost_ids}{argument used to convert selected cost attributes into
+benefit attributes. Integer vector. Cost type attributes have the
+characteristic, that a lower value means the user is better off than with a
+higher value. E.g. price is often considered a cost type attribute. Should be equal to
+\code{attr} input or a subset of it.}
 }
 \value{
 the same list as \code{aList} with converted cost attribtues

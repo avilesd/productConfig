@@ -14,6 +14,7 @@
 #' (PT, DRP, TRP), (2) which decision weights you assign to each attribute, and
 #' (3) the reference point(s) you input.
 #'
+#' @inheritParams  decisionMatrix
 #' @inheritParams gainMatrix
 #' @inheritParams getAttrWeights
 #'
@@ -123,6 +124,18 @@ overallPV <- function (dataset, userid = NULL, attr = NULL, rounds = NULL, refps
 #'
 #' @inheritParams trpValueMatrix
 #' @inheritParams getAttrWeights
+#' @inheritParams weight.differenceToIdeal
+#' @inheritParams trp.valueMatrix
+#'
+#' @param refps a list of numeric vectors, one for each user. Reference Points:
+#'   each point corresponds to one attribute, therefore the amount of attributes
+#'   and of refps entered, should be equal. Default assumes the refps as the
+#'   default values of the initial product configuration for each user. You may
+#'   fully or partially enter your own reference points, check below for more
+#'   info.
+#' @param beta(s) numeric arguments representing the psychological impact of an
+#'   outcome equaling failer (_f), loss (_l), gain (_g) or success (_s). Default
+#'   values are taken from our reference paper \code{(5,1,1,3)}.
 #'
 #' @seealso \code{\link{decisionMatrix, overallTRP, overallDRP,
 #'   weight.differenceToIdeal, weight.entropy, weight.highAndStandard}}
@@ -229,6 +242,14 @@ overallTRP <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps
 #'
 #' @inheritParams dualValueMatrix
 #' @inheritParams getAttrWeights
+#' @inheritParams dualValueMatrix.oneAttr
+#'
+#' @param refps a list of numeric vectors, one for each user. Reference Points:
+#'   each point corresponds to one attribute, therefore the amount of attributes
+#'   and of refps entered, should be equal. Default assumes the refps as the
+#'   default values of the initial product configuration for each user. You may
+#'   fully or partially enter your own reference points, check below for more
+#'   info.
 #'
 #' @seealso \code{\link{decisionMatrix, overallTRP, overallDRP,
 #'   weight.differenceToIdeal, weight.entropy, weight.highAndStandard}}
@@ -293,6 +314,7 @@ overallTRP <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps
 #'   prospect theory. Computers & Industrial Engineering, 65(2), 341-350.
 #'
 #' @export
+
 
 overallDRP <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, cost_ids = NULL, weight = NULL, weightFUN = "differenceToIdeal",
                         dual.refps = c(sq=NA, g=NA), lambda = 2.25, delta = 0.8, consumption_fun = NULL, gamma) {

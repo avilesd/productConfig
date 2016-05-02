@@ -54,6 +54,13 @@ at NULL.}
 \item{gamma}{numeric and between 0 and 1. It is a parameter used for the function
 \code{\link{weight.highAndStandard}} and
 \code{\link{highAndStandard}}, please the former to know its use.}
+
+\item{refps}{a list of numeric vectors, one for each user. Reference Points:
+each point corresponds to one attribute, therefore the amount of attributes
+and of refps entered, should be equal. Default assumes the refps as the
+default values of the initial product configuration for each user. You may
+fully or partially enter your own reference points, check below for more
+info.}
 }
 \value{
 overall prospect values for each alternative/row

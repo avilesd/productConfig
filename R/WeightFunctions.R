@@ -599,6 +599,7 @@ highestValue <- function(normalizedMatrix) {
 #' function. It acts also as a weight since the final weight vector is given by
 #' \code{result = gamma * weight.highestValue + (1-gamma) * weight.standard}
 #'
+#' @inheritParams decisionMatrix
 #' @inheritParams getAttrWeights
 #'
 #' @return a list of weight vectors (one per user)

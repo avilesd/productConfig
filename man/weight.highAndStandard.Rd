@@ -8,29 +8,27 @@ weight.highAndStandard(dataset, userid = NULL, attr = NULL,
   rounds = "all", cost_ids = NULL, gamma = 0.5)
 }
 \arguments{
-\item{dataset}{data.frame with the user generated data from a product
-configurator. See \code{decisionMatrix} for specifications of the dataset.}
+\item{dataset}{a \code{data.frame} with the user generated data from a
+product configurator. See Details of \code{\link{decisionMatrix}} for more
+information about which data should included in this argument.}
 
-\item{userid}{a vector of integers that gives the information of which users
-the matrix should be calculated. Vectorised.}
+\item{userid}{an integer vector indicating for which user the output of this
+function should be calculated. This functions is vectorised in this
+argument, i.e. you may enter more userIDs simultaneously.}
 
-\item{attr}{attributes IDs, vector of integer numbers corresponding to the
-  attributes you desire to use; attr are assumed to be 1-indexed. This
-  function will calculate with all attributes and do the subsetting a
-  posteriori.
+\item{attr}{attribute IDs, vector of integer numbers corresponding to the
+attributes (columns) you desire to use.}
 
-  If you want to get the weights for only two attributes you will have to
-  first use \code{\link{decisionMatrix}} and then pass it on to
-  \code{\link{normalize.altMethod}} and \code{\link{differenceToIdeal}}.}
+\item{rounds}{integer vector, text option or a list of integer vectors. Which
+steps of the configuration process should be shown? Defaults are first and
+last step. Text options are \code{all, first, last}. Alternatively, a
+vector of arbitrarily chosen rounds can be entered as well.}
 
-\item{rounds}{integer vector or text option. Which steps of the configuration
-process should be taken into account? Defaults are "all" in order to have
-more data to calculate with. If \code{"first"} or \code{"last"} are entered
-there will be only one rounds to gather data from, consequently all
-attribtues will have the same weight.}
-
-\item{cost_ids}{argument used to convert selected cost attributes into benefit
-attributes. Integer vector.}
+\item{cost_ids}{argument used to convert selected cost attributes into
+benefit attributes. Integer vector. Cost type attributes have the
+characteristic, that a lower value means the user is better off than with a
+higher value. E.g. price is often considered a cost type attribute. Should be equal to
+\code{attr} input or a subset of it.}
 
 \item{gamma}{numeric and between 0 and 1. It is a parameter used for the function
 \code{\link{weight.highAndStandard}} and

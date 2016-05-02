@@ -29,8 +29,8 @@ attributes (columns) you desire to use.}
 \item{cost_ids}{argument used to convert selected cost attributes into
 benefit attributes. Integer vector. Cost type attributes have the
 characteristic, that a lower value means the user is better off than with a
-higher value. E.g. price is often considered a cost type attribute. Should be equal to
-\code{attr} input or a subset of it.}
+higher value. E.g. price is often considered a cost type attribute. Should
+be equal to \code{attr} input or a subset of it.}
 
 \item{forceRefps}{logical, default value is \code{TRUE}. If values are given
   to \code{refps}, it forces the user to enter a value for all attributes,
@@ -42,6 +42,11 @@ higher value. E.g. price is often considered a cost type attribute. Should be eq
   Alternatively, you can set forceRefps and avoid given a value (NA or
   numeric) for each attribute. However, do this at your own risk, since the
   argument is intended for development only.}
+
+\item{rounds}{integer vector, text option or a list of integer vectors. Which
+steps of the configuration process should be shown? Defaults are first and
+last step. Text options are \code{all, first, last}. Alternatively, a
+vector of arbitrarily chosen rounds can be entered as well.}
 }
 \value{
 a list of numeric vectors representing a reference point for each

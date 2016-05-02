@@ -24,6 +24,13 @@ attributes you desire to use; attr are assumed to be 1-indexed.}
 process should be shown? Defaults are first and last step. Text options are
 \code{all, first, last}.}
 
+\item{refps}{a list of numeric vectors, one for each user. Reference Points:
+each point corresponds to one attribute, therefore the amount of attributes
+and of refps entered, should be equal. Default assumes the refps as the
+default values of the initial product configuration for each user. You may
+fully or partially enter your own reference points, check below for more
+info.}
+
 \item{cost_ids}{argument used to convert selected cost attributes into
 benefit attributes. Integer vector.}
 
@@ -36,9 +43,17 @@ element of the list corresponding to one user in \code{userid}.}
 the weight vector, the options are \code{"differenceToIdeal", "entropy",
 "highAndStandard", "standard"}. Default ist \code{differencetoIdeal}.}
 
+\item{tri.refps}{numeric matrix or vector - three numbers per attribute,
+indicating the minimum requirements, status-quo and the goals for a user
+(MR, SQ, G).}
+
 \item{gamma}{numeric and between 0 and 1. It is a parameter used for the function
 \code{\link{weight.highAndStandard}} and
 \code{\link{highAndStandard}}, please the former to know its use.}
+
+\item{beta(s)}{numeric arguments representing the psychological impact of an
+outcome equaling failer (_f), loss (_l), gain (_g) or success (_s). Default
+values are taken from our reference paper \code{(5,1,1,3)}.}
 }
 \value{
 overall prospect values for each alternative/row

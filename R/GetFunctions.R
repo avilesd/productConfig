@@ -239,7 +239,7 @@ getAttrValues <-function(dataset, attrid = NULL) {
 
 #' Converts benefit type attributes to cost type, within a list
 #'
-#' @inheritParams overallTRP
+#' @inheritParams decisionMatrix
 #' @param aList a List with decision matrices as elements. Within each decision matrix, the
 #' columns are attributes from a product configurator. Using \code{cost_ids} the cost type
 #' attribtues are identified and transformed from benefit to cost attributes. Cost attributes are

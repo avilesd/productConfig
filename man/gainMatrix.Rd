@@ -8,12 +8,34 @@ gainMatrix(dataset, userid = NULL, attr = NULL, rounds = NULL,
   refps = NULL, cost_ids = NULL)
 }
 \arguments{
+\item{dataset}{a \code{data.frame} with the user generated data from a
+product configurator. See Details of \code{\link{decisionMatrix}} for more
+information about which data should included in this argument.}
+
+\item{userid}{an integer vector indicating for which user the output of this
+function should be calculated. This functions is vectorised in this
+argument, i.e. you may enter more userIDs simultaneously.}
+
+\item{attr}{attribute IDs, vector of integer numbers corresponding to the
+attributes (columns) you desire to use.}
+
+\item{rounds}{integer vector, text option or a list of integer vectors. Which
+steps of the configuration process should be shown? Defaults are first and
+last step. Text options are \code{all, first, last}. Alternatively, a
+vector of arbitrarily chosen rounds can be entered as well.}
+
 \item{refps}{a list of numeric vectors, one for each user. Reference Points:
 each point corresponds to one attribute, therefore the amount of attributes
 and of refps entered, should be equal. Default assumes the refps as the
 default values of the initial product configuration for each user. You may
 fully or partially enter your own reference points, check below for more
 info.}
+
+\item{cost_ids}{argument used to convert selected cost attributes into
+benefit attributes. Integer vector. Cost type attributes have the
+characteristic, that a lower value means the user is better off than with a
+higher value. E.g. price is often considered a cost type attribute. Should
+be equal to \code{attr} input or a subset of it.}
 }
 \value{
 a list of gain matrices, one for each user.
