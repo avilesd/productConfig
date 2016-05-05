@@ -20,3 +20,7 @@ LazyData: true
 URL: https://github.com/avilesd/productConfig
 BugReports: https://github.com/avilesd/productConfig/issues
 RoxygenNote: 5.0.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
+Encoding: UTF-8

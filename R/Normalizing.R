@@ -94,9 +94,10 @@ normalize.altMethod <- function(aMatrix, attr, cost_ids = NULL) {
 #'
 #' @return a normalized matrix
 #'
-#' @references [1]Lotfi, F. H., & Fallahnejad, R. (2010). Imprecise Shannon’s
-#'   entropy and multi attribute decision making. Entropy, 12(1), 53-62. [2]
-#'   Fan, Z. P. (1996). Complicated multiple attribute decision making: theory
+#' @references [1]Lotfi, F. H., and Fallahnejad, R. (2010). Imprecise Shannons entropy and
+#'   multi attribute decision making. Entropy, 12(1), 53-62.
+#'
+#'   [2] Fan, Z. P. (1996). Complicated multiple attribute decision making: theory
 #'   and applications (Doctoral dissertation, Ph. D. Dissertation, North-eastern
 #'   University, Shenyang, PRC).
 #'

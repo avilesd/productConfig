@@ -10,14 +10,6 @@ diego_pv_extend <- function(g_or_l_matrix, weight = NULL, wfrom_dataset) {
   }
   result
 }
-#'Estas eran mas que todo para el Poster, para poder ensenar los graficos.
-#'Enfocarse mas en las weight_functions, mira el papel, dejar la value function
-#'como esta y documentarla, esto solo como extra, ignore o play.
-#'
-#'as dos funciones solo son para poder sacar la value function mas simple,
-#'simple weighted additive function, gain_matrix sin normalizar y multiplicarlo
-#'por los pesos, no es igual que el paper pero podria ser util, decide quickly.
-#'
 diego_pv <- function (dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL,  weight = NULL,
                       gainm = TRUE) {
   if(gainm == TRUE) {
@@ -63,7 +55,7 @@ lengthp <- function(list1) {
   help
 }
 
-#' Used for test-equal-normalized-matrix-function
+#Used for test-equal-normalized-matrix-function
 norm.gainLoss.sep <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL) {
   desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
   refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)

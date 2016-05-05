@@ -45,7 +45,7 @@ sum(entropy) should return 1
   [2]Shannon, C. E. (2001). A mathematical theory of communication. ACM
   SIGMOBILE Mobile Computing and Communications Review, 5(1), 35.
 
-  [3]Lotfi, F. H., & Fallahnejad, R. (2010). Imprecise Shannon’s entropy and
+  [3]Lotfi, F. H., and Fallahnejad, R. (2010). Imprecise Shannons entropy and
   multi attribute decision making. Entropy, 12(1), 53-62.
 }
 
