@@ -566,3 +566,36 @@ someFunction <- function(allMatrix, vecToTest, nameIndex) {
   }
   allMatrix
 }
+
+weight_higher_sum_value <- function(dataset, userid = NULL , rounds = NULL, cost_ids = NULL) {
+
+  ##Calculate with always 4 attribute so that function works properly, take attr into account at result level.
+  all_dec_matrices <- powerful_function(dataset, userid, FUN = decision_matrix, attr = NULL, rounds = "all", refps = NULL, cost_ids,
+                                        weight = NULL, alpha = 0.88, beta = 0.88, lambda = 2.25, gainm = TRUE, result_type = NULL)
+
+  if(length(userid) != 1) stop("Please enter only one userid, for more see powerful_function.")
+
+  length_attr <- length(get_attrs_ID(dataset))
+
+  sum_help <- rep.int(0, length_attr)
+
+  for(i in all_dec_matrices) {
+
+    help <- apply(i, 2, sum)
+    sum_help <- sum_help + help
+    sum_help <- abs(sum_help)
+  }
+  almost <- sum_help * c(1,1,1,10.5147)
+  result <- almost/sum(almost)
+  result
+}
+
+getNamesAsNums <- function(aList) {
+  res <- sapply(aList, function(temp2) sort(temp2, decreasing=T))
+  res <- sapply(res, function(temp) as.numeric(names(temp)))
+  res
+}
+correlationS <- function(xList, yList) {
+  result <- mapply(function(x, y) spearman.test(x,y)$estimate, xList, yList)
+  result
+}
