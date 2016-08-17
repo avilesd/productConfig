@@ -301,3 +301,78 @@ replaceNotNA <- function(x, y, boolean.vector) {
   x[boolean.vector] <- y[boolean.vector]
   x
 }
+
+
+getAllPrids <- function(dataset) {
+  table_unique <- sapply(dataset, unique)
+  result <- table_unique$prid
+  result
+}
+
+getAllValues <- function (dataset) {
+  table_unique <-  sapply(dataset, unique)
+  result <- table_unique$value
+  result
+}
+
+getPridValues <-function(dataset, prid = NULL) {
+  if(is.null(dataset)) {
+    stop("You need to provide the dataset")
+  }
+
+  allPrids <- getAllPrids(dataset)
+
+  if(is.null(prid)) {
+    prid <- allPrids
+  }
+  if(FALSE %in%(prid %in% allPrids)) {
+    allPrids <- paste(allPrids, sep=",", collapse = " ")
+    stop("One of the attrid you specified is not contained in your data. Valid Attibute Ids are: ", allPrids)
+  }
+
+  help1 <- split(dataset, f = dataset$prid)
+  result <- lapply(help1[prid], function(tempData) unique(tempData$value))
+  result
+}
+
+
+getTableByPrid <- function(dataset, prid = NULL,...) {
+  if(is.null(prid)) {
+    stop("You need to specify at least one userid.")
+  }
+
+  if(FALSE %in%(prid %in% getAllPrids(dataset))) {
+    logicalVector <-!(prid %in% getAllPrids(dataset))
+    fatalUserid <- prid[logicalVector]
+    fatalUserid <- paste(fatalUserid, collapse = " ")
+    stop("At least one userid you specified is not contained within your data: ", fatalUserid)
+  }
+
+  result <- split(dataset, f = dataset$prid)
+  result <- result[as.character(prid)]
+  result
+}
+
+convertValues <- function(dataset, usefulPrids, group0, group1, group2, group3) {
+  workTable <- dataset[dataset[,1] %in% usefulPrids,]
+  thirdColumn <- lapply(workTable, echo, group0, group1, group2, group3)
+  workTable
+}
+
+echo <- function(x, group0, group1, group2, group3) {
+  if(x %in% group0) {
+    result <- 0
+  }
+  if(x %in% group1) {
+    result <- 1
+  }
+  if(x %in% group2) {
+    result <- 2
+  }
+  if(x %in% group3) {
+    result <- 3
+  }
+  result
+}
+
+
