@@ -1,8 +1,8 @@
 # Exceptions
 !new_BA.RData
-
 #Seminar and paper files, stored in the Cloud - G Drive
 /Seminar Files
+/BAFiles
 /SeminarFiles2RMarkdown
 .log
 .Rmd
@@ -24,3 +24,7 @@ vignettes/*.pdf
 .httr-oauth
 .Rproj.user
 inst/doc
+# Session and BA writing documents
+.Rd2pdf9652
+BAFiles/3-3IllustrationOfProductConfig_1.pdf
+BAFiles/3-3IllustrationOfProductConfig_1.tex

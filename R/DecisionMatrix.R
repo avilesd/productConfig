@@ -140,7 +140,7 @@ decisionMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, c
   ## Name columns and rows, test inputting list of vectors other than the strings in 'rounds' argument.
   ## Should work as in list(0:2), test list out of bounds, and DOCU.
   tableRows <- lapply(costifiedTables, rownames)
-  round.RowNames <- lapply(tableRows, paste0, "round")
+  round.RowNames <- lapply(tableRows, paste0)
   namedResult <- lapply(costifiedTables, function(tempData5) {colnames(tempData5) <-colnames(tempData5, do.NULL = F, prefix = "attr"); tempData5})
   namedResult <- mapply(namedResult[1:length(namedResult)], FUN =  function(tempDataC, tempDataD) {rownames(tempDataC) <- tempDataD; tempDataC}, round.RowNames, SIMPLIFY = FALSE)
 

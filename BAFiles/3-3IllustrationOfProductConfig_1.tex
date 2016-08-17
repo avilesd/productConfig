@@ -101,7 +101,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2016-04-01}
+  \date{2016-05-05}
 
 
 
@@ -287,13 +287,13 @@ using only one function.
 
 \begin{verbatim}
 ## $`33`
-##      [,1]  [,2]      [,3]         [,4]
-## [1,]    0  0.00 0.0000000 0.000000e+00
-## [2,]    0  0.00 0.5433674 1.000000e+00
-## [3,]    0 -2.25 0.5433674 2.129512e-12
-## [4,]    1 -2.25 0.5433674 1.000000e+00
-## [5,]    0 -2.25 0.5433674 2.129512e-12
-## [6,]    0 -2.25 1.0000000 1.000000e+00
+##        attr1 attr2     attr3        attr4
+## 0round     0  0.00 0.0000000 0.000000e+00
+## 1round     0  0.00 0.5433674 1.000000e+00
+## 2round     0 -2.25 0.5433674 2.129512e-12
+## 3round     1 -2.25 0.5433674 1.000000e+00
+## 4round     0 -2.25 0.5433674 2.129512e-12
+## 5round     0 -2.25 1.0000000 1.000000e+00
 \end{verbatim}
 
 Finally, for the final step of calculating the overall prospect values,
@@ -366,7 +366,8 @@ To achieve this we can find at least two equivalent ways.
 
 \begin{verbatim}
 ## $`33`
-## [1]  0.0000000  0.3524735 -0.7070319 -0.2649027 -0.7070319 -0.3715795
+##     0round     1round     2round     3round     4round     5round 
+##  0.0000000  0.3524735 -0.7070319 -0.2649027 -0.7070319 -0.3715795
 \end{verbatim}
 
 The last command illustrates many of the implementation principles
@@ -422,7 +423,7 @@ default values for DRP and TRP (see pages 14, 15).
 \begin{verbatim}
 ## $`33`
 ##      0round      1round      2round      3round      4round      5round 
-## -0.38878327  0.13182216 -0.67024550  0.08383736 -0.67024550 -0.31466703
+## -0.38710408  0.11688393 -0.67236180  0.08821309 -0.67236180 -0.31466703
 \end{verbatim}
 
 \begin{Shaded}
