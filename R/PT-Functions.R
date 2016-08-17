@@ -93,7 +93,7 @@ prospect_value_matrix_extend <- function(ngain = NULL, nloss = NULL, alpha = 0.8
 
 pvMatrix <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL,
                      alpha = 0.88, beta = 0.88, lambda = 2.25) {
-  normalizedgainLoss <- norm.gainLoss(dataset, userid, attr, rounds, refps, cost_ids, binded = F)
+  normalizedgainLoss <- norm.gainLoss_new(dataset, userid, attr, rounds, refps, cost_ids, binded = F)
   pvMatrixList <- with(normalizedgainLoss, mapply(pvalue_fun, gain, loss, alpha, beta, lambda, SIMPLIFY = F))
   pvMatrixList
 }
