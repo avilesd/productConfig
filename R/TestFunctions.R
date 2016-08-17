@@ -525,6 +525,17 @@ transform4 <- function(dataset, userid=users.withRanks, attr=NULL, rounds="all",
   roundedDM
 }
 
+transform4_config1 <-function(dataset, userid= NULL, attr=NULL, rounds="all", cost_ids=3) {
+  dM <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
+  roundedDM <- lapply(dM, round, digits=5)
+  roundedDM <- lapply(roundedDM, function(temp) apply(temp, 2, function(temp2) {replace(temp2, temp2==-0.58879, 0)}))
+  roundedDM <- lapply(roundedDM, function(temp) apply(temp, 2, function(temp3) {replace(temp3, temp3==-0.45157, 0)}))
+  roundedDM <- lapply(roundedDM, function(temp) apply(temp, 2, function(temp4) {replace(temp4, temp4==-0.31434, 1)}))
+  roundedDM <- lapply(roundedDM, function(temp) apply(temp, 2, function(temp5) {replace(temp5, temp5==-0.17711, 2)}))
+  roundedDM <- lapply(roundedDM, function(temp) apply(temp, 2, function(temp6) {replace(temp6, temp6==-0.03989, 3)}))
+  roundedDM
+}
+
 containsVectors <- function(allMatrices, datenbankMatrix) {
   j <- 0
   for (vec in 1:nrow(datenbankMatrix)) {

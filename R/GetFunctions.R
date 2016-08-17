@@ -353,6 +353,12 @@ getTableByPrid <- function(dataset, prid = NULL,...) {
   result
 }
 
+pridVectors <- function(dataset, prid = NULL) {
+  allTables <- getTableByPrid(dataset, prid)
+  result <- lapply(allTables, function(x) {x$value})
+  result
+}
+
 convertValues <- function(dataset, usefulPrids, group0, group1, group2, group3) {
   workTable <- dataset[dataset[,1] %in% usefulPrids,]
   thirdColumn <- lapply(workTable, echo, group0, group1, group2, group3)
