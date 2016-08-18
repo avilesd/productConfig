@@ -61,11 +61,11 @@ listOfNames <- function(aListofVectors) {
   uniquePrids
 }
 
-tidyUpData <- function(listOfMatricesPV, listofMatricesDRP, listofMatricesTRP) {
+tidyUpData <- function(listOfMatricesPV, listOfMatricesDRP, listOfMatricesTRP) {
   #PT
-  listOfTargetsPV <- lapply(listOfMatrices, function(vector) sort(vector[1,], decreasing=F))
+  listOfTargetsPV <- lapply(listOfMatricesPV, function(vector) sort(vector[1,], decreasing=F))
   resultPV <- mapply(function(targetVector, matrix) {t(matrix[ , match(targetVector, matrix[1,])])},
-                   listOfTargets, listOfMatrices)
+                   listOfTargetsPV, listOfMatricesPV)
   #DRP
   listOfTargetsDRP <- lapply(listOfMatricesDRP, function(vector) sort(vector[1,], decreasing=F))
   resultDRP <- mapply(function(targetVector, matrix) {t(matrix[ , match(targetVector, matrix[1,])])},
@@ -76,7 +76,16 @@ tidyUpData <- function(listOfMatricesPV, listofMatricesDRP, listofMatricesTRP) {
   resultTRP <- mapply(function(targetVector, matrix) {t(matrix[ , match(targetVector, matrix[1,])])},
                       listOfTargetsTRP, listOfMatricesTRP)
 
-  result <- mapply(cbind, )
-  result <- cbind(resultPV, "dualModel" = resultDRP[ ,2], "tri-theory" = resultTRP[ ,2])
+  result <- mapply(function(pt, drp, trp) {cbind(pt, "dual" = drp[ ,2], "tri" = trp[ ,2])}, resultPV, resultDRP, resultTRP)
+  matrixNames <- names(listOfMatricesPV)
+  namesAsNumbers <- as.numeric(matrixNames)
+
+  result <- mapply(function(aNumber, matrix) {cbind("userid" = rep(aNumber, nrow(matrix)), matrix)}, namesAsNumbers, result)
+
   result
+}
+
+helpFunction <- function(aNumber, aMatrix) {
+  aMatrix <- cbind("userid" = rep(aNumber, nrow(aMatrix)), aMatrix)
+  aMatrix
 }
