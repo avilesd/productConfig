@@ -418,7 +418,7 @@ gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps =
 #' @export
 
 norm.gainLoss <- function(dataset, userid = NULL, attr = NULL, rounds = NULL, refps = NULL, cost_ids = NULL, binded = T) {
-  desList <- decisionMatrix(dataset, userid, attr, rounds, cost_ids)
+  desList <- containedTables2 #decisionMatrix(dataset, userid, attr, rounds, cost_ids)
   refPs <- referencePoints(dataset, userid, refps, attr, cost_ids)
 
   #Save names
