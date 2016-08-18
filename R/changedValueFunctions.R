@@ -57,5 +57,26 @@ listOfNames <- function(aListofVectors) {
   regularExp <- lapply(regularExp, function(temp) {gsub("rid", "", temp) })
   regularExp <- lapply(regularExp, function(temp) {as.numeric(temp)})
   uniquePrids <- lapply(regularExp, function(x) unique(x))
+  uniquePrids <- lapply(uniquePrids, function(prids) { rbind(prids, "ranking" = 1:length(prids)) })
   uniquePrids
+}
+
+tidyUpData <- function(listOfMatricesPV, listofMatricesDRP, listofMatricesTRP) {
+  #PT
+  listOfTargetsPV <- lapply(listOfMatrices, function(vector) sort(vector[1,], decreasing=F))
+  resultPV <- mapply(function(targetVector, matrix) {t(matrix[ , match(targetVector, matrix[1,])])},
+                   listOfTargets, listOfMatrices)
+  #DRP
+  listOfTargetsDRP <- lapply(listOfMatricesDRP, function(vector) sort(vector[1,], decreasing=F))
+  resultDRP <- mapply(function(targetVector, matrix) {t(matrix[ , match(targetVector, matrix[1,])])},
+                     listOfTargetsDRP, listOfMatricesDRP)
+
+  #TRP
+  listOfTargetsTRP <- lapply(listOfMatricesTRP, function(vector) sort(vector[1,], decreasing=F))
+  resultTRP <- mapply(function(targetVector, matrix) {t(matrix[ , match(targetVector, matrix[1,])])},
+                      listOfTargetsTRP, listOfMatricesTRP)
+
+  result <- mapply(cbind, )
+  result <- cbind(resultPV, "dualModel" = resultDRP[ ,2], "tri-theory" = resultTRP[ ,2])
+  result
 }
